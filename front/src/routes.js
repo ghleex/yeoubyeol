@@ -9,7 +9,6 @@ import AccountCreate from './views/Join/AccountCreate.vue'
 
 // 회원 관리
 import UserLogin from './views/User/UserLogin.vue'
-import UserLogin1 from './views/User/UserLogin1.vue'
 import UserPwdSendEmail from './views/User/UserPwdSendEmail.vue'
 import UserPwdSendEmailConfirm from './views/User/UserPwdSendEmailConfirm.vue'
 import UserPwdChange from './views/User/UserPwdChange.vue'
@@ -28,9 +27,9 @@ import Follow from './views/Settings/Follow.vue'
 
 //검색
 import Search from './views/Search.vue'
+import hongjuLab2 from './views/hongjuLab2.vue'
 
 
-import comp from './views/Components.vue'
 
 const requireAuth = () => (to, from, next) => {
     if(sessionStorage.getItem('AUTH_token')){
@@ -145,15 +144,10 @@ export default [
         path: '*',
         redirect: '/404'
     },
-    {
-        path: '/comp',
-        name: 'comp',
-        component: comp
-    },
     //홍주의 실험실...
     {
-        path: '/lab1',
-        name: '로그인 랩',
-        component: UserLogin1
+        path: '/lab',
+        name: '홍주랩실',
+        component: hongjuLab2
     },
 ]
