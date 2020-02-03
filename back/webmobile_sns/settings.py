@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'articles.apps.ArticlesConfig',
+    'imagekit',
     'rest_framework',
     'rest_framework_swagger',
     'rest_framework.authtoken',
@@ -207,5 +208,8 @@ EMAIL_PORT = '465'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-
 SITE_ID = 1
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_URL = '/uploads/'
+

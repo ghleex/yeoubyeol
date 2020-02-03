@@ -10,5 +10,5 @@ urlpatterns = [
     path('', views.ArticleList.as_view(), name='articles'),
     path('<int:pk>/', views.ArticleDetail.as_view(), name='detail'),
     path('search/', views.SearchResultList.as_view(), name='search'),
-    path('follow/<int:user_pk>/', views.FollowerList.as_view(), name='follow'),
+    path('follow/', views.FollowerList.as_view(), name='follow'),
 ]

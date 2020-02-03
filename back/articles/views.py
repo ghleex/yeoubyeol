@@ -97,7 +97,11 @@ class FollowerList(APIView):
     @login_required
     def post(self, request, format=None):
         me = get_object_or_404(get_user_model(), nickname=request.data.get.my_nickname)
+<<<<<<< HEAD
         you = get_object_or_404(get_user_model(), nickname=request.data.get.your_nickname)
+=======
+        you = get_object_or_404(get_user_model(), nickname=request.data.get.nickname)
+>>>>>>> d160d949aca4cae09585dbfdd10c1c747fcee6a7
         serializer = UserSerializer(you)
         if me != you:
             if serializer.followers.filter(pk=me.id).exists():

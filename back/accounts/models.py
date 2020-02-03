@@ -42,4 +42,3 @@ class Notification(models.Model):
     
     class Meta:
         ordering = ('-pk',)
-

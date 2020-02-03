@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@vue/cli": "^4.1.2",
     "axios": "^0.19.2",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
