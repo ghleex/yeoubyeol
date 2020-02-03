@@ -96,17 +96,17 @@ class FollowerList(APIView):
     # 팔로우 신청
     @login_required
     def post(self, request, format=None):
-        me = get_object_or_404(get_user_model(), username=request.data.get.my_username)
-        you = get_object_or_404(get_user_model(), username=request.data.get.your_username)
+        me = get_object_or_404(get_user_model(), nickname=request.data.get.my_nickname)
+        you = get_object_or_404(get_user_model(), nickname=request.data.get.nickname)
         serializer = UserSerializer(you)
         if me != you:
             if serializer.followers.filter(pk=me.id).exists():
                 serializer.followers.remove(me)
             else:
                 notification = {
-                    'username': you.username,
+                    'nickname': you.nickname,
                     'message': me.nickname + '님이 팔로우를 신청했습니다.',
-                    'send_user': me.username
+                    'send_user': me.nickname
                 }
                 json_noti = json.dumps(notification)
                 noti_serializer = NotificationSerializer(data=json_noti)
