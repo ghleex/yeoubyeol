@@ -43,6 +43,7 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import JoinApi from "../../apis/JoinApi";
 import axios from "axios";
 export default {
@@ -84,6 +85,77 @@ export default {
             this.alert = true;
             this.valid = false;
           }
+=======
+    // import ButtonCustom from '../../components/common/ButtonCustom'
+    import emailjs from 'emailjs-com';
+    import * as EmailValidator from 'email-validator';
+    import axios from 'axios';
+    export default {
+        components: {
+            // ButtonCustom,
+        },
+        created() {
+            if (this.$store.email) {
+                this.email = this.$store.email
+                if (this.checkForm()) {
+                    this.isSubmit = true
+                }
+                this.$store.email = null
+            }
+        },
+        data: () => {
+            return {
+                email: '',
+                error: {
+                    email: false,
+                },
+                isSubmit: false,
+            }
+        },
+        methods: {
+            checkForm() {
+                if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
+                    this.error.email = "이메일 형식이 아닙니다."
+                    console.log('hi')
+                    return false
+                } else {
+                    this.error.email = false;
+                    console.log('bye')
+                    return true
+                }
+            },
+            sendEmail() {
+                var router = this.$router
+                console.log(this.email)
+                if (this.email && !this.error.email) {
+                    this.$store.email = this.email
+                    router.push({
+                        path: '/user/password/ok'
+                    })
+                let form = new FormData();
+                form.append('username', this.email)
+                axios.post('http://192.168.31.80:8000/accounts/find_pwd/', form)
+                .then(response => {
+                    console.log(response)
+                })
+                }
+            },
+        },
+        watch: {
+            email: function (v) {
+                this.checkForm();
+            },
+            error: {
+                deep: true,
+                handler() {
+                    if (!this.error.email) {
+                        this.isSubmit = true
+                    } else {
+                        this.isSubmit = false
+                    }
+                }
+            }
+>>>>>>> 41bd4035c54303915650898ddbba921f3e5c78d8
         },
         error => {
           //에러
