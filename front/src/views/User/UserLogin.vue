@@ -85,15 +85,9 @@ import "../../assets/css/user.scss";
 import PV from "password-validator";
 import axios from 'axios'
 import * as EmailValidator from "email-validator";
-// import KakaoLogin from '../../components/user/snsLogin/Kakao.vue'
-// import GoogleLogin from '../../components/user/snsLogin/Google.vue'
 import UserApi from "../../apis/UserApi";
 
 export default {
-  components: {
-    // KakaoLogin,
-    // GoogleLogin,
-  },
   created() {
     if (sessionStorage.getItem("AUTH_token")) {
       alert("이미 로그인된 상태입니다.");
@@ -159,9 +153,6 @@ export default {
           error => {
             this.password = "";
               this.alert = true;
-            // this.$store.error = this.email;
-            // var router = this.$router;
-            // router.push({ path: "/error" });
           }
         );
       }

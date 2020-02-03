@@ -27,7 +27,13 @@ import Follow from './views/Settings/Follow.vue'
 
 //검색
 import Search from './views/Search.vue'
+import hongjuLab2 from './views/hongjuLab2.vue'
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 3a81803c6eb1a7bc396c952a95f1d9999d81028d
 const requireAuth = () => (to, from, next) => {
     if(sessionStorage.getItem('AUTH_token')){
     // if (this.$cookies.isKey('auth_cookie')) {
@@ -143,8 +149,8 @@ export default [
     },
     //홍주의 실험실...
     {
-        path: '/lab1',
-        name: '로그인 랩',
-        component: UserLogin
+        path: '/lab',
+        name: '홍주랩실',
+        component: hongjuLab2
     },
 ]
