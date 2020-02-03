@@ -1,0 +1,70 @@
+@charset "utf-8";
+@import './common';
+
+.home {
+    @include wrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    box-sizing: border-box;
+
+    /* The only rule that matters */
+    #video-background {
+        /*  making the video fullscreen  */
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        // width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+
+    /* These just style the content */
+    article {
+        /*  just a fancy border  */
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 10px solid rgba(255, 255, 255, 0.5);
+        margin: 10px;
+        z-index: 2;
+    }
+
+
+    h1 {
+        position: absolute;
+        top: 60%;
+        width: 100%;
+        font-size: 36px;
+        letter-spacing: 3px;
+        color: #fff;
+        font-family: Oswald, sans-serif;
+        text-align: center;
+    }
+
+    h1 span {
+        font-family: sans-serif;
+        letter-spacing: 0;
+        font-weight: 300;
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    a:hover {
+        color: #71d087;
+        font-weight: 600;
+    }
+
+    span {
+        a {
+            color: #fff;
+            text-decoration: none;
+        }
+    }
+}

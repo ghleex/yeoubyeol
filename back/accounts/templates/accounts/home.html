@@ -1,0 +1,15 @@
+<div>
+회원가입하러가기
+<a href="{% url 'accounts:email' %}">가입하기</a>
+<br>
+{% for waiting in waitings %}
+{{ waiting.username }}
+<br>
+{{ waiting.secret_key }}
+<br>
+{{ waiting.created_at }}
+<br>
+{% endfor %}
+
+
+</div>

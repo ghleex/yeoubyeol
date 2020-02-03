@@ -1,0 +1,10 @@
+<div>
+{{ result }}
+<form action="{% url 'accounts:email' %}" method="POST">
+{% csrf_token %}
+{% comment %} <input type="text" name="" id=""> {% endcomment %}
+{{ form.username }}
+{% comment %} <input type="text" name="" id=""> {% endcomment %}
+<input type="submit" value="인증">
+</form>
+</div>
