@@ -29,13 +29,16 @@ class pwd_find(models.Model):
 
 # 알림센터 모델링
 class Notification(models.Model):
-    # noti_id: 알림 종류(팔로우 요청, 댓글 등)
-    noti_id = models.IntegerField()
+    # username: 알림 받는 사람
+    nickname = models.CharField(max_length=50)
     # is_read: 열람 여부
     is_read = models.BooleanField(default=0)
     # created_at: noti 생성 시각
     created_at = models.DateTimeField(auto_now_add=True)
     # message: noti 내용
-    message = models.TextField()
-    # user: 현재 사용자
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    message = models.CharField(max_length=100)
+    # send_user: 알림 보내는 사람
+    send_user = models.CharField(max_length=50)
+    
+    class Meta:
+        ordering = ('-pk',)
