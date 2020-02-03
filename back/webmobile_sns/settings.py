@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'articles.apps.ArticlesConfig',
+    'imagekit',
     'rest_framework',
     'rest_framework_swagger',
     'rest_framework.authtoken',
@@ -151,7 +152,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', # mysql 엔진 설정
         'NAME':'yeoubyeol', # 데이터베이스 이름
         'USER':'root', # 데이터베이스 연결시 사용할 유저 이름
-        'PASSWORD': 'test1234!', # 유저 패스워드
+        'PASSWORD': 'dudnquf@102', # 유저 패스워드
         'HOST':'localhost',
         'PORT':''
     }
@@ -207,5 +208,8 @@ EMAIL_PORT = '465'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-
 SITE_ID = 1
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_URL = '/uploads/'
+

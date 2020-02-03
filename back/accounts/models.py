@@ -36,6 +36,6 @@ class Notification(models.Model):
     # created_at: noti 생성 시각
     created_at = models.DateTimeField(auto_now_add=True)
     # message: noti 내용
-    message = models.CharField(max_length=100)
+    message = models.TextField()
     # user: 현재 사용자
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
