@@ -1,6 +1,6 @@
-from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
-from django.shortcuts import render, get_object_or_404
-from django.core.mail import send_mail, EmailMessage
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from rest_framework import status
 from rest_framework.views import APIView
@@ -12,8 +12,7 @@ from django.contrib.auth.decorators import login_required
 from .serializers import UserCreationSerializer, UserSerializer, WaitingSerializer
 from .models import User, Waiting
 from .forms import WaitingForm, CustomUserCreationForm
-from rest_framework.views import APIView
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from string import punctuation, ascii_letters, digits
 
 import random
@@ -27,7 +26,6 @@ class AccountList(APIView):
     def post(self, request, format=None):
         users = User.objects.filter(username=request.data.get('email'))
         serializer = UserSerializer(users, many=True)
-        print(serializer.data)
         if serializer:
             return Response(serializer.data)
         else:
@@ -53,6 +51,7 @@ class AccountList(APIView):
 @api_view(['POST',])
 def email_auth(request):
     waitings = Waiting.objects.all()
+
     for waiting in waitings:
         if waiting.created_at < datetime.now() - timedelta(minutes=30):
             waiting.delete()
@@ -82,7 +81,6 @@ def email_auth(request):
             return Response({'message': '아직 인증을 완료하지 않은 계정입니다.'}, status=status.HTTP_202_ACCEPTED)
     else:
         return Response({'message': '이미 존재하는 계정입니다.'}, status=status.HTTP_202_ACCEPTED)
-
 
 @api_view(['POST',])
 def social_auth(request):
@@ -130,7 +128,6 @@ def social_auth(request):
 @permission_classes((AllowAny, ))
 def user_signup(request, secret_key):
     waiting = get_object_or_404(Waiting, secret_key=secret_key)
-
     if waiting and waiting.created_at > datetime.now() - timedelta(minutes=30):
         serializer = UserCreationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -138,7 +135,10 @@ def user_signup(request, secret_key):
             user.set_password(request.data.get('password'))
             user.save()
             waiting.delete()
+<<<<<<< HEAD
+=======
             # print(serializer.data)
+>>>>>>> d160d949aca4cae09585dbfdd10c1c747fcee6a7
             return Response({'message': '회원가입이 성공적으로 완료되었습니다.'}, status=status.HTTP_200_OK)
 
     else:
@@ -159,9 +159,15 @@ def find_pwd(request):
     user = get_object_or_404(User, username=username)
 
     symbols = ascii_letters + digits + punctuation
+<<<<<<< HEAD
+    secure_random = secrets.SystemRandom()
+    new_pwd = ''.join(secure_random.choice(symbols) for i in range(10)) +'!'
+    user.password = new_pwd
+=======
     new_pwd = ''.join(secrets.SystemRandom().choice(symbols) for i in range(10))
     print(new_pwd)
     user.set_password(new_pwd)
+>>>>>>> d160d949aca4cae09585dbfdd10c1c747fcee6a7
     user.save()
     
     mail_subject = '[SOT] 임시 비밀번호 메일입니다.'
@@ -191,6 +197,7 @@ def change_pwd(request):
 
 
 @api_view(['POST',])
+@login_required
 def profile(request):
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)

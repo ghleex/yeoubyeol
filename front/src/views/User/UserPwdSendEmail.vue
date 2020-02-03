@@ -31,6 +31,7 @@
     // import ButtonCustom from '../../components/common/ButtonCustom'
     import emailjs from 'emailjs-com';
     import * as EmailValidator from 'email-validator';
+    import axios from 'axios';
     export default {
         components: {
             // ButtonCustom,
@@ -73,7 +74,12 @@
                     router.push({
                         path: '/user/password/ok'
                     })
-
+                let form = new FormData();
+                form.append('username', this.email)
+                axios.post('http://192.168.31.80:8000/accounts/find_pwd/', form)
+                .then(response => {
+                    console.log(response)
+                })
                 }
             },
         },

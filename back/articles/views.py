@@ -2,16 +2,16 @@ from django.core.mail import EmailMessage
 from django.http import Http404
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import ArticleSerializer
 from .models import Article
-from accounts.serializers import UserSerializer
-import secrets
+from accounts.models import Notification
+from accounts.serializers import UserSerializer, NotificationSerializer
+import secrets, json
 # Create your views here.
 class ArticleList(APIView):
     # 글 생성
@@ -97,7 +97,11 @@ class FollowerList(APIView):
     @login_required
     def post(self, request, format=None):
         me = get_object_or_404(get_user_model(), nickname=request.data.get.my_nickname)
+<<<<<<< HEAD
+        you = get_object_or_404(get_user_model(), nickname=request.data.get.your_nickname)
+=======
         you = get_object_or_404(get_user_model(), nickname=request.data.get.nickname)
+>>>>>>> d160d949aca4cae09585dbfdd10c1c747fcee6a7
         serializer = UserSerializer(you)
         if me != you:
             if serializer.followers.filter(pk=me.id).exists():
@@ -118,6 +122,7 @@ class FollowerList(APIView):
         return Response(serializer.data)
 
     # 팔로워 목록
+    @login_required
     def get(self, request, user_pk, format=None):        
         person = get_object_or_404(get_user_model(), pk=request.user.pk)
         serializer = UserSerializer(person, many=True)
@@ -125,3 +130,9 @@ class FollowerList(APIView):
             return Response(serializer.data)
         else:
             return Response({'message': '팔로워를 찾을 수 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
+
+@login_required
+def like(request):
+    username = request.data.get('username')
+    user = get_object_or_404(User, username=username)
+
