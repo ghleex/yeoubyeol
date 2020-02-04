@@ -1,25 +1,27 @@
 <template>
   <div class="home" style="color: #EEEEEE; 
            text-align: center;">
-    <!-- <img src="../assets/images/moon_home.jpg" alt=""> -->
+    <!-- <img src="../assets/images/moon_home.jpg" alt /> -->
     <article>
-      <h1>
-        <br />달이 떴어요.
-        <br />모두 나오세요.
-        <br />
-        <span v-if="!isOk">
-          <a @click="tologin">로그인</a> |
-          <a @click="toConfirmEmail">회원가입</a>
-        </span>
-        <span v-if="isOk">
-          <a @click="goHome" id="goHome">홈으루</a> |
-          <a @click="logout" id="logoutButton">로그아웃</a>
-        </span>
-      </h1>
+      <div dark color="transparent" style="top: 60%; margin-top:70px">
+        <h1>
+          <br />달이 떴어요.                                                                       
+          <br />모두 나오세요.
+          <br />
+        </h1>
+        <div v-if="!isOk">
+          <v-btn text @click="tologin" class="white--text">로그인</v-btn>|
+          <v-btn text @click="toConfirmEmail" class="white--text">회원가입</v-btn>
+        </div>
+        <div v-if="isOk">
+          <v-btn text @click="goHome" class="white--text">홈으루</v-btn>|
+          <v-btn text @click="logout" class="white--text">로그아웃</v-btn>
+        </div>
+      </div>
     </article>
     <!--  Video is muted & autoplays, placed after major DOM elements for performance & has an image fallback  -->
     <video autoplay loop id="video-background" muted plays-inline>
-      <source src="../assets/images/example/5r.mp4" />
+      <source src="../assets/images/example/7.mp4" />
     </video>
   </div>
 </template>
@@ -28,7 +30,10 @@
 import "../assets/css/home.scss";
 export default {
   created() {
-    if (sessionStorage.getItem("AUTH_token")) {
+    if (
+      sessionStorage.getItem("AUTH_token") &&
+      sessionStorage.getItem("LoginUserNickname")
+    ) {
       this.isOk = true;
     }
   },
@@ -41,11 +46,10 @@ export default {
   methods: {
     logout() {
       sessionStorage.removeItem("AUTH_token");
+      sessionStorage.removeItem("LoginUserNickname");
       this.$cookies.remove("auth_cookie");
       alert("로그아웃되었습니다.");
-      const logoutButton = document.getElementById("logoutButton");
-      logoutButton.remove();
-      this.isOk = true;
+      this.isOk = false;
     },
     tologin() {
       var router = this.$router;

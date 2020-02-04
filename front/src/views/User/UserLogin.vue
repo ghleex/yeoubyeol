@@ -80,20 +80,16 @@
 </template>
 
 <script>
+
 import "../../assets/css/style.scss";
 import "../../assets/css/user.scss";
 import PV from "password-validator";
 import axios from 'axios'
 import * as EmailValidator from "email-validator";
-// import KakaoLogin from '../../components/user/snsLogin/Kakao.vue'
-// import GoogleLogin from '../../components/user/snsLogin/Google.vue'
 import UserApi from "../../apis/UserApi";
 
+let tokenFromLogin='';
 export default {
-  components: {
-    // KakaoLogin,
-    // GoogleLogin,
-  },
   created() {
     if (sessionStorage.getItem("AUTH_token")) {
       alert("이미 로그인된 상태입니다.");
@@ -130,22 +126,23 @@ export default {
           res => {
             //통신을 통해 전달받은 값 콘솔에 출력
             // console.log("Success");
-            console.log(res);
+            // console.log(res);
             var router = this.$router;
+            this.tokenFromLogin = res.data.token;
             if (res.status === 200) {
               alert("로그인되었습니다.");
-              sessionStorage.setItem("AUTH_token", res.data.token);
-              router.push({ name: "홈" });
+              
               //요청이 끝나면 버튼 활성화
-              this.isSubmit = true;
-              // console.log(email);
               let data={'email':email};
+              console.log('프로필조회 : '+data.email);
               axios.post(`http://192.168.31.80:8000/accounts/`, data).then((response=>{
-                  console.log('로그인 후 가져온 다라 '+response.data[0].nickname);
-                  // console.log(response.data);
-                  this.$emit('LoginUserData',response.data[0].nickname);
-                  // this.$store.commit('setnickname',response.data[0].nickname);
-              }))
+                console.log('로그인 후 가져온 다라 '+response.data[0].nickname);
+                  sessionStorage.setItem("AUTH_token", this.tokenFromLogin);
+                  sessionStorage.setItem('LoginUserNickname',response.data[0].nickname);
+                  router.push({ name: "홈" });
+              }),error=>{
+                console.log("로그인 후 프로필 가져오기 문제");
+              })
     
             } else {
               // console.log("Fail");
@@ -159,9 +156,6 @@ export default {
           error => {
             this.password = "";
               this.alert = true;
-            // this.$store.error = this.email;
-            // var router = this.$router;
-            // router.push({ path: "/error" });
           }
         );
       }
@@ -181,8 +175,7 @@ export default {
         !!v ||
         "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 15자리 이하입니다",
       v =>
-        (v.length <= 15 && v.length >= 8) ||
-        "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 15자리 이하입니다"
+        /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[`~!@#$%^&+=;',.?]).*$/.test(v) || "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 15자리 이하입니다",
     ],
 
     alert: false,
