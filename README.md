@@ -12,46 +12,60 @@
 
 ### 2. 환경 :deciduous_tree:
 
-|               OS               |   Language   | Frontend |   Backend    |     DBMS      |
-| :----------------------------: | :----------: | :------: | :----------: | :-----------: |
-| Windows 10 Enterprise (64-bit) | Python 3.7.x |  Vue.js  | Django 3.0.x |    SQLite3    |
-|     Ubuntu 18.04 (AWS EC2)     |  JavaScript  |          |              | (MySQL 8.0.x) |
+|               OS               |   Language   | Frontend |   Backend    |    DBMS     |
+| :----------------------------: | :----------: | :------: | :----------: | :---------: |
+| Windows 10 Enterprise (64-bit) | Python 3.7.x |  Vue.js  | Django 3.0.x | MySQL 8.0.x |
+|     Ubuntu 18.04 (AWS EC2)     |  JavaScript  |          |              |             |
 
-* SQLite3 → MySQL 교체 고려 이유
+* DBMS 교체(SQLite3 → MySQL) 이유
 
-  * 단일 사용자 대 복수 사용자 데이터베이스
-    * SQLite는 데스크톱 또는 모바일 앱과 같이 동시 사용자가 한 명인 애플리케이션에 가장 적합하다. MySQL과 마리아DB는 여러 명의 동시 사용자에 대응하도록 설계됐다. 또한 MySQL과 마리아DB는 클러스터 및 수평 확장 솔루션을 제공할 수 있지만 SQLite는 할 수 없다.
-
-  * 강한 데이터 형식 지정 필요
-    * SQLite의 데이터 형식은 비교적 소수이다. 예를 들어 기본 datetime 형식이 없다. 따라서 애플리케이션에서 이러한 형식을 처리해야 한다. 애플리케이션이 아닌 데이터베이스에서 datetime 값을 위한 입력을 정규화하고 제약 필요
-  * 수평 확장 설계 필요
-    * SQLite 인스턴스는 단일체이며 독립적이고, 인스턴스 간 기본 동기화 기능이 없다. 또한 여러 개를 연합하거나 클러스터를 만들 수 없기 때문
-  * 여러 연결에서의 동시 쓰기 작업 실행 시 성능 문제 발생
-    * SQLite는 쓰기 작업 시 데이터베이스를 잠그므로 여러 동시 쓰기 작업이 실행되는 앱에서는 성능 문제가 발생할 수 있기 때문
+  * 단일 사용자 對 복수 사용자 데이터베이스 측면
+    * SQLite 는 데스크톱 또는 모바일 앱과 같이 동시 사용자가 한 명인 애플리케이션에 가장 적합
+    * MySQL 과 마리아DB는 여러 명의 동시 사용자에 대응하도록 설계
+    * MySQL 과 마리아DB는 클러스터 및 수평 확장 솔루션을 제공하나 SQLite 는 제공하지 않음
+  * MySQL 의 다양한 데이터 형식 제공
+    * MySQL 에 비해 SQLite 은 적은 수의 데이터 형식을 제공
+    * 예> SQLite 에는 기본 datetime 형식이 존재하지 않아 애플리케이션에서 이러한 형식을 처리해야 함
+    * 따라서 애플리케이션이 아닌 데이터베이스에서 datetime 값을 위한 입력을 정규화하고 제약하는데 MySQL 이 더욱 적합
+  * MySQL 사용 시 수평 확장 설계 시 더욱 용이
+    * SQLite 인스턴스는 단일체이며 독립적이고, 인스턴스 간 기본 동기화 기능 부재
+    * SQLite 를 이용하여 DB 여러 개를 연합하거나 클러스터를 만들 수 없음
+  * 여러 연결에서 SQLite 를 통한 동시 쓰기 작업 실행 시 성능 문제 발생
+    * SQLite 는 쓰기 작업 시 데이터베이스를 잠그므로 여러 동시 쓰기 작업이 실행되는 앱에서는 성능 문제가 발생할 수 있음
 
 
 
 ### 3. 역할
 
-|    Frontend    |       Backend       |
-| :------------: | :-----------------: |
-| 김홍주, 조선행 | **이길현***, 조규홍 |
+|       Frontend       |       Backend       |
+| :------------------: | :-----------------: |
+| 김홍주, **조선행**** | **이길현***, 조규홍 |
 
-*: 팀장
-
-
-
-### 4. ER Diagram (알림센터 모델링 보완 후 확정 게시)
-
-TBA
+*: 팀장 | **: CTO
 
 
 
+### 4. System Architecture
+
+![system_architecture](https://user-images.githubusercontent.com/52685206/73622923-59860380-467e-11ea-99e6-90881f1f614c.png) 
 
 
-### 5. Git Workflow (기능별로 세분화하여 수정 예정)
+
+### 5. ER Diagram
+
+<img src="https://user-images.githubusercontent.com/52685206/73625718-580e0880-4689-11ea-9e6c-f97c9b845baf.png" alt="erd" style="width: 70%; height: 70%;" />
+
+
+
+### 6. Git Workflow (기능별로 세분화하여 수정 예정)
 
 ![git_workflow](https://user-images.githubusercontent.com/52685206/73424672-e1b09400-4372-11ea-9f27-163147f844d2.png)
+
+
+
+
+
+-----
 
 
 
