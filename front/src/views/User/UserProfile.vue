@@ -67,17 +67,17 @@
       </v-tab>
 
       <v-tab-item id="tab-1">
-          <Post :content="text" :isLiked="false" :isClipped="true" />
-          <Post :content="text" :isLiked="false" :isClipped="true" />
-          <Post :content="text" :isLiked="false" :isClipped="true" />
-          <Post :content="text" :isLiked="false" :isClipped="true" />
+        <Post :content="text" :isLiked="false" :isClipped="true" />
+        <Post :content="text" :isLiked="false" :isClipped="true" />
+        <!-- <Post :content="text" :isLiked="false" :isClipped="true" />
+        <Post :content="text" :isLiked="false" :isClipped="true" />-->
       </v-tab-item>
       <v-tab-item id="tab-2">
         <v-card dark color="#110b22">
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-row class="py-0 ma-2">
               <v-col cols="12" class="pa-1">
-                <v-file-input accept="image/*" ></v-file-input>
+                <v-file-input accept="image/*" @change="onFileChanged"></v-file-input>
                 <!-- <v-text-field dark label="홍주의 미니랩실" required></v-text-field> -->
               </v-col>
 
@@ -87,8 +87,8 @@
                   :rules="contentRules"
                   required
                   outlined
-                  :value="inputPostContent"
-                ></v-textarea>
+                  v-model="inputPostContent"
+                >{{inputPostContent}}</v-textarea>
                 <v-btn
                   block
                   class="mb-2"
@@ -120,13 +120,16 @@ import "../../assets/css/user.scss";
 import Post from "../../components/common/Post";
 import UserApi from "../../apis/UserApi";
 import FeedApi from "../../apis/FeedApi";
-
 export default {
   name: "components",
   components: {
     Post
   },
   methods: {
+    onFileChanged(event) {
+      console.log("1", event);
+      this.selectedFile = event;
+    },
     validate() {
       if (this.$refs.form.validate()) {
         // this.snackbar = true;
@@ -134,18 +137,19 @@ export default {
       }
     },
     newPost() {
+      let { loginedNickname, inputPostContent, selectedFile } = this;
+      let data = { loginedNickname, inputPostContent, selectedFile };
 
-
-    let data = new FormData();
-    data.append('nickname', this.loginedNickname);
-    data.append('article', 'my-picture');
-    data.append('image', event.target.files[0]); 
-
-    FeedApi.newPost(data,res=>{
-
-    })
-
-  }
+      console.log(data);
+      FeedApi.newPost(
+        data,
+        res => {
+          console.log(res);
+        },
+        error => {
+          console.log("error");
+        }
+      );
     },
     clickFollowBtn() {
       if (!this.isMyAccount) {
@@ -169,6 +173,7 @@ export default {
     viewFollows() {
       console.log(this.userInfo.nickname);
       this.$router.push({ name: "팔로", params: this.nickname });
+    }
   },
   created() {
     UserApi.requestUserProfile(
@@ -210,7 +215,8 @@ export default {
 
   data: () => {
     return {
-      inputPostContent:'',
+      selectedFile: "",
+      inputPostContent: "",
       valid: false,
       contentRules: [v => !!v || "내용을 입력해주세요.."],
       isFollow: false,

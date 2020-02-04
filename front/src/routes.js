@@ -27,6 +27,7 @@ import Follow from './views/Settings/Follow.vue'
 //검색
 import Search from './views/Search.vue'
 import hongjuLab2 from './views/hongjuLab2.vue'
+import hongjuLab3 from './views/hongjuLab3.vue'
 
 
 
@@ -140,8 +141,13 @@ export default [
     },
     //홍주의 실험실...
     {
-        path: '/lab',
-        name: '홍주랩실',
+        path: '/lab2',
+        name: '홍주랩실2',
         component: hongjuLab2
+    },
+    {
+        path: '/lab3',
+        name: '홍주랩실3',
+        component: hongjuLab3
     },
 ]
