@@ -2,7 +2,6 @@
 import axios from 'axios'
 const requestFollow = (data, callback, errorCallback) => {
     console.log(data);
-    //백앤드와 로그인 통신하는 부분
     let form = new FormData()
     form.append('my_nickname', data.loginedNickname)
     form.append('your_nickname', data.shownNickname)
@@ -19,8 +18,25 @@ const requestFollow = (data, callback, errorCallback) => {
         })
 }
 
+//새 글 작성하기
+const newPost = (data, callback, errorCallback) => {
+    console.log(data);
+    axios.post(`http://192.168.31.80:8000/articles/follow/`, data)
+        .then((response) => {
+            console.log(response)
+            callback(response)
+        
+        })
+        .catch((response) => {
+            console.log(response)
+            console.log('catch ' + response)
+            errorCallback('error')
+        })
+}
+
 
 const FeedApi = {
     requestFollow: (data, callback, errorCallback) => requestFollow(data, callback, errorCallback),
+    newPost: (data, callback, errorCallback) => newPost(data, callback, errorCallback),
 }
 export default FeedApi

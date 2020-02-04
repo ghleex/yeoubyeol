@@ -3,8 +3,8 @@
 
 
 <!--  https://vuetifyjs.com/ko/components/cards -->
-  <!-- <v-layout row dark color="#110b22" class="py-2"> -->
-      <v-card dark color="#110b22" width="100%" style="border:1px solid #110b22;">
+  <!-- <v-layout row dark style="background-color:#110b22; border:0px solid;" class="py-1"> -->
+      <v-card dark outlined color="#110b22" width="100%" style="border:0px">
         <v-card-title>
              <v-avatar size="55">
           <img v-if="picName!=='default'"
