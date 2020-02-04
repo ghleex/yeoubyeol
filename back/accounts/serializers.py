@@ -21,6 +21,7 @@ class WaitingSerializer(serializers.ModelSerializer):
         model = Waiting
         fields = ('username', 'secret_key', 'created_at')
 
+
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification

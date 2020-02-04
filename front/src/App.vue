@@ -1,13 +1,13 @@
 <template>
   <v-app style="background-color:#110b22;">
-    <v-content v-if="isLogin">
+    <v-content v-if="isLogin && usernickname">
       <hongjulab :username = usernickname />
     </v-content>
 
     <v-content v-if="!isLogin">
       <!-- Provides the application the proper gutter -->
   
-      <router-view v-on:LoginUserData="LoginUserData"></router-view>
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
@@ -25,30 +25,33 @@ export default {
     usernickname:'',
   }),
   updated() {
-    // if (this.$cookies.isKey('auth_cookie')) {
     if (sessionStorage.getItem("AUTH_token")) {
       this.isLogin = true;
     } else {
       this.isLogin = false;
     } 
-      // console.log('zz');
-      this.usernickname = this.$store.state.nickname;
-      // console.log(this.$store.state.nickname);
-      // console.log(this.$store.getters.getnickname);
+
+    if (sessionStorage.getItem("LoginUserNickname")) {
+      this.usernickname = sessionStorage.getItem("LoginUserNickname");
+      // console.log("app vue -> "+this.usernickname);
+    } else {
+      this.usernickname = '';
+    } 
+
   },
   created() {
     this.$vuetify.theme.primary = "#ef51b5";
-    // if (this.$cookies.isKey('auth_cookie')) {
     if (sessionStorage.getItem("AUTH_token")) {
       this.isLogin = true;
+    }else{
+      this.isLogin=false;
+    }
+    if (sessionStorage.getItem("LoginUserNickname")) {
+      this.usernickname = sessionStorage.getItem("LoginUserNickname");
+    }else{
+      this.usernickname='';
     }
     // this.$vuetify.theme.themes.dark.background="#4caf50"
   },
-  methods:{
-    LoginUserData:function(){
-      alert('event')
-    }
-
-  }
 };
 </script>
