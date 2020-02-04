@@ -1,7 +1,10 @@
 <template>
+<div>
+
+
 <!--  https://vuetifyjs.com/ko/components/cards -->
-  <v-layout row class="py-2">
-      <v-card dark color="transparent" width="100%">
+  <!-- <v-layout row dark color="#110b22" class="py-2"> -->
+      <v-card dark color="#110b22" width="100%" style="border:1px solid #110b22;">
         <v-card-title>
              <v-avatar size="55">
           <img v-if="picName!=='default'"
@@ -57,7 +60,8 @@
           </v-card-text>
         </v-slide-y-transition>
       </v-card>
-  </v-layout>
+  <!-- </v-layout> -->
+  </div>
 </template>
 
 <script>
