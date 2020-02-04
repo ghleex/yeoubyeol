@@ -15,6 +15,7 @@ import UserProfile from './views/User/UserProfile.vue'
 
 //피드
 import FeedMain from './views/Feed/FeedMain.vue'
+import FeedCreateUpdate from '@/views/Feed/FeedCreateUpdate.vue'
 
 //에러
 import EPageNotFound from './views/Error/EPageNotFound.vue'
@@ -102,6 +103,11 @@ export default [
         path: '/feed',
         name: '메인피드',
         component: FeedMain
+    },
+    {
+        path: '/feed/up',
+        name: '피드 저장',
+        component: FeedCreateUpdate
     },
     //에러
     {
