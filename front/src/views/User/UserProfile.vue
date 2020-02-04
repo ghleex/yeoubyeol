@@ -41,7 +41,6 @@
       <v-list-item>
         <v-list-item-content>
           <h2 class="white--text">{{userInfo.intro}}</h2>
-          <h5 class="grey--text">{{userInfo.username}}</h5>
         </v-list-item-content>
         <br />
         <br />
@@ -53,12 +52,15 @@
       <v-tabs-slider color="#71d087"></v-tabs-slider>
 
       <v-tab href="#tab-1">
-        게시 피드
+        게시한 피드
         <br />
         {{feed.post}}
       </v-tab>
-
       <v-tab href="#tab-2">
+        <v-icon>mdi-lead-pencil</v-icon>
+      </v-tab>
+
+      <v-tab href="#tab-3">
         좋아한 피드
         <br />
         {{feed.liked}}
@@ -71,17 +73,41 @@
           <Post :content="text" :isLiked="false" :isClipped="true" />
       </v-tab-item>
       <v-tab-item id="tab-2">
+        <v-card dark color="#110b22">
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <v-row class="py-0 ma-2">
+              <v-col cols="12" class="pa-1">
+                <v-file-input accept="image/*" ></v-file-input>
+                <!-- <v-text-field dark label="홍주의 미니랩실" required></v-text-field> -->
+              </v-col>
+
+              <v-col cols="12" class="pa-1">
+                <v-textarea
+                  dark
+                  :rules="contentRules"
+                  required
+                  outlined
+                  :value="inputPostContent"
+                ></v-textarea>
+                <v-btn
+                  block
+                  class="mb-2"
+                  color="#71d087"
+                  style="color:#110b22"
+                  @click="validate"
+                  :disabled="!valid"
+                >피드 발행하기</v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card>
+      </v-tab-item>
+      <v-tab-item id="tab-3">
         <v-container>
           <v-btn>click</v-btn>
         </v-container>
       </v-tab-item>
     </v-tabs>
-
-    <v-fab-transition>
-      <v-btn class="py-4" color="pink" dark absolute bottom right fab>
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
-    </v-fab-transition>
   </div>
 </template>
 
@@ -101,6 +127,26 @@ export default {
     Post
   },
   methods: {
+    validate() {
+      if (this.$refs.form.validate()) {
+        // this.snackbar = true;
+        this.newPost();
+      }
+    },
+    newPost() {
+
+
+    let data = new FormData();
+    data.append('nickname', this.loginedNickname);
+    data.append('article', 'my-picture');
+    data.append('image', event.target.files[0]); 
+
+    FeedApi.newPost(data,res=>{
+
+    })
+
+  }
+    },
     clickFollowBtn() {
       if (!this.isMyAccount) {
         let { loginedNickname, shownNickname } = this;
@@ -123,7 +169,6 @@ export default {
     viewFollows() {
       console.log(this.userInfo.nickname);
       this.$router.push({ name: "팔로", params: this.nickname });
-    }
   },
   created() {
     UserApi.requestUserProfile(
@@ -134,7 +179,7 @@ export default {
         console.log("프로필 정보 : " + JSON.stringify(res.data));
         this.userInfo.followers = JSON.stringify(res.data.followers.length);
         this.userInfo.followings = JSON.stringify(res.data.followings.length);
-
+        this.userInfo.id = res.data.id;
         this.userInfo.intro = res.data.intro;
         this.userInfo.nickname = res.data.nickname;
         this.userInfo.username = res.data.username;
@@ -148,6 +193,7 @@ export default {
           this.isMyAccount = true;
         } else {
           this.isMyAccount = false;
+          //내 계정이 아니고,
         }
       },
       error => {
@@ -164,11 +210,15 @@ export default {
 
   data: () => {
     return {
+      inputPostContent:'',
+      valid: false,
+      contentRules: [v => !!v || "내용을 입력해주세요.."],
       isFollow: false,
       isMyAccount: false,
       loginUsername: "",
       shownUsername: "",
       userInfo: {
+        id: "",
         nickname: "",
         username: "",
         likes: "",
