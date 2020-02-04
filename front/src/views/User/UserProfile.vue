@@ -67,11 +67,10 @@
       </v-tab>
 
       <v-tab-item id="tab-1">
-        <Post :content="text" :isLiked="false" :isClipped="true" style="border:0;" />
-        <Post :content="text" :isLiked="false" :isClipped="true" style="border:0;" />
-        <Post :content="text" :isLiked="false" :isClipped="true" style="border:0;" />
-        <Post :content="text" :isLiked="false" :isClipped="true" style="border:0;" />
-        <!-- <Post content="title2" image="cat1" :isLiked="true" :isClipped="false" /> -->
+          <Post :content="text" :isLiked="false" :isClipped="true" />
+          <Post :content="text" :isLiked="false" :isClipped="true" />
+          <Post :content="text" :isLiked="false" :isClipped="true" />
+          <Post :content="text" :isLiked="false" :isClipped="true" />
       </v-tab-item>
       <v-tab-item id="tab-2">
         <v-card dark color="#110b22">
