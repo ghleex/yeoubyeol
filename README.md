@@ -53,7 +53,9 @@
 
 ### 5. ER Diagram
 
-<img src="https://user-images.githubusercontent.com/52685206/73625718-580e0880-4689-11ea-9e6c-f97c9b845baf.png" alt="erd" style="width: 70%; height: 70%;" />
+<img src="https://user-images.githubusercontent.com/52685206/73713380-91f61200-4750-11ea-84d0-10d5c2766604.png" alt="erd" style="width: 70%; height: 70%;" />
+
+
 
 
 
