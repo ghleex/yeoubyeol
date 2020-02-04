@@ -77,7 +77,7 @@ export default {
           if (res.status === 200) {
             this.$store.email = this.email;
             router.push({
-              path: "/join/ok1"
+              path: "/join/ok"
             });
           } //이미 있는 이메일인 경우
           else if (res.status === 202) {
