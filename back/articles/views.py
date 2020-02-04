@@ -9,22 +9,22 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import ArticleSerializer
 from .models import Article
-from accounts.models import Notification
+from accounts.models import Notification, User
 from accounts.serializers import UserSerializer, NotificationSerializer
 import secrets, json
 # Create your views here.
 class ArticleList(APIView):
-    # 글 생성
+    # 글 생성 request = 'username', 
     def post(self, request, format=None):
         username = request.data.get('username')
         user = get_object_or_404(User, username=username)
         followers = username.followers.all()
         for follower in followers:
-            send_user = User.object.filter(pk=follower)
+            receive_user = User.object.filter(id=follower)
             notification = {
-                'username': username,
+                'username': receive_user.nickname,
                 'message': user.nickname + "님이 새 글을 작성했습니다.",
-                'send_user': send_user
+                'send_user': user.nikename
             }
             json_noti = json.dumps(notification)
             noti_serializer = NotificationSerializer(data=json_noti)
@@ -94,35 +94,38 @@ class SearchResultList(APIView):
 # Following(Front와 연결하여 확인 필요)
 class FollowerList(APIView):
     # 팔로우 신청
-    @login_required
-    def post(self, request, format=None):
-        me = get_object_or_404(get_user_model(), nickname=request.data.get.my_nickname)
-<<<<<<< HEAD
-        you = get_object_or_404(get_user_model(), nickname=request.data.get.your_nickname)
-=======
-        you = get_object_or_404(get_user_model(), nickname=request.data.get.nickname)
->>>>>>> d160d949aca4cae09585dbfdd10c1c747fcee6a7
+        def post(self, request, format=None):
+        me = get_object_or_404(get_user_model(), nickname=request.data.get('my_nickname'))
+        you = get_object_or_404(get_user_model(), nickname=request.data.get('your_nickname'))
         serializer = UserSerializer(you)
         if me != you:
-            if serializer.followers.filter(pk=me.id).exists():
-                serializer.followers.remove(me)
+            # if serializer.data.followers.filter(pk=me.id).exists():
+            if me.id in serializer.data.get('followers'):
+                serializer.data.get('followers').remove(me.id)
+                # serializer.data.followers.remove(me.id)
             else:
-                notification = {
-                    'nickname': you.nickname,
-                    'message': me.nickname + '님이 팔로우를 신청했습니다.',
-                    'send_user': me.nickname
-                }
-                json_noti = json.dumps(notification)
-                noti_serializer = NotificationSerializer(data=json_noti)
-                noti_serializer.save()
-                print(noti_serializer.data)
-                serializer.followers.add(me)
+                # notification = {
+                #     'nickname': you.nickname,
+                #     'message': me.nickname + '님이 팔로우를 신청했습니다.',
+                #     'send_user': me.nickname
+                # }
+                # json_noti = json.dumps(notification)
+                # noti_serializer = NotificationSerializer(data=json_noti)
+                # print('--- before validation ---')
+                # print(noti_serializer)
+                # print('--- noti end ---')
+                # if noti_serializer.is_valid(): noti_serializer.save()
+                # print('--- if noti is valid ---')
+                # print(noti_serializer.data)
+                # print('--- noti end ---')
+                # serializer.data.followers.add(me)
+                serializer.data.get('followers').append(me.id)
+        serializer = UserSerializer(you, data=serializer.data)
         if serializer.is_valid():
             serializer.save()
         return Response(serializer.data)
 
     # 팔로워 목록
-    @login_required
     def get(self, request, user_pk, format=None):        
         person = get_object_or_404(get_user_model(), pk=request.user.pk)
         serializer = UserSerializer(person, many=True)
@@ -131,8 +134,30 @@ class FollowerList(APIView):
         else:
             return Response({'message': '팔로워를 찾을 수 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
-@login_required
+
+# 좋아요 request = 'username', 'article'
 def like(request):
+    # 요청 보낸 유저 정보
     username = request.data.get('username')
     user = get_object_or_404(User, username=username)
+    # 좋아요 한 글
+    article = get_object_or_404(Article, article=request.data.get('article'))
+    serializer = ArticleSerializer(article)
+    if serializer.like_users.filter(pk=user.id).exists():
+        serializer.like_users.remove(user)
+    else:
+        serializer.like_users.add(user)
+        like_users = article.like_users.all()
+        for like_user in like_users:
+            # 알림 받는 유저
+            receive_user = get_object_or_404(User, id=like_user)
+            notification = {
+                'username': receive_user.nickname,
+                'message': user.nickname + "님이" + receive_user.nickname + "님의 글을 좋아합니다.",
+                'send_user': user.nickname
+            }
+            json_noti = json.dumps(notification)
+            noti_serializer = NotificationSerializer(data=json_noti)
+            noti_serializer.save()
+    return Response(serializer.data)
 
