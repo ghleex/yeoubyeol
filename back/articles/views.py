@@ -12,6 +12,7 @@ from .models import Article
 from accounts.models import Notification
 from accounts.serializers import UserSerializer, NotificationSerializer
 import secrets, json
+
 # Create your views here.
 class ArticleList(APIView):
     # 글 생성
@@ -39,6 +40,7 @@ class ArticleList(APIView):
     def get(self, request, format=None):
         queryset = Article.objects.all()
         serializer = ArticleSerializer(queryset, many=True)
+
         return Response(serializer.data)
 
 
@@ -105,16 +107,17 @@ class FollowerList(APIView):
                 serializer.data.get('followers').remove(me.id)
                 # serializer.data.followers.remove(me.id)
             else:
-                # notification = {
-                #     'nickname': you.nickname,
-                #     'message': me.nickname + '님이 팔로우를 신청했습니다.',
-                #     'send_user': me.nickname
-                # }
-                # json_noti = json.dumps(notification)
-                # noti_serializer = NotificationSerializer(data=json_noti)
-                # if noti_serializer.is_valid(): noti_serializer.save()
-                # serializer.data.followers.add(me)
+                notification = {
+                    'nickname': you.nickname,
+                    'message': me.nickname + '님이 팔로우를 신청했습니다.',
+                    'send_user': me.nickname
+                }
+                json_noti = json.dumps(notification)
+                noti_serializer = NotificationSerializer(data=json_noti)
+                if noti_serializer.is_valid(): noti_serializer.save()
+
                 serializer.data.get('followers').append(me.id)
+
         serializer = UserSerializer(you, data=serializer.data)
         if serializer.is_valid():
             serializer.save()
@@ -126,13 +129,21 @@ class FollowerList(APIView):
         person = get_object_or_404(get_user_model(), pk=request.user.pk)
         serializer = UserSerializer(person, many=True)
         if serializer:
-            return Response(serializer.data)
+            return Response(serializer.data.get('followers'))
         else:
             return Response({'message': '팔로워를 찾을 수 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class FollowingList(APIView):
-    pass
+    # 팔로잉 목록
+    @login_required
+    def get(self, request, user_pk, format=None):
+        person = get_object_or_404(get_user_model(), pk=request.user.pk)
+        serializer = UserSerializer(person, many=True)
+        if serializer:
+            return Response(serializer.data.get('followings'))
+        else:
+            return Response({'message': '팔로잉하는 사람이 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 @login_required
