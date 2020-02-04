@@ -22,7 +22,7 @@ User = get_user_model()
 
 # Create your views here.
 class AccountList(APIView):
-    # 유저 리스트 조회
+    # 유저 리스트 조회(영자님 전용)
     def post(self, request, format=None):
         users = User.objects.filter(username=request.data.get('email'))
         serializer = UserSerializer(users, many=True)
@@ -135,10 +135,6 @@ def user_signup(request, secret_key):
             user.set_password(request.data.get('password'))
             user.save()
             waiting.delete()
-<<<<<<< HEAD
-=======
-            # print(serializer.data)
->>>>>>> d160d949aca4cae09585dbfdd10c1c747fcee6a7
             return Response({'message': '회원가입이 성공적으로 완료되었습니다.'}, status=status.HTTP_200_OK)
 
     else:
@@ -159,15 +155,9 @@ def find_pwd(request):
     user = get_object_or_404(User, username=username)
 
     symbols = ascii_letters + digits + punctuation
-<<<<<<< HEAD
-    secure_random = secrets.SystemRandom()
-    new_pwd = ''.join(secure_random.choice(symbols) for i in range(10)) +'!'
-    user.password = new_pwd
-=======
     new_pwd = ''.join(secrets.SystemRandom().choice(symbols) for i in range(10))
     print(new_pwd)
     user.set_password(new_pwd)
->>>>>>> d160d949aca4cae09585dbfdd10c1c747fcee6a7
     user.save()
     
     mail_subject = '[SOT] 임시 비밀번호 메일입니다.'
@@ -196,8 +186,9 @@ def change_pwd(request):
     return Response({'message': '현재 비밀번호가 틀렸습니다.'})
 
 
+# 타 유저 프로필 조회
 @api_view(['POST',])
-@login_required
+# @login_required
 def profile(request):
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
