@@ -17,9 +17,14 @@ import secrets, json
 class ArticleList(APIView):
     # 글 생성 request = 'username', 
     def post(self, request, format=None):
-        username = request.data.get('username')
-        user = get_object_or_404(User, username=username)
-        followers = username.followers.all()
+        print()
+        print('--- request.data ---')
+        print(request.data)
+        print('--- end of request.data ---')
+        print()
+        nickname = request.data.get('nickname')
+        user = get_object_or_404(User, nickname=nickname)
+        followers = user.followers.all()
         for follower in followers:
             receive_user = User.object.filter(id=follower)
             notification = {
@@ -30,8 +35,17 @@ class ArticleList(APIView):
             json_noti = json.dumps(notification)
             noti_serializer = NotificationSerializer(data=json_noti)
             noti_serializer.save()
+            print()
+            print('--- noti_serializer.data ---')
             print(noti_serializer.data)
-        serializer = ArticleSerializer(data=request.data)
+            print('--- end of noti_serializer.data ---')
+            print()
+        data = {
+            'author_id': user.id,
+            'article': request.data.get('article'),
+            'image': request.data.get('image'),
+        }
+        serializer = ArticleSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
