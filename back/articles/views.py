@@ -9,23 +9,23 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import ArticleSerializer
 from .models import Article
-from accounts.models import Notification
+from accounts.models import Notification, User
 from accounts.serializers import UserSerializer, NotificationSerializer
 import secrets, json
 
 # Create your views here.
 class ArticleList(APIView):
-    # 글 생성
+    # 글 생성 request = 'username', 
     def post(self, request, format=None):
         username = request.data.get('username')
         user = get_object_or_404(User, username=username)
         followers = username.followers.all()
         for follower in followers:
-            send_user = User.object.filter(pk=follower)
+            receive_user = User.object.filter(id=follower)
             notification = {
-                'username': username,
+                'username': receive_user.nickname,
                 'message': user.nickname + "님이 새 글을 작성했습니다.",
-                'send_user': send_user
+                'send_user': user.nikename
             }
             json_noti = json.dumps(notification)
             noti_serializer = NotificationSerializer(data=json_noti)
@@ -124,7 +124,6 @@ class FollowerList(APIView):
         return Response(serializer.data)
 
     # 팔로워 목록
-    @login_required
     def get(self, request, user_pk, format=None):        
         person = get_object_or_404(get_user_model(), pk=request.user.pk)
         serializer = UserSerializer(person, many=True)
@@ -148,6 +147,27 @@ class FollowingList(APIView):
 
 @login_required
 def like(request):
+    # 요청 보낸 유저 정보
     username = request.data.get('username')
     user = get_object_or_404(User, username=username)
+    # 좋아요 한 글
+    article = get_object_or_404(Article, article=request.data.get('article'))
+    serializer = ArticleSerializer(article)
+    if serializer.like_users.filter(pk=user.id).exists():
+        serializer.like_users.remove(user)
+    else:
+        serializer.like_users.add(user)
+        like_users = article.like_users.all()
+        for like_user in like_users:
+            # 알림 받는 유저
+            receive_user = get_object_or_404(User, id=like_user)
+            notification = {
+                'username': receive_user.nickname,
+                'message': user.nickname + "님이" + receive_user.nickname + "님의 글을 좋아합니다.",
+                'send_user': user.nickname
+            }
+            json_noti = json.dumps(notification)
+            noti_serializer = NotificationSerializer(data=json_noti)
+            noti_serializer.save()
+    return Response(serializer.data)
 

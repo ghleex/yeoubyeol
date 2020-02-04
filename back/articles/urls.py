@@ -12,4 +12,5 @@ urlpatterns = [
     path('search/', views.SearchResultList.as_view(), name='search'),
     path('follower/', views.FollowerList.as_view(), name='follower'),
     path('following/', views.FollowingList.as_view(), name='following'),
+    path('like/', views.like, name='like'),
 ]
