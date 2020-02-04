@@ -2,11 +2,20 @@
   <v-app style="background-color:#110b22;">
     <v-content v-if="isLogin && usernickname">
       <hongjulab :username = usernickname />
+      <v-btn
+        fixed
+        dark
+        fab
+        bottom
+        right
+        color="#71d087"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
     </v-content>
 
     <v-content v-if="!isLogin">
       <!-- Provides the application the proper gutter -->
-  
       <router-view></router-view>
     </v-content>
   </v-app>
