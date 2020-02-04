@@ -2,7 +2,7 @@
  User API 예시
  */
 
- //가입
+//가입
 import axios from 'axios'
 const requestSignup = (data, callback, errorCallback) => {
     console.log(data);
@@ -15,7 +15,7 @@ const requestSignup = (data, callback, errorCallback) => {
         .then((response) => {
             console.log(response)
             callback(response)
-        
+
         })
         .catch((response) => {
             console.log(response)
@@ -59,7 +59,7 @@ const requestUserProfile = (data, callback, errorCallback) => {
         })
         .catch(err => {
             console.log(err)
-            // errorCallback('프로필 조회 에러')
+            errorCallback('error')
         })
 }
 

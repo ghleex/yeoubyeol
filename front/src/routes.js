@@ -11,7 +11,6 @@ import AccountCreate from './views/Join/AccountCreate.vue'
 import UserLogin from './views/User/UserLogin.vue'
 import UserPwdSendEmail from './views/User/UserPwdSendEmail.vue'
 import UserPwdSendEmailConfirm from './views/User/UserPwdSendEmailConfirm.vue'
-import UserPwdChange from './views/User/UserPwdChange.vue'
 import UserProfile from './views/User/UserProfile.vue'
 
 //피드
@@ -92,15 +91,10 @@ export default [
         beforeEnter: LoginUsersCantAccess()
     },
     {
-        path: '/user/password/:key',
-        component: UserPwdChange,
-        beforeEnter: LoginUsersCantAccess()
-    },
-    {
         path: '/user/:email',
         name: '프로필',
         component: UserProfile,
-        beforeEnter: requireAuth()
+        // beforeEnter: requireAuth()
         
     },
     //피드
