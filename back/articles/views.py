@@ -94,7 +94,8 @@ class SearchResultList(APIView):
 # Following(Front와 연결하여 확인 필요)
 class FollowerList(APIView):
     # 팔로우 신청
-        def post(self, request, format=None):
+    # @login_required
+    def post(self, request, format=None):
         me = get_object_or_404(get_user_model(), nickname=request.data.get('my_nickname'))
         you = get_object_or_404(get_user_model(), nickname=request.data.get('your_nickname'))
         serializer = UserSerializer(you)
@@ -111,13 +112,7 @@ class FollowerList(APIView):
                 # }
                 # json_noti = json.dumps(notification)
                 # noti_serializer = NotificationSerializer(data=json_noti)
-                # print('--- before validation ---')
-                # print(noti_serializer)
-                # print('--- noti end ---')
                 # if noti_serializer.is_valid(): noti_serializer.save()
-                # print('--- if noti is valid ---')
-                # print(noti_serializer.data)
-                # print('--- noti end ---')
                 # serializer.data.followers.add(me)
                 serializer.data.get('followers').append(me.id)
         serializer = UserSerializer(you, data=serializer.data)
@@ -135,7 +130,11 @@ class FollowerList(APIView):
             return Response({'message': '팔로워를 찾을 수 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
-# 좋아요 request = 'username', 'article'
+class FollowingList(APIView):
+    pass
+
+
+@login_required
 def like(request):
     # 요청 보낸 유저 정보
     username = request.data.get('username')

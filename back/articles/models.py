@@ -23,6 +23,7 @@ class Article(models.Model):
         format='JPEG',
         options={'quality': 90},
         upload_to='articles/images',
+        blank=True,
     )
 
     class Meta:

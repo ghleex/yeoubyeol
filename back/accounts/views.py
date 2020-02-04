@@ -22,7 +22,7 @@ User = get_user_model()
 
 # Create your views here.
 class AccountList(APIView):
-    # 유저 리스트 조회
+    # 유저 리스트 조회(영자님 전용)
     def post(self, request, format=None):
         users = User.objects.filter(username=request.data.get('email'))
         serializer = UserSerializer(users, many=True)
@@ -186,8 +186,9 @@ def change_pwd(request):
     return Response({'message': '현재 비밀번호가 틀렸습니다.'})
 
 
+# 타 유저 프로필 조회
 @api_view(['POST',])
-@login_required
+# @login_required
 def profile(request):
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
