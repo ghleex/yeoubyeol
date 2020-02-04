@@ -6,7 +6,7 @@ const requestFollow = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('my_nickname', data.loginedNickname)
     form.append('your_nickname', data.shownNickname)
-    axios.post(`http://192.168.31.80:8000/articles/follow`, form)
+    axios.post(`http://192.168.31.80:8000/articles/follow/`, form)
         .then((response) => {
             console.log(response)
             callback(response)

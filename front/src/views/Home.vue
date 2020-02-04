@@ -3,9 +3,9 @@
            text-align: center;">
     <!-- <img src="../assets/images/moon_home.jpg" alt /> -->
     <article>
-      <div dark color="transparent" style="top: 60%;">
+      <div dark color="transparent" style="top: 60%; margin-top:70px">
         <h1>
-          <br />달이 떴어요.
+          <br />달이 떴어요.                                                                       
           <br />모두 나오세요.
           <br />
         </h1>
@@ -21,7 +21,7 @@
     </article>
     <!--  Video is muted & autoplays, placed after major DOM elements for performance & has an image fallback  -->
     <video autoplay loop id="video-background" muted plays-inline>
-      <source src="../assets/images/example/5r.mp4" />
+      <source src="../assets/images/example/7.mp4" />
     </video>
   </div>
 </template>
