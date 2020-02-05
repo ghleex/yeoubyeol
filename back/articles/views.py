@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from .serializers import ArticleSerializer
 from .models import Article
 from accounts.models import Notification, User
@@ -24,22 +25,22 @@ class ArticleList(APIView):
         print()
         nickname = request.data.get('nickname')
         user = get_object_or_404(User, nickname=nickname)
-        followers = user.followers.all()
-        for follower in followers:
-            receive_user = User.object.filter(id=follower)
-            notification = {
-                'username': receive_user.nickname,
-                'message': user.nickname + "님이 새 글을 작성했습니다.",
-                'send_user': user.nikename
-            }
-            json_noti = json.dumps(notification)
-            noti_serializer = NotificationSerializer(data=json_noti)
-            noti_serializer.save()
-            print()
-            print('--- noti_serializer.data ---')
-            print(noti_serializer.data)
-            print('--- end of noti_serializer.data ---')
-            print()
+        # followers = user.followers.all()
+        # for follower in followers:
+        #     receive_user = User.object.filter(id=follower)
+        #     notification = {
+        #         'username': receive_user.nickname,
+        #         'message': user.nickname + "님이 새 글을 작성했습니다.",
+        #         'send_user': user.nikename
+        #     }
+        #     json_noti = json.dumps(notification)
+        #     noti_serializer = NotificationSerializer(data=json_noti)
+        #     noti_serializer.save()
+        #     print()
+        #     print('--- noti_serializer.data ---')
+        #     print(noti_serializer.data)
+        #     print('--- end of noti_serializer.data ---')
+        #     print()
         data = {
             'author_id': user.id,
             'article': request.data.get('article'),
@@ -157,6 +158,21 @@ class FollowingList(APIView):
             return Response(serializer.data.get('followings'))
         else:
             return Response({'message': '팔로잉하는 사람이 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST', ])
+def followerlist(request):
+    person = get_object_or_404(get_user_model(), nickname=request.data.get('nickname'))
+    serializer = UserSerializer(person)
+    users = []
+    for user_id in serializer.data.get('followers'):
+        user = get_object_or_404(get_user_model(), id=user_id)
+        users.append(UserSerializer(user).data)
+
+    if serializer:
+        return Response({'data': users})
+    else:
+        return Response({'message': '팔로워를 찾을 수 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 @login_required
