@@ -4,23 +4,25 @@
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-row class="py-0 ma-2">
           <v-col cols="12" class="pa-1">
-            <v-file-input accept="image/*"></v-file-input>
-            <!-- <v-text-field dark label="홍주의 미니랩실" required></v-text-field> -->
+            <v-file-input accept="image/*" @change="onFileChanged"></v-file-input>
           </v-col>
 
           <v-col cols="12" class="pa-1">
             <v-textarea 
-                dark 
-                :rules="contentRules" 
-                required 
-                outlined 
-                :value="inputPostContent">
-            </v-textarea>
+              dark 
+              :rules="contentRules" 
+              required 
+              outlined 
+              v-model="inputPostContent" 
+              :autofocus="true" 
+              :auto-grow="true"
+              clearable
+            >{{inputPostContent}}</v-textarea>
             <v-btn
               block
               class="mb-2"
               color="#71d087"
-              style="color:#110b22"
+              style
               @click="validate"
               :disabled="!valid"
             >피드 발행하기</v-btn>
@@ -32,28 +34,48 @@
 </template>
 
 <script>
-import FeedApi from '@/apis/FeedApi'
+import FeedApi from "@/apis/FeedApi";
 
 export default {
-    methods: {
-        validate() {
-            if (this.$refs.form.validate()) {
-            // this.snackbar = true;
-                this.newPost();
-            }
-        },
-        newPost() {
-            let data = new FormData();
-            data.append('nickname', this.loginedNickname);
-            data.append('article', 'my-picture');
-            data.append('image', event.target.files[0]); 
+  created() {
+      this.loginedNickname = sessionStorage.getItem('LoginUserNickname')
+  },
+  methods: {
+    onFileChanged(event) {
+      console.log("1", event);
+      this.selectedFile = event;
+    },
+    validate() {
+      if (this.$refs.form.validate()) {
+        // this.snackbar = true;
+        this.newPost();
+      }
+    },
+    newPost() {
+      let { loginedNickname, inputPostContent, selectedFile } = this;
+      let data = { loginedNickname, inputPostContent, selectedFile };
 
-            FeedApi.newPost(data,res=>{
-
-            })
+      console.log(data);
+      FeedApi.newPost(
+        data,
+        res => {
+          console.log(res);
         },
+        error => {
+          console.log("error");
+        }
+      );
     }
-
+  },
+  data: () => {
+    return {
+      loginedNickname: '',
+      selectedFile: "",
+      inputPostContent: "",
+      valid: false,
+      contentRules: [v => !!v || "내용을 입력해주세요.."]
+    };
+  }
 };
 </script>
 
