@@ -88,7 +88,7 @@
 import UserApi from "../apis/UserApi";
 
 export default {
-  props: ["username"],
+  props: ["pr_username"],
 
   data: () => ({
     profileUsername:'',
@@ -133,7 +133,7 @@ export default {
     }
 
     //프로필 정보를 불러올거에여~~!
-    UserApi.requestUserProfile(this.username, res => {
+    UserApi.requestUserProfile(this.pr_username, res => {
       //확인용 ..useless ...
       let sentData = JSON.stringify(res.data);
       console.log("프로필 정보 : " + JSON.stringify(res.data));
@@ -161,7 +161,7 @@ export default {
     },
     logout() {
       sessionStorage.removeItem("AUTH_token");
-      sessionStorage.removeItem("LoginUserNickname");
+      sessionStorage.removeItem("LoginUserInfo");
       this.$cookies.remove("auth_cookie");
       alert("로그아웃되었습니다.");
       this.$router.push({ name: "홈" });
