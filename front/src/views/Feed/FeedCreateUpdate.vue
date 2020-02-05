@@ -8,7 +8,16 @@
           </v-col>
 
           <v-col cols="12" class="pa-1">
-            <v-textarea dark :rules="contentRules" required outlined v-model="inputPostContent">{{inputPostContent}}</v-textarea>
+            <v-textarea 
+              dark 
+              :rules="contentRules" 
+              required 
+              outlined 
+              v-model="inputPostContent" 
+              :autofocus="true" 
+              :auto-grow="true"
+              clearable
+            >{{inputPostContent}}</v-textarea>
             <v-btn
               block
               class="mb-2"
