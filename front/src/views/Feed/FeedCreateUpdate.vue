@@ -38,12 +38,12 @@ import FeedApi from "@/apis/FeedApi";
 
 export default {
   created() {
-      this.loginedNickname = sessionStorage.getItem('LoginUserNickname')
+      this.loginedNickname = JSON.parse(sessionStorage.getItem('LoginUserInfo')).nickname
   },
   methods: {
     onFileChanged(event) {
-      console.log("1", event);
-      this.selectedFile = event;
+      console.log(this.$refs)
+      this.selectedFile = this.$refs.selectedFile.files[0]
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -52,12 +52,15 @@ export default {
       }
     },
     newPost() {
-      let { loginedNickname, inputPostContent, selectedFile } = this;
-      let data = { loginedNickname, inputPostContent, selectedFile };
-
-      console.log(data);
+      // let { loginedNickname, inputPostContent, selectedFile } = this;
+      // let data = { loginedNickname, inputPostContent, selectedFile };
+      let form = new FormData();
+      form.append('nickname', this.loginedNickname)
+      form.append('article', this.inputPostContent)
+      form.append('image', this.selectedFile)
+      console.log(form);
       FeedApi.newPost(
-        data,
+        form,
         res => {
           console.log(res);
         },

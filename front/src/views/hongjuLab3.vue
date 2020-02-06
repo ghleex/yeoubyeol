@@ -60,7 +60,7 @@ export default {
           Make the request to the POST /single-file URL
         */
       axios
-        .post(`http://192.168.31.80:8000/articles/`, formData, {
+        .post(`http://192.168.31.87:8000/articles/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
