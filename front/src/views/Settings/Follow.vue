@@ -2,9 +2,9 @@
   <v-tabs centered fixed-tabs dark background-color="transparent" class="py-12">
     <v-tabs-slider color="#71d087"></v-tabs-slider>
 
-    <v-tab href="#tab-1">워</v-tab>
+    <v-tab href="#tab-1" @click="updateFollowerList">워</v-tab>
 
-    <v-tab href="#tab-2">잉</v-tab>
+    <v-tab href="#tab-2" @click="updateFollowingList">잉</v-tab>
 
     <!-- 워 ~~~ 부분 -->
     <v-tab-item id="tab-1">
@@ -87,7 +87,7 @@ export default {
     },
     getAndSetData() {
       this.getFollowerList();
-      this.getFollowingList();
+      // this.getFollowingList();
 
       if (this.loginedNickname === this.currUserName) {
         this.isMyAccount = true;
