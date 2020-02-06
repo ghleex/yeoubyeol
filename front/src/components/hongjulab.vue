@@ -16,7 +16,6 @@
       <v-btn text icon>
         <v-icon @click="changeView('검색')" v-if="!isSearchPage">mdi-magnify</v-icon>
       </v-btn>
-    
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app clipped color="#110B22" dark>
@@ -30,8 +29,8 @@
         </v-list-item>
 
         <v-list-item>
-          <v-list-item-avatar size="62">
-            <v-img src="../assets/images/profile_default.png"></v-img>
+          <v-list-item-avatar size="62"  color="grey darken-3">
+            <v-img :src="currUserInfo.picname"></v-img>
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -91,11 +90,11 @@ export default {
   props: ["pr_username"],
 
   data: () => ({
-    profileUsername:'',
+    profileUsername: "",
     drawer: null,
     item: 0,
     pageTitle: "",
-    
+
     isSearchPage: false,
     currUserInfo: {
       nickname: "로그인 에러",
@@ -108,10 +107,9 @@ export default {
     }
   }),
   updated() {
-    if(this.$route.name==='프로필'){
-      this.pageTitle=this.$route.params.email;
-    }else{
-
+    if (this.$route.name === "프로필") {
+      this.pageTitle = this.$route.params.email;
+    } else {
       this.pageTitle = this.$route.name;
     }
   },
@@ -143,13 +141,17 @@ export default {
       this.currUserInfo.intro = res.data.intro;
       this.currUserInfo.nickname = res.data.nickname;
       this.currUserInfo.username = res.data.username;
+      // console.log('pic name is ',res.data.pic_name);
+      this.currUserInfo.picname = require("@/assets/images/profile/" +
+        res.data.pic_name +
+        ".png");
     }),
-      error => {
+      err => {
         this.$router.push({ path: "/404" });
       };
   },
   methods: {
-    //path와 이메일을받으면 프로필로 기기
+    //path와 닉넴을받으면 프로필로 기기
     changeViewProfile(path, usersEmail) {
       this.pageTitle = usersEmail;
       this.$router.push({ name: path, params: { email: usersEmail } });
