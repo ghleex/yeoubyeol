@@ -5,7 +5,7 @@ const requestFollow = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('my_nickname', data.loginedNickname)
     form.append('your_nickname', data.shownNickname)
-    axios.post(`http://192.168.31.80:8000/articles/follow/`, form)
+    axios.post(`http://192.168.31.80:8000/articles/follower/`, form)
         .then((response) => {
             console.log(response)
             callback(response)
@@ -20,18 +20,26 @@ const requestFollow = (data, callback, errorCallback) => {
 
 //새 글 작성하기
 const newPost = (data, callback, errorCallback) => {
-    console.log(data);
-    axios.post(`http://192.168.31.80:8000/articles/follow/`, data)
+    let form = new FormData();
+    form.append("nickname", data.loginedNickname);
+    form.append("article", data.inputPostContent);
+    form.append("image", data.selectedFile);
+    console.log(form)
+     axios.post(`http://192.168.31.80:8000/articles/`, form,{
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+     })
         .then((response) => {
-            console.log(response)
+            console.log('글작성 :',response)
             callback(response)
         
         })
         .catch((response) => {
             console.log(response)
-            console.log('catch ' + response)
+            console.log('글작성 오류'  + response)
             errorCallback('error')
-        })
+        }) 
 }
 
 
