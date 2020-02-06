@@ -135,7 +135,7 @@ export default {
               //요청이 끝나면 버튼 활성화
               let data={'email':email};
               console.log('프로필조회 : '+data.email);
-              axios.post(`http://192.168.31.80:8000/accounts/`, data).then((response=>{
+              axios.post(`http://192.168.31.87:8000/accounts/`, data).then((response=>{
                 console.log('로그인 후 가져온 다라 '+response.data[0].nickname);
                 // console.log("login -> ",response.data[0]);
                   sessionStorage.setItem("AUTH_token", this.tokenFromLogin);
