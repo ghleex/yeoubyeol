@@ -1,18 +1,10 @@
 <template>
   <v-app style="background-color:#110b22;">
-    <v-content v-if="isLogin && usernickname">
-      <hongjulab :username = usernickname />
+    <v-content v-if="isLogin && userNickname">
+      <hongjulab :pr_username="userNickname" />
       <v-dialog max-width="600px">
         <template v-slot:activator="{ on }">
-          <v-btn
-            fixed
-            dark
-            fab
-            bottom
-            right
-            color="#71d087"
-            v-on="on"
-          >
+          <v-btn fixed dark fab bottom right color="#71d087" v-on="on">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </template>
@@ -31,7 +23,7 @@
       
 <script>
 import hongjulab from "./components/hongjulab";
-import feedCreateUpdate from '@/views/Feed/FeedCreateUpdate.vue'
+import feedCreateUpdate from "@/views/Feed/FeedCreateUpdate.vue";
 export default {
   name: "App",
   components: {
@@ -40,36 +32,46 @@ export default {
   },
   data: () => ({
     isLogin: false,
-    usernickname:'',
+    userNickname: "",
+    userId: ""
   }),
   updated() {
     if (sessionStorage.getItem("AUTH_token")) {
       this.isLogin = true;
     } else {
       this.isLogin = false;
-    } 
+    }
 
-    if (sessionStorage.getItem("LoginUserNickname")) {
-      this.usernickname = sessionStorage.getItem("LoginUserNickname");
-      // console.log("app vue -> "+this.usernickname);
+    if (sessionStorage.getItem("LoginUserInfo")) {
+      console.log("session test -> ", sessionStorage.getItem("LoginUserInfo"));
+      const parsedLoginUserInfo = JSON.parse(
+        sessionStorage.getItem("LoginUserInfo")
+      );
+      this.userNickname = parsedLoginUserInfo.nickname;
+      this.userId = parsedLoginUserInfo.id;
     } else {
-      this.usernickname = '';
-    } 
-
+      this.userNickname = "";
+      this.userId = "";
+    }
   },
   created() {
     this.$vuetify.theme.primary = "#ef51b5";
     if (sessionStorage.getItem("AUTH_token")) {
       this.isLogin = true;
-    }else{
-      this.isLogin=false;
+    } else {
+      this.isLogin = false;
     }
-    if (sessionStorage.getItem("LoginUserNickname")) {
-      this.usernickname = sessionStorage.getItem("LoginUserNickname");
-    }else{
-      this.usernickname='';
+    if (sessionStorage.getItem("LoginUserInfo")) {
+      const parsedLoginUserInfo = JSON.parse(
+        sessionStorage.getItem("LoginUserInfo")
+      );
+      this.userNickname = parsedLoginUserInfo.nickname;
+      this.userId = parsedLoginUserInfo.id;
+    } else {
+      this.userNickname = "";
+      this.userId = "";
     }
     // this.$vuetify.theme.themes.dark.background="#4caf50"
-  },
+  }
 };
 </script>
