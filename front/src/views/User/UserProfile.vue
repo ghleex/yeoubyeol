@@ -2,13 +2,8 @@
   <div class="py-12">
     <v-list dark color="#110B22">
       <v-list-item>
-        <v-avatar size="70">
-          <img
-            v-if="userInfo.picname!=='default'"
-            :src="'../../assets/images/example/'+this.userInfo.picname"
-          />
-
-          <img v-else src="../../assets/images/profile_default.png" />
+        <v-avatar size="70" color="grey darken-3">
+          <v-img :src="userInfo.picname"></v-img>
         </v-avatar>
         <v-spacer></v-spacer>
         <v-list-item-content>
@@ -80,10 +75,10 @@
 </template>
 
 <script>
-import "../../assets/css/components.scss";
-import "../../assets/css/common.scss";
-import "../../assets/css/style.scss";
-import "../../assets/css/user.scss";
+// import "../../assets/css/components.scss";
+// import "../../assets/css/common.scss";
+// import "../../assets/css/style.scss";
+// import "../../assets/css/user.scss";
 
 import Post from "../../components/common/Post";
 import UserApi from "../../apis/UserApi";
@@ -117,64 +112,74 @@ export default {
       console.log(this.userInfo.nickname);
       this.$router.push({ name: "팔로", params: this.nickname });
     },
+    getLoginUserInformation() {
+      if(sessionStorage.getItem("LoginUserInfo")){
 
-    getUserInformation(){
-       UserApi.requestUserProfile(
-      this.$route.params.email,
-      res => {
-        //확인용 ..useless ...
-        let sentData = JSON.stringify(res.data);
-        console.log("프로필 정보 : " + JSON.stringify(res.data));
-        this.userInfo.followers = JSON.stringify(res.data.followers.length);
-        this.userInfo.followings = JSON.stringify(res.data.followings.length);
-        this.userInfo.id = res.data.id;
-        this.userInfo.intro = res.data.intro;
-        this.userInfo.nickname = res.data.nickname;
-        this.userInfo.username = res.data.username;
-        this.shownNickname = res.data.nickname;
         this.loginedNickname = JSON.parse(
           sessionStorage.getItem("LoginUserInfo")
-        ).nickname;
-
-        if (this.userInfo.nickname === this.loginedNickname) {
-          //만약에 지금보는 정보랑 내 로그인 정보가 같으먄
-          this.isMyAccount = true;
-        } else {
-          const followerList = res.data.followers;
-          const LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
-            .id;
-          // console.log("Login id -> ",LoginId," followerList is -> ",followerList)
-          if (followerList.includes(LoginId)) {
-            console.log("팔로우한 사람이자너 ~!!");
-            this.isFollow = true;
-          } else {
-            console.log("팔로우 아님 ㅋ");
-            this.isFollow = false;
-          }
-
-          console.log(followerList);
-          this.isMyAccount = false;
-          //내 계정이 아니고,
-        }
-      },
-      error => {
-        this.$router.push({ path: "/404" });
+      ).nickname;
+      }else{
+        this.$router.push({name:'Error'});
       }
-    ),
-      // (this.userInfo.email = this.$route.params.email),
-      (this.userInfo.likes = 1225),
-      (this.feed.post = 3452),
-      (this.feed.liked = 124),
-      (this.feed.keywords = 45),
-      (this.userInfo.picname = "default");
+    },
+    getUserInformation() {
+      UserApi.requestUserProfile(
+        this.$route.params.email,
+        res => {
+          //확인용 ..useless ...
+          let sentData = JSON.stringify(res.data);
+          console.log("프로필 정보 : " + JSON.stringify(res.data));
+          this.userInfo.followers = JSON.stringify(res.data.followers.length);
+          this.userInfo.followings = JSON.stringify(res.data.followings.length);
+          this.userInfo.id = res.data.id;
+          this.userInfo.intro = res.data.intro;
+          this.userInfo.nickname = res.data.nickname;
+          this.userInfo.username = res.data.username;
+          this.userInfo.picname = require("@/assets/images/profile/" +
+            res.data.pic_name +
+            ".png");
+          this.shownNickname = res.data.nickname;
+
+          if (this.userInfo.nickname === this.loginedNickname) {
+            //만약에 지금보는 정보랑 내 로그인 정보가 같으먄
+            this.isMyAccount = true;
+          } else {
+            const followerList = res.data.followers;
+            const LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
+              .id;
+            // console.log("Login id -> ",LoginId," followerList is -> ",followerList)
+            if (followerList.includes(LoginId)) {
+              console.log("팔로우한 사람이자너 ~!!");
+              this.isFollow = true;
+            } else {
+              console.log("팔로우 아님 ㅋ");
+              this.isFollow = false;
+            }
+
+            console.log(followerList);
+            this.isMyAccount = false;
+            //내 계정이 아니고,
+          }
+        },
+        err => {
+          this.$router.push({ path: "/404" });
+        }
+      ),
+        // (this.userInfo.email = this.$route.params.email),
+        (this.userInfo.likes = 1225),
+        (this.feed.post = 3452),
+        (this.feed.liked = 124),
+        (this.feed.keywords = 45)
     }
   },
-  updated(){
+  updated() {
     this.getUserInformation();
+    this.getLoginUserInformation();
   },
 
   created() {
-   this.getUserInformation();
+    this.getUserInformation();
+    this.getLoginUserInformation();
   },
 
   data: () => {
