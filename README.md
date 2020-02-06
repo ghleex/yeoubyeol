@@ -47,13 +47,13 @@
 
 ### 4. System Architecture
 
-<img src="https://user-images.githubusercontent.com/52685206/73899026-a9f3a000-48ce-11ea-843f-995f61655488.png" alt="system_architecture" style="width:50%;" />
+<img src="https://user-images.githubusercontent.com/52685206/73899026-a9f3a000-48ce-11ea-843f-995f61655488.png" alt="system_architecture" style="width:80%;" />
 
 
 
 ### 5. ER Diagram
 
-<img src="https://user-images.githubusercontent.com/52685206/73899106-ed4e0e80-48ce-11ea-9fe5-df61f8029bfd.png" alt="erd" style="width:100%;" />
+<img src="https://user-images.githubusercontent.com/52685206/73899106-ed4e0e80-48ce-11ea-9fe5-df61f8029bfd.png" alt="erd" style="width:80%;" />
 
 
 
@@ -61,7 +61,7 @@
 
 ### 6. Git Workflow
 
-![git_workflow](https://user-images.githubusercontent.com/52685206/73899976-9269e680-48d1-11ea-8d7b-bf01a1e138ab.png)
+<img src="https://user-images.githubusercontent.com/52685206/73899976-9269e680-48d1-11ea-8d7b-bf01a1e138ab.png" alt="git_workflow" style="width:80%;" />
 
 #### Rules of writing a commit message
 
@@ -74,6 +74,16 @@
    * Finished: -ed
 
 5. 끝에 `.` 붙이지 않음
+
+
+
+
+
+### 7. 기존과 다른 점
+
+<img src="https://user-images.githubusercontent.com/52685206/73901276-a0ba0180-48d5-11ea-95a8-e22fb6e6e011.png" alt="기존과_다른_점" style="width:80%;" />
+
+
 
 
 
