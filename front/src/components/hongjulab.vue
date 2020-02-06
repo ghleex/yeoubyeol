@@ -29,7 +29,7 @@
         </v-list-item>
 
         <v-list-item>
-          <v-list-item-avatar size="62"  color="grey darken-3">
+          <v-list-item-avatar size="62" color="grey darken-3">
             <v-img :src="currUserInfo.picname"></v-img>
           </v-list-item-avatar>
 
@@ -76,7 +76,7 @@
 
     <v-sheet>
       <v-container style="background-color:#110b22">
-        <router-view></router-view>
+        <router-view :key="$route.fullPath"></router-view>
       </v-container>
     </v-sheet>
   </v-card>
@@ -112,6 +112,7 @@ export default {
     } else {
       this.pageTitle = this.$route.name;
     }
+    this.getLoginUserProfile();
   },
   created() {
     //이거 선행님이 바꾼거 밑에 넣어야해
@@ -129,32 +130,40 @@ export default {
       //프로필 화면인 경우에는 아이디를 상단에 노출시킴
       this.pageTitle = this.profileUsername;
     }
-
-    //프로필 정보를 불러올거에여~~!
-    UserApi.requestUserProfile(this.pr_username, res => {
-      //확인용 ..useless ...
-      let sentData = JSON.stringify(res.data);
-      console.log("프로필 정보 : " + JSON.stringify(res.data));
-      this.currUserInfo.followers = JSON.stringify(res.data.followers.length);
-      this.currUserInfo.followings = JSON.stringify(res.data.followings.length);
-
-      this.currUserInfo.intro = res.data.intro;
-      this.currUserInfo.nickname = res.data.nickname;
-      this.currUserInfo.username = res.data.username;
-      // console.log('pic name is ',res.data.pic_name);
-      this.currUserInfo.picname = require("@/assets/images/profile/" +
-        res.data.pic_name +
-        ".png");
-    }),
-      err => {
-        this.$router.push({ path: "/404" });
-      };
+    this.getLoginUserProfile();
   },
   methods: {
     //path와 닉넴을받으면 프로필로 기기
+    getLoginUserProfile() {
+      //프로필 정보를 불러올거에여~~!
+      UserApi.requestUserProfile(this.pr_username, res => {
+        //확인용 ..useless ...
+        let sentData = JSON.stringify(res.data);
+        console.log("프로필 정보 : " + JSON.stringify(res.data));
+        this.currUserInfo.followers = JSON.stringify(res.data.followers.length);
+        this.currUserInfo.followings = JSON.stringify(
+          res.data.followings.length
+        );
+
+        this.currUserInfo.intro = res.data.intro;
+        this.currUserInfo.nickname = res.data.nickname;
+        this.currUserInfo.username = res.data.username;
+        // console.log('pic name is ',res.data.pic_name);
+        this.currUserInfo.picname = require("@/assets/images/profile/" +
+          res.data.pic_name +
+          ".png");
+      }),
+        err => {
+          this.$router.push({ path: "/404" });
+        };
+    },
     changeViewProfile(path, usersEmail) {
-      this.pageTitle = usersEmail;
-      this.$router.push({ name: path, params: { email: usersEmail } });
+      if (this.pageTitle == usersEmail) {
+        this.drawer = !this.drawer;
+      } else {
+        this.pageTitle = usersEmail;
+        this.$router.push({ name: path, params: { email: usersEmail } });
+      }
     },
     //그냥 이동일 경우
     changeView(path) {
