@@ -37,15 +37,15 @@
           <v-list-item-content>
             <h1
               class="title"
-              @click="changeViewProfile('프로필',userInfo.nickname)"
-            >{{userInfo.nickname}}</h1>
-            <v-list-item-subtitle>{{userInfo.username}}</v-list-item-subtitle>
+              @click="changeViewProfile('프로필',currUserInfo.nickname)"
+            >{{currUserInfo.nickname}}</h1>
+            <v-list-item-subtitle>{{currUserInfo.username}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item @click="changeViewProfile('팔로',userInfo.nickname)">
-          <v-content class="left">{{userInfo.followers}} 팔로워</v-content>
+        <v-list-item @click="changeViewProfile('팔로',currUserInfo.nickname)">
+          <v-content class="left">{{currUserInfo.followers}} 팔로워</v-content>
           <v-spacer></v-spacer>
-          <v-content>{{userInfo.followings}} 팔로잉</v-content>
+          <v-content>{{currUserInfo.followings}} 팔로잉</v-content>
         </v-list-item>
 
         <v-divider></v-divider>
@@ -88,7 +88,7 @@
 import UserApi from "../apis/UserApi";
 
 export default {
-  props: ["username"],
+  props: ["pr_username"],
 
   data: () => ({
     profileUsername:'',
@@ -97,7 +97,7 @@ export default {
     pageTitle: "",
     
     isSearchPage: false,
-    userInfo: {
+    currUserInfo: {
       nickname: "로그인 에러",
       username: "잠시 후에 다시 시도해주세요",
       likes: "",
@@ -133,16 +133,16 @@ export default {
     }
 
     //프로필 정보를 불러올거에여~~!
-    UserApi.requestUserProfile(this.username, res => {
+    UserApi.requestUserProfile(this.pr_username, res => {
       //확인용 ..useless ...
       let sentData = JSON.stringify(res.data);
       console.log("프로필 정보 : " + JSON.stringify(res.data));
-      this.userInfo.followers = JSON.stringify(res.data.followers.length);
-      this.userInfo.followings = JSON.stringify(res.data.followings.length);
+      this.currUserInfo.followers = JSON.stringify(res.data.followers.length);
+      this.currUserInfo.followings = JSON.stringify(res.data.followings.length);
 
-      this.userInfo.intro = res.data.intro;
-      this.userInfo.nickname = res.data.nickname;
-      this.userInfo.username = res.data.username;
+      this.currUserInfo.intro = res.data.intro;
+      this.currUserInfo.nickname = res.data.nickname;
+      this.currUserInfo.username = res.data.username;
     }),
       error => {
         this.$router.push({ path: "/404" });
@@ -161,7 +161,7 @@ export default {
     },
     logout() {
       sessionStorage.removeItem("AUTH_token");
-      sessionStorage.removeItem("LoginUserNickname");
+      sessionStorage.removeItem("LoginUserInfo");
       this.$cookies.remove("auth_cookie");
       alert("로그아웃되었습니다.");
       this.$router.push({ name: "홈" });

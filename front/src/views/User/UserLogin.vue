@@ -27,7 +27,7 @@
               :rules="passwordRules"
               type="password"
               label="비밀번호"
-              hint="영문,숫자 포함 8자리 이상, 15자리 이하입니다."
+              hint="영문,숫자 포함 8자리 이상, 20자리 이하입니다."
               required
             ></v-text-field>
           </v-col>
@@ -137,8 +137,13 @@ export default {
               console.log('프로필조회 : '+data.email);
               axios.post(`http://192.168.31.80:8000/accounts/`, data).then((response=>{
                 console.log('로그인 후 가져온 다라 '+response.data[0].nickname);
+                // console.log("login -> ",response.data[0]);
                   sessionStorage.setItem("AUTH_token", this.tokenFromLogin);
-                  sessionStorage.setItem('LoginUserNickname',response.data[0].nickname);
+                  const LoginUserInfo={
+                    nickname : response.data[0].nickname,
+                    id : response.data[0].id
+                  }
+                  sessionStorage.setItem('LoginUserInfo',JSON.stringify(LoginUserInfo));
                   router.push({ name: "홈" });
               }),error=>{
                 console.log("로그인 후 프로필 가져오기 문제");
@@ -173,9 +178,9 @@ export default {
     passwordRules: [
       v =>
         !!v ||
-        "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 15자리 이하입니다",
+        "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 20자리 이하입니다",
       v =>
-        /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[`~!@#$%^&+=;',.?]).*$/.test(v) || "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 15자리 이하입니다",
+        /^.*(?=^.{8,20}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[`~!@#$%^&+=;',.?]).*$/.test(v) || "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 20자리 이하입니다",
     ],
 
     alert: false,

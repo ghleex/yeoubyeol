@@ -15,6 +15,7 @@ import UserProfile from './views/User/UserProfile.vue'
 
 //피드
 import FeedMain from './views/Feed/FeedMain.vue'
+import FeedCreateUpdate from '@/views/Feed/FeedCreateUpdate.vue'
 
 //에러
 import EPageNotFound from './views/Error/EPageNotFound.vue'
@@ -27,6 +28,7 @@ import Follow from './views/Settings/Follow.vue'
 //검색
 import Search from './views/Search.vue'
 import hongjuLab2 from './views/hongjuLab2.vue'
+import hongjuLab3 from './views/hongjuLab3.vue'
 
 
 
@@ -103,6 +105,11 @@ export default [
         name: '메인피드',
         component: FeedMain
     },
+    {
+        path: '/feed/up',
+        name: '피드 저장',
+        component: FeedCreateUpdate
+    },
     //에러
     {
         path: '/404',
@@ -140,8 +147,13 @@ export default [
     },
     //홍주의 실험실...
     {
-        path: '/lab',
-        name: '홍주랩실',
+        path: '/lab2',
+        name: '홍주랩실2',
         component: hongjuLab2
+    },
+    {
+        path: '/lab3',
+        name: '홍주랩실3',
+        component: hongjuLab3
     },
 ]

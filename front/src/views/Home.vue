@@ -32,7 +32,7 @@ export default {
   created() {
     if (
       sessionStorage.getItem("AUTH_token") &&
-      sessionStorage.getItem("LoginUserNickname")
+      sessionStorage.getItem("LoginUserInfo")
     ) {
       this.isOk = true;
     }
@@ -46,7 +46,7 @@ export default {
   methods: {
     logout() {
       sessionStorage.removeItem("AUTH_token");
-      sessionStorage.removeItem("LoginUserNickname");
+      sessionStorage.removeItem("LoginUserInfo");
       this.$cookies.remove("auth_cookie");
       alert("로그아웃되었습니다.");
       this.isOk = false;
