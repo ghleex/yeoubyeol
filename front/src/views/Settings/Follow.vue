@@ -11,7 +11,11 @@
       <v-container v-if="followers.length>0" centered class="my-0">
         <v-layout row class="my-0 py-0">
           <v-flex xs12 sm12 v-for="(items,i) in followers" :key="i">
-            <FollowerList v-bind="items" :isFollowing="true" :isMyAccount="isMyAccount" />
+            <FollowerList
+              @updateFollowerList="updateFollowerList"
+              v-bind="items"
+              :isMyAccount="isMyAccount"
+            />
           </v-flex>
         </v-layout>
       </v-container>
@@ -24,7 +28,11 @@
       <v-container v-if="followings.length>0" centered class="my-0">
         <v-layout row class="my-0 py-0">
           <v-flex xs12 sm12 v-for="(items,i) in followings" :key="i">
-            <FollowingList v-bind="items" :isFollowing="true" />
+            <FollowingList
+              @updateFollowingList="updateFollowingList"
+              v-bind="items"
+              :isMyAccount="isMyAccount"
+            />
           </v-flex>
         </v-layout>
       </v-container>
@@ -40,21 +48,44 @@ import FollowerList from "../../components/common/FollowerList";
 import FollowingList from "../../components/common/FollowingList";
 import UserApi from "../../apis/UserApi";
 
-const loginedNickname = "";
+let loginedNickname = "";
 export default {
   components: {
     FollowerList,
     FollowingList
   },
   created() {
-    this.getAndSetData();
+    this.currUserName = this.$route.params.email;
+    this.loginedNickname = JSON.parse(
+      sessionStorage.getItem("LoginUserInfo")
+    ).nickname;
+    this.checkFollowInfo(); //현재 로그인한사람의 팔로워 팔로잉정보 받아오고
+    this.getAndSetData(); //조회하는 사람의 팔로워팔로잉정보 세팅
   },
   methods: {
+    updateFollowerList() {
+      // console.log("EEMMIITT!!");
+      this.checkFollowInfo();
+      this.getFollowerList();
+    },
+    updateFollowingList() {
+      this.checkFollowInfo();
+      this.getFollowingList();
+    },
+    checkFollowInfo() {
+      UserApi.requestUserProfile(
+        this.loginedNickname,
+        res => {
+          this.LU_followers = res.data.followers;
+          this.LU_followings = res.data.followings;
+        },
+        err => {
+          console.log("또잉");
+          this.$router.push({ path: "/404" });
+        }
+      );
+    },
     getAndSetData() {
-      this.currUserName = this.$route.params.email;
-      this.loginedNickname = JSON.parse(
-        sessionStorage.getItem("LoginUserInfo")
-      ).nickname;
       this.getFollowerList();
       this.getFollowingList();
 
@@ -65,38 +96,40 @@ export default {
       }
     },
     getFollowerList() {
+      this.followers = [];
       console.log("팔로워를 조회할 아이디는요 ", this.currUserName);
       UserApi.requestFollowers(
         this.currUserName,
         res => {
           console.log("callback 에서 ", res);
           for (let i = 0; i < res.data.data.length; i++) {
-            console.log(res.data.data[i]);
+            // console.log(res.data.data[i]);
             let followerInfo = {
-              nickName: res.data.data[i].nickname,
+              shownNickname: res.data.data[i].nickname,
               intro: res.data.data[i].intro,
-              picName: res.data.data[i].pic_name
+              picName: res.data.data[i].pic_name,
+              //내 팔로잉 리스트와 비교해서 팔로잉인지 아닌지 알려조야해 ㅠ
+              isFollowing: this.LU_followings.includes(res.data.data[i].id)
             };
-
             this.followers.push(followerInfo);
           }
         },
         error => {
           console.log("에러콜백에서 ", error);
-          this.$router.push({ path: "/" });
+          // this.$router.push({ path: "/" });
         }
       );
     },
     getFollowingList() {
+      this.followings=[];
       // console.log("팔로잉 조회할 아이디는요 ", this.currUserName);
       UserApi.requestFollowings(
         this.currUserName,
         res => {
           // console.log("callback 에서 ", res);
           for (let i = 0; i < res.data.data.length; i++) {
-            console.log(res.data.data[i]);
             let followingInfo = {
-              nickName: res.data.data[i].nickname,
+              shownNickname: res.data.data[i].nickname,
               intro: res.data.data[i].intro,
               picName: res.data.data[i].pic_name
             };
@@ -111,13 +144,16 @@ export default {
       );
     }
   },
+
   data: () => ({
     //code
     // 1:댓글 2:좋아요 3: (나에게)팔로잉신청 4 (나의)팔로잉거절 5 팔로잉수락
     currUserName: "",
     followings: [],
     followers: [],
-    isMyAccount: false
+    isMyAccount: false,
+    LU_followings: [],
+    LU_followers: []
   })
 };
 </script>
