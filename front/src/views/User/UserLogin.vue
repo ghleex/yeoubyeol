@@ -137,8 +137,13 @@ export default {
               console.log('프로필조회 : '+data.email);
               axios.post(`http://192.168.31.80:8000/accounts/`, data).then((response=>{
                 console.log('로그인 후 가져온 다라 '+response.data[0].nickname);
+                // console.log("login -> ",response.data[0]);
                   sessionStorage.setItem("AUTH_token", this.tokenFromLogin);
-                  sessionStorage.setItem('LoginUserNickname',response.data[0].nickname);
+                  const LoginUserInfo={
+                    nickname : response.data[0].nickname,
+                    id : response.data[0].id
+                  }
+                  sessionStorage.setItem('LoginUserInfo',JSON.stringify(LoginUserInfo));
                   router.push({ name: "홈" });
               }),error=>{
                 console.log("로그인 후 프로필 가져오기 문제");

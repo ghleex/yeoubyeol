@@ -59,7 +59,25 @@ const requestUserProfile = (data, callback, errorCallback) => {
         })
         .catch(err => {
             console.log(err)
-            errorCallback('error')
+            errorCallback(err)
+        })
+}
+
+//팔로워 목록 받아오기
+const requestFollowers= (data, callback, errorCallback) => {
+    let nickname = {
+        nickname: data,
+    }
+    // console.log(nickname)
+    axios.post('http://192.168.31.80:8000/articles/followerlist/', nickname)
+        .then(res => {
+            console.log('팔로워리스트 가져오기 성공')
+            callback(res)
+        })
+        .catch(err => {
+            console.log('팔로워리스트 가져오기 시루패 ㅜ')
+            console.log(err)
+            errorCallback(err)
         })
 }
 
@@ -67,6 +85,7 @@ const requestUserProfile = (data, callback, errorCallback) => {
 const UserApi = {
     requestSignup: (data, callback, errorCallback) => requestSignup(data, callback, errorCallback),
     requestLogin: (data, callback, errorCallback) => requestLogin(data, callback, errorCallback),
-    requestUserProfile: (data, callback, errorCallback) => requestUserProfile(data, callback, errorCallback)
+    requestUserProfile: (data, callback, errorCallback) => requestUserProfile(data, callback, errorCallback),
+    requestFollowers: (data, callback, errorCallback) => requestFollowers(data, callback, errorCallback),
 }
 export default UserApi
