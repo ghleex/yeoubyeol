@@ -2,11 +2,27 @@
   <v-app style="background-color:#110b22;">
     <v-content v-if="isLogin && usernickname">
       <hongjulab :username = usernickname />
+      <v-dialog max-width="600px">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fixed
+            dark
+            fab
+            bottom
+            right
+            color="#71d087"
+            v-on="on"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </template>
+
+        <feedCreateUpdate />
+      </v-dialog>
     </v-content>
 
     <v-content v-if="!isLogin">
       <!-- Provides the application the proper gutter -->
-  
       <router-view></router-view>
     </v-content>
   </v-app>
@@ -15,10 +31,12 @@
       
 <script>
 import hongjulab from "./components/hongjulab";
+import feedCreateUpdate from '@/views/Feed/FeedCreateUpdate.vue'
 export default {
   name: "App",
   components: {
-    hongjulab
+    hongjulab,
+    feedCreateUpdate
   },
   data: () => ({
     isLogin: false,

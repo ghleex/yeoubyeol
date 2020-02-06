@@ -56,53 +56,21 @@
         <br />
         {{feed.post}}
       </v-tab>
-      <v-tab href="#tab-2">
-        <v-icon>mdi-lead-pencil</v-icon>
-      </v-tab>
 
-      <v-tab href="#tab-3">
+      <v-tab href="#tab-2">
         좋아한 피드
         <br />
         {{feed.liked}}
       </v-tab>
 
       <v-tab-item id="tab-1">
-          <Post :content="text" :isLiked="false" :isClipped="true" />
-          <Post :content="text" :isLiked="false" :isClipped="true" />
-          <Post :content="text" :isLiked="false" :isClipped="true" />
-          <Post :content="text" :isLiked="false" :isClipped="true" />
+        <Post :content="text" :isLiked="false" :isClipped="true" />
+        <Post :content="text" :isLiked="false" :isClipped="true" />
+        <!-- <Post :content="text" :isLiked="false" :isClipped="true" />
+        <Post :content="text" :isLiked="false" :isClipped="true" />-->
       </v-tab-item>
-      <v-tab-item id="tab-2">
-        <v-card dark color="#110b22">
-          <v-form ref="form" v-model="valid" lazy-validation>
-            <v-row class="py-0 ma-2">
-              <v-col cols="12" class="pa-1">
-                <v-file-input accept="image/*" ></v-file-input>
-                <!-- <v-text-field dark label="홍주의 미니랩실" required></v-text-field> -->
-              </v-col>
 
-              <v-col cols="12" class="pa-1">
-                <v-textarea
-                  dark
-                  :rules="contentRules"
-                  required
-                  outlined
-                  :value="inputPostContent"
-                ></v-textarea>
-                <v-btn
-                  block
-                  class="mb-2"
-                  color="#71d087"
-                  style="color:#110b22"
-                  @click="validate"
-                  :disabled="!valid"
-                >피드 발행하기</v-btn>
-              </v-col>
-            </v-row>
-          </v-form>
-        </v-card>
-      </v-tab-item>
-      <v-tab-item id="tab-3">
+      <v-tab-item id="tab-2">
         <v-container>
           <v-btn>click</v-btn>
         </v-container>
@@ -120,33 +88,13 @@ import "../../assets/css/user.scss";
 import Post from "../../components/common/Post";
 import UserApi from "../../apis/UserApi";
 import FeedApi from "../../apis/FeedApi";
-
 export default {
   name: "components",
   components: {
     Post
   },
   methods: {
-    validate() {
-      if (this.$refs.form.validate()) {
-        // this.snackbar = true;
-        this.newPost();
-      }
-    },
-    newPost() {
-
-
-    let data = new FormData();
-    data.append('nickname', this.loginedNickname);
-    data.append('article', 'my-picture');
-    data.append('image', event.target.files[0]); 
-
-    FeedApi.newPost(data,res=>{
-
-    })
-
-  }
-    },
+  
     clickFollowBtn() {
       if (!this.isMyAccount) {
         let { loginedNickname, shownNickname } = this;
@@ -169,6 +117,7 @@ export default {
     viewFollows() {
       console.log(this.userInfo.nickname);
       this.$router.push({ name: "팔로", params: this.nickname });
+    }
   },
   created() {
     UserApi.requestUserProfile(
@@ -194,6 +143,9 @@ export default {
         } else {
           this.isMyAccount = false;
           //내 계정이 아니고,
+          const fw=this.userInfo.followings;
+          console.log(fw);
+          
         }
       },
       error => {
@@ -210,13 +162,10 @@ export default {
 
   data: () => {
     return {
-      inputPostContent:'',
-      valid: false,
-      contentRules: [v => !!v || "내용을 입력해주세요.."],
+
       isFollow: false,
       isMyAccount: false,
       loginUsername: "",
-      shownUsername: "",
       userInfo: {
         id: "",
         nickname: "",
