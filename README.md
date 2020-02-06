@@ -1,17 +1,15 @@
-# 여우별 :fox_face: :star2:
+## ![main](https://user-images.githubusercontent.com/52685206/73918007-002f0600-4904-11ea-800e-2fd950a3781e.png)
 
-## 새벽에 유난히 넘치는 감성을 담는 공간  :city_sunset:
-
-### 1. 목표 :dart:
+### THE AIMS OF THE PROJECT :dart:
 
 * Django, Vue-Router, Vuex, Open API, Docker 에 대한 이해
 * SNS 기본 기능(회원가입, 로그인, 프로필 변경, 알림 등) 구현
 * “여우별” 만의 차별화 요소 구현
-* 새벽 감성을 담는 공간 완성하기
+* 새벽에 넘치는 감성을 담는 공간 완성하기
 
 
 
-### 2. 환경 :deciduous_tree:
+### ENVIRONMENTS :deciduous_tree:
 
 |               OS               |   Language   | Frontend |   Backend    |    DBMS     |
 | :----------------------------: | :----------: | :------: | :----------: | :---------: |
@@ -35,7 +33,7 @@
 
 
 
-### 3. 역할
+### ROLES
 
 |       Frontend       |       Backend       |
 | :------------------: | :-----------------: |
@@ -45,23 +43,23 @@
 
 
 
-### 4. System Architecture
-
-<img src="https://user-images.githubusercontent.com/52685206/73899026-a9f3a000-48ce-11ea-843f-995f61655488.png" alt="system_architecture" style="width:80%;" />
 
 
-
-### 5. ER Diagram
-
-<img src="https://user-images.githubusercontent.com/52685206/73899106-ed4e0e80-48ce-11ea-9fe5-df61f8029bfd.png" alt="erd" style="width:80%;" />
+<img src="https://user-images.githubusercontent.com/52685206/73917727-5780a680-4903-11ea-969c-c48dd3d8ff10.png" alt="system_architecture"/>
 
 
 
 
 
-### 6. Git Workflow
+### ER Diagram
 
-<img src="https://user-images.githubusercontent.com/52685206/73899976-9269e680-48d1-11ea-8d7b-bf01a1e138ab.png" alt="git_workflow" style="width:80%;" />
+<img src="https://user-images.githubusercontent.com/52685206/73899106-ed4e0e80-48ce-11ea-9fe5-df61f8029bfd.png" alt="erd"/>
+
+
+
+
+
+<img src="https://user-images.githubusercontent.com/52685206/73899976-9269e680-48d1-11ea-8d7b-bf01a1e138ab.png" alt="git_workflow"/>
 
 #### Rules of writing a commit message
 
@@ -70,8 +68,8 @@
    * Sample: `"S02P13B203-14 | -ing | Add FEED templates on sth"`
 3. 영문 기준 50자 이내
 4. 시작 단어: 동사로
-   * In progress: -ing
-   * Finished: -ed
+   * In progress: `-ing`
+   * Finished: `-ed`
 
 5. 끝에 `.` 붙이지 않음
 
@@ -79,13 +77,11 @@
 
 
 
-### 7. 기존과 다른 점
-
-<img src="https://user-images.githubusercontent.com/52685206/73901276-a0ba0180-48d5-11ea-95a8-e22fb6e6e011.png" alt="기존과_다른_점" style="width:80%;" />
+<img src="https://user-images.githubusercontent.com/52685206/73917713-4e8fd500-4903-11ea-9ccb-b70b38a15480.png" alt="differences"/>
 
 
 
-
+-----
 
 -----
 
