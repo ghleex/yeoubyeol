@@ -96,19 +96,21 @@ export default [
         path: '/user/:email',
         name: '프로필',
         component: UserProfile,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
         
     },
     //피드
     {
         path: '/feed',
         name: '메인피드',
-        component: FeedMain
+        component: FeedMain,
+        beforeEnter: requireAuth()
     },
     {
         path: '/feed/up',
         name: '피드 저장',
-        component: FeedCreateUpdate
+        component: FeedCreateUpdate,
+        beforeEnter: requireAuth()
     },
     //에러
     {
@@ -126,19 +128,22 @@ export default [
     {
         path: '/noti',
         name: '알림',
-        component: Noti
+        component: Noti,
+        beforeEnter: requireAuth()
     },
     {
         path: '/follow/:email',
         name: '팔로',
-        component: Follow
+        component: Follow,
+        beforeEnter: requireAuth()
     },
 
     //검색
     {
         path: '/search',
         name: '검색',
-        component: Search
+        component: Search,
+        beforeEnter: requireAuth()
     },
     
     {

@@ -8,13 +8,13 @@
           </v-col>
 
           <v-col cols="12" class="pa-1">
-            <v-textarea 
-              dark 
-              :rules="contentRules" 
-              required 
-              outlined 
-              v-model="inputPostContent" 
-              :autofocus="true" 
+            <v-textarea
+              dark
+              :rules="contentRules"
+              required
+              outlined
+              v-model="inputPostContent"
+              :autofocus="true"
               :auto-grow="true"
               clearable
             >{{inputPostContent}}</v-textarea>
@@ -38,7 +38,9 @@ import FeedApi from "@/apis/FeedApi";
 
 export default {
   created() {
-      this.loginedNickname = JSON.parse(sessionStorage.getItem('LoginUserInfo')).nickname
+    this.loginedNickname= JSON.parse(
+      sessionStorage.getItem("LoginUserInfo")
+    ).nickname;
   },
   methods: {
     onFileChanged(event) {
@@ -52,13 +54,11 @@ export default {
       }
     },
     newPost() {
-      // let { loginedNickname, inputPostContent, selectedFile } = this;
-      // let data = { loginedNickname, inputPostContent, selectedFile };
-      let form = new FormData();
-      form.append('nickname', this.loginedNickname)
-      form.append('article', this.inputPostContent)
-      form.append('image', this.selectedFile)
-      console.log(form);
+  let form = new FormData();
+    form.append("nickname", this.loginedNickname);
+    form.append("article", this.inputPostContent);
+    form.append("image", this.selectedFile);
+    console.log(typeof(this.selectedFile));
       FeedApi.newPost(
         form,
         res => {
@@ -72,7 +72,7 @@ export default {
   },
   data: () => {
     return {
-      loginedNickname: '',
+      loginedNickname: "",
       selectedFile: "",
       inputPostContent: "",
       valid: false,

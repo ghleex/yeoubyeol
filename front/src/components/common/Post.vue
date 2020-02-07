@@ -11,7 +11,7 @@
       <v-list-item>
         <v-list-item-avatar color="grey darken-3">
           <v-img
-            src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
+            src=""
           ></v-img>
         </v-list-item-avatar>
 
