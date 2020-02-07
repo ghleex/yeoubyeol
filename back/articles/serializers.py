@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import Article, Comment, HonorArticle
+from .models import Article, Comment, HonorArticle, Hashtag
+
+class HashtagSerializer(serializers.ModelSerializer):
+    class Meta(Hashtag):
+        model = Hashtag
+        fields = ('hashtag')
+
 
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta(Article):
