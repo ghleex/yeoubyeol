@@ -39,9 +39,28 @@ const newPost = (form, callback, errorCallback) => {
         }) 
 }
 
+//해시태그 추천받기
+const requestHashTags = (form, callback, errorCallback) => {
+    
+
+     axios.post(`http://192.168.31.87:8000/articles/recommend/`, form,{
+     })
+        .then((response) => {
+            console.log('해시태그 받기 성공 :',response)
+            callback(response)
+        
+        })
+        .catch((response) => {
+            console.log(response)
+            console.log('해시태그 받기 오류'  + response)
+            errorCallback('error')
+        }) 
+}
+
 
 const FeedApi = {
     requestFollow: (data, callback, errorCallback) => requestFollow(data, callback, errorCallback),
     newPost: (data, callback, errorCallback) => newPost(data, callback, errorCallback),
+    requestHashTags: (data, callback, errorCallback) => requestHashTags(data, callback, errorCallback),
 }
 export default FeedApi
