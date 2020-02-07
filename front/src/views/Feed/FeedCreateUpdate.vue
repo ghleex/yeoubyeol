@@ -156,8 +156,8 @@ export default {
       );
     },
     onFileChanged(event) {
-      console.log("1", event);
-      this.selectedFile = event;
+      console.log(this.$refs)
+      this.selectedFile = this.$refs.selectedFile.files[0]
     },
     validate() {
       if (this.$refs.form.validate()) {

@@ -24,7 +24,7 @@ const newPost = (form, callback, errorCallback) => {
 
      axios.post(`http://192.168.31.87:8000/articles/`, form,{
         headers: {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
         }
      })
         .then((response) => {

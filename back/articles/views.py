@@ -5,10 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import ArticleSerializer
-from .models import Article
+from .serializers import ArticleSerializer, CommentSerializer, HonorArticleSerializer
+from .models import Article, Comment, HonorArticle
 from accounts.models import Notification, User
 from accounts.serializers import UserSerializer, NotificationSerializer
 import secrets, json
@@ -17,21 +18,35 @@ import secrets, json
 class ArticleList(APIView):
     # 글 생성 request = 'username', 
     def post(self, request, format=None):
-        username = request.data.get('username')
-        user = get_object_or_404(User, username=username)
-        followers = username.followers.all()
-        for follower in followers:
-            receive_user = User.object.filter(id=follower)
-            notification = {
-                'username': receive_user.nickname,
-                'message': user.nickname + "님이 새 글을 작성했습니다.",
-                'send_user': user.nikename
-            }
-            json_noti = json.dumps(notification)
-            noti_serializer = NotificationSerializer(data=json_noti)
-            noti_serializer.save()
-            print(noti_serializer.data)
-        serializer = ArticleSerializer(data=request.data)
+        print()
+        print('--- request.data ---')
+        print(request.data)
+        print('--- end of request.data ---')
+        print()
+        nickname = request.data.get('nickname')
+        user = get_object_or_404(User, nickname=nickname)
+        # followers = user.followers.all()
+        # for follower in followers:
+        #     receive_user = User.object.filter(id=follower)
+        #     notification = {
+        #         'username': receive_user.nickname,
+        #         'message': user.nickname + "님이 새 글을 작성했습니다.",
+        #         'send_user': user.nikename
+        #     }
+        #     json_noti = json.dumps(notification)
+        #     noti_serializer = NotificationSerializer(data=json_noti)
+        #     noti_serializer.save()
+        #     print()
+        #     print('--- noti_serializer.data ---')
+        #     print(noti_serializer.data)
+        #     print('--- end of noti_serializer.data ---')
+        #     print()
+        data = {
+            'author_id': user.id,
+            'article': request.data.get('article'),
+            'image': request.data.get('image'),
+        }
+        serializer = ArticleSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -47,13 +62,17 @@ class ArticleList(APIView):
 # 글 상세보기
 class ArticleDetail(APIView):
     def get_objects(self, pk):
-        try: return Article.objects.get(pk=pk)
+        try: return Article.objects.get(id=pk)
         except: raise Http404
 
     def get(self, request, pk):
         article = self.get_object(pk)
         serializer = ArticleSerializer(article)
-        return Response(serializer.data)
+        comments = article.comment_set.all()
+        return Response({
+            'article': serializer.data,
+            'comments': comments
+        })
     
     def put(self, request, pk, format=None):
         article = self.get_object(pk)
@@ -124,8 +143,8 @@ class FollowerList(APIView):
         return Response(serializer.data)
 
     # 팔로워 목록
-    def get(self, request, user_pk, format=None):        
-        person = get_object_or_404(get_user_model(), pk=request.user.pk)
+    def get(self, request, format=None):        
+        person = get_object_or_404(get_user_model(), id=request.data.get('user_id'))
         serializer = UserSerializer(person, many=True)
         if serializer:
             return Response(serializer.data.get('followers'))
@@ -137,12 +156,27 @@ class FollowingList(APIView):
     # 팔로잉 목록
     @login_required
     def get(self, request, user_pk, format=None):
-        person = get_object_or_404(get_user_model(), pk=request.user.pk)
+        person = get_object_or_404(get_user_model(), id=request.user.pk)
         serializer = UserSerializer(person, many=True)
         if serializer:
             return Response(serializer.data.get('followings'))
         else:
             return Response({'message': '팔로잉하는 사람이 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST', ])
+def followerlist(request):
+    person = get_object_or_404(get_user_model(), nickname=request.data.get('nickname'))
+    serializer = UserSerializer(person)
+    users = []
+    for user_id in serializer.data.get('followers'):
+        user = get_object_or_404(get_user_model(), id=user_id)
+        users.append(UserSerializer(user).data)
+
+    if serializer:
+        return Response({'data': users})
+    else:
+        return Response({'message': '팔로워를 찾을 수 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 @login_required
@@ -153,7 +187,27 @@ def like(request):
     # 좋아요 한 글
     article = get_object_or_404(Article, article=request.data.get('article'))
     serializer = ArticleSerializer(article)
-    if serializer.like_users.filter(pk=user.id).exists():
+    if len(article.like_uses_set.all()) == 30000:
+        data = {
+            'article': article.article,
+            'author': article.author,
+            'hashtags': article.hashtags,
+            'image': article.image
+        }
+        honorserializer = HonorArticleSerializer(data=data)
+        honorserializer.save()
+        author = article.author
+        noti_user = get_object_or_404(User, id=author)
+        notification = {
+                'username': noti_user.nickname,
+                'message': noti_user.nickname + "님의 글이 명예의 전당에 올라갔습니다.",
+                'send_user': noti_user.nickname
+            }
+        json_noti = json.dumps(notification)
+        noti_serializer = NotificationSerializer(data=json_noti)
+        noti_serializer.save()
+        article.delete()
+    if serializer.like_users.filter(id=user.id).exists():
         serializer.like_users.remove(user)
     else:
         serializer.like_users.add(user)
@@ -171,3 +225,18 @@ def like(request):
             noti_serializer.save()
     return Response(serializer.data)
 
+
+class CommentList(APIView):
+    def post(request):
+        serializer = CommentSerializer(data=serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response({'message': '이런 나쁜 요청'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def honor(request):
+    articles = HonorArticle.objects.all()
+    serializer = HonorArticleSerializer(articles, many=True)
+    return Response(serializer.data)
