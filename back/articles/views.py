@@ -26,10 +26,7 @@ class ArticleList(APIView):
         nickname = request.data.get('nickname')
         article = request.POST.get('article')
         hashtags = request.POST.get('hashtags')
-        print('-------------123123123---')
         hashtags = hashtags.split(',')
-        print(hashtags)
-        print('----------------123123')
         user = get_object_or_404(User, nickname=nickname)
         data = {
             'article': request.data.get('article'),
@@ -42,20 +39,10 @@ class ArticleList(APIView):
             for word in hashtags:
                 hashtag, created = Hashtag.objects.get_or_create(
                     hashtag=word)
-                print('----------------')
-                print(word)
-                print(hashtag)
-                print('----------------')
                 hash_serializer = HashtagSerializer(data=hashtag)
                 if hash_serializer.is_valid():
-                    print('1111111111111111111111')
-                    print(hash_serializer.data)
-                    print('1111111111111111111111')
                     hash_serializer.save()
-                print(hashtag.id)
-                print(serializer)
                 article.hashtags.add(hashtag)
-            print(data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(data, status=status.HTTP_204_NO_CONTENT)
     # 글 리스트 조회
