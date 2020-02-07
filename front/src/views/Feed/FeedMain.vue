@@ -13,7 +13,7 @@ export default {
     Post,
   },
   created(){
-    axios.get('http://192.168.31.80:8000/articles/')
+    axios.get('http://192.168.31.87:8000/articles/')
       .then(response => {
         console.log(response.data);
         this.articles = response.data;

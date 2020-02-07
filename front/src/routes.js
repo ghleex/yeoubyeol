@@ -29,6 +29,7 @@ import Follow from './views/Settings/Follow.vue'
 import Search from './views/Search.vue'
 import hongjuLab2 from './views/hongjuLab2.vue'
 import hongjuLab3 from './views/hongjuLab3.vue'
+import hongjuLab4 from './views/hongjuLab4.vue'
 
 
 
@@ -160,5 +161,10 @@ export default [
         path: '/lab3',
         name: '홍주랩실3',
         component: hongjuLab3
+    },
+    {
+        path: '/lab4',
+        name: '홍주랩실4',
+        component: hongjuLab4
     },
 ]
