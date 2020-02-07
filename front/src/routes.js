@@ -15,6 +15,7 @@ import UserProfile from './views/User/UserProfile.vue'
 
 //피드
 import FeedMain from './views/Feed/FeedMain.vue'
+import FeedCreateUpdate from '@/views/Feed/FeedCreateUpdate.vue'
 
 //에러
 import EPageNotFound from './views/Error/EPageNotFound.vue'
@@ -27,6 +28,7 @@ import Follow from './views/Settings/Follow.vue'
 //검색
 import Search from './views/Search.vue'
 import hongjuLab2 from './views/hongjuLab2.vue'
+import hongjuLab3 from './views/hongjuLab3.vue'
 
 
 
@@ -94,14 +96,21 @@ export default [
         path: '/user/:email',
         name: '프로필',
         component: UserProfile,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
         
     },
     //피드
     {
         path: '/feed',
         name: '메인피드',
-        component: FeedMain
+        component: FeedMain,
+        beforeEnter: requireAuth()
+    },
+    {
+        path: '/feed/up',
+        name: '피드 저장',
+        component: FeedCreateUpdate,
+        beforeEnter: requireAuth()
     },
     //에러
     {
@@ -119,19 +128,22 @@ export default [
     {
         path: '/noti',
         name: '알림',
-        component: Noti
+        component: Noti,
+        beforeEnter: requireAuth()
     },
     {
         path: '/follow/:email',
         name: '팔로',
-        component: Follow
+        component: Follow,
+        beforeEnter: requireAuth()
     },
 
     //검색
     {
         path: '/search',
         name: '검색',
-        component: Search
+        component: Search,
+        beforeEnter: requireAuth()
     },
     
     {
@@ -140,8 +152,13 @@ export default [
     },
     //홍주의 실험실...
     {
-        path: '/lab',
-        name: '홍주랩실',
+        path: '/lab2',
+        name: '홍주랩실2',
         component: hongjuLab2
+    },
+    {
+        path: '/lab3',
+        name: '홍주랩실3',
+        component: hongjuLab3
     },
 ]

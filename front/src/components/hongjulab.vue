@@ -16,7 +16,6 @@
       <v-btn text icon>
         <v-icon @click="changeView('검색')" v-if="!isSearchPage">mdi-magnify</v-icon>
       </v-btn>
-    
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app clipped color="#110B22" dark>
@@ -30,22 +29,22 @@
         </v-list-item>
 
         <v-list-item>
-          <v-list-item-avatar size="62">
-            <v-img src="../assets/images/profile_default.png"></v-img>
+          <v-list-item-avatar size="62" color="grey darken-3">
+            <v-img :src="currUserInfo.picname"></v-img>
           </v-list-item-avatar>
 
           <v-list-item-content>
             <h1
               class="title"
-              @click="changeViewProfile('프로필',userInfo.nickname)"
-            >{{userInfo.nickname}}</h1>
-            <v-list-item-subtitle>{{userInfo.username}}</v-list-item-subtitle>
+              @click="changeViewProfile('프로필',currUserInfo.nickname)"
+            >{{currUserInfo.nickname}}</h1>
+            <v-list-item-subtitle>{{currUserInfo.username}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item @click="changeViewProfile('팔로',userInfo.nickname)">
-          <v-content class="left">{{userInfo.followers}} 팔로워</v-content>
+        <v-list-item @click="changeViewProfile('팔로',currUserInfo.nickname)">
+          <v-content class="left">{{currUserInfo.followers}} 팔로워</v-content>
           <v-spacer></v-spacer>
-          <v-content>{{userInfo.followings}} 팔로잉</v-content>
+          <v-content>{{currUserInfo.followings}} 팔로잉</v-content>
         </v-list-item>
 
         <v-divider></v-divider>
@@ -77,7 +76,7 @@
 
     <v-sheet>
       <v-container style="background-color:#110b22">
-        <router-view></router-view>
+        <router-view :key="$route.fullPath"></router-view>
       </v-container>
     </v-sheet>
   </v-card>
@@ -88,16 +87,16 @@
 import UserApi from "../apis/UserApi";
 
 export default {
-  props: ["username"],
+  props: ["pr_username"],
 
   data: () => ({
-    profileUsername:'',
+    profileUsername: "",
     drawer: null,
     item: 0,
     pageTitle: "",
-    
+
     isSearchPage: false,
-    userInfo: {
+    currUserInfo: {
       nickname: "로그인 에러",
       username: "잠시 후에 다시 시도해주세요",
       likes: "",
@@ -108,12 +107,12 @@ export default {
     }
   }),
   updated() {
-    if(this.$route.name==='프로필'){
-      this.pageTitle=this.$route.params.email;
-    }else{
-
+    if (this.$route.name === "프로필") {
+      this.pageTitle = this.$route.params.email;
+    } else {
       this.pageTitle = this.$route.name;
     }
+    this.getLoginUserProfile();
   },
   created() {
     //이거 선행님이 바꾼거 밑에 넣어야해
@@ -131,28 +130,40 @@ export default {
       //프로필 화면인 경우에는 아이디를 상단에 노출시킴
       this.pageTitle = this.profileUsername;
     }
-
-    //프로필 정보를 불러올거에여~~!
-    UserApi.requestUserProfile(this.username, res => {
-      //확인용 ..useless ...
-      let sentData = JSON.stringify(res.data);
-      console.log("프로필 정보 : " + JSON.stringify(res.data));
-      this.userInfo.followers = JSON.stringify(res.data.followers.length);
-      this.userInfo.followings = JSON.stringify(res.data.followings.length);
-
-      this.userInfo.intro = res.data.intro;
-      this.userInfo.nickname = res.data.nickname;
-      this.userInfo.username = res.data.username;
-    }),
-      error => {
-        this.$router.push({ path: "/404" });
-      };
+    this.getLoginUserProfile();
   },
   methods: {
-    //path와 이메일을받으면 프로필로 기기
+    //path와 닉넴을받으면 프로필로 기기
+    getLoginUserProfile() {
+      //프로필 정보를 불러올거에여~~!
+      UserApi.requestUserProfile(this.pr_username, res => {
+        //확인용 ..useless ...
+        let sentData = JSON.stringify(res.data);
+        console.log("프로필 정보 : " + JSON.stringify(res.data));
+        this.currUserInfo.followers = JSON.stringify(res.data.followers.length);
+        this.currUserInfo.followings = JSON.stringify(
+          res.data.followings.length
+        );
+
+        this.currUserInfo.intro = res.data.intro;
+        this.currUserInfo.nickname = res.data.nickname;
+        this.currUserInfo.username = res.data.username;
+        // console.log('pic name is ',res.data.pic_name);
+        this.currUserInfo.picname = require("@/assets/images/profile/" +
+          res.data.pic_name +
+          ".png");
+      }),
+        err => {
+          this.$router.push({ path: "/404" });
+        };
+    },
     changeViewProfile(path, usersEmail) {
-      this.pageTitle = usersEmail;
-      this.$router.push({ name: path, params: { email: usersEmail } });
+      if (this.pageTitle == usersEmail) {
+        this.drawer = !this.drawer;
+      } else {
+        this.pageTitle = usersEmail;
+        this.$router.push({ name: path, params: { email: usersEmail } });
+      }
     },
     //그냥 이동일 경우
     changeView(path) {
@@ -161,7 +172,7 @@ export default {
     },
     logout() {
       sessionStorage.removeItem("AUTH_token");
-      sessionStorage.removeItem("LoginUserNickname");
+      sessionStorage.removeItem("LoginUserInfo");
       this.$cookies.remove("auth_cookie");
       alert("로그아웃되었습니다.");
       this.$router.push({ name: "홈" });

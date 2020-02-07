@@ -1,16 +1,15 @@
-# 공통 PJT: 웹 모바일 :office:
+## ![main](https://user-images.githubusercontent.com/52685206/73918007-002f0600-4904-11ea-800e-2fd950a3781e.png)
 
-## Sub PJT Ⅲ: SNS 심화 기능 및 웹 큐레이션 기능 구현  :city_sunset:
+### THE AIMS OF THE PROJECT :dart:
 
-### 1. 목표
-
-* Vue-Roter, Vuex, Open API, Docker 에 대한 이해
+* Django, Vue-Router, Vuex, Open API, Docker 에 대한 이해
 * SNS 기본 기능(회원가입, 로그인, 프로필 변경, 알림 등) 구현
-* 새벽 시간에만 만들 수 있는 감성을 담는 공간 완성하기
+* “여우별” 만의 차별화 요소 구현
+* 새벽에 넘치는 감성을 담는 공간 완성하기
 
 
 
-### 2. 환경 :deciduous_tree:
+### ENVIRONMENTS :deciduous_tree:
 
 |               OS               |   Language   | Frontend |   Backend    |    DBMS     |
 | :----------------------------: | :----------: | :------: | :----------: | :---------: |
@@ -20,9 +19,8 @@
 * DBMS 교체(SQLite3 → MySQL) 이유
 
   * 단일 사용자 對 복수 사용자 데이터베이스 측면
-    * SQLite 는 데스크톱 또는 모바일 앱과 같이 동시 사용자가 한 명인 애플리케이션에 가장 적합
-    * MySQL 과 마리아DB는 여러 명의 동시 사용자에 대응하도록 설계
-    * MySQL 과 마리아DB는 클러스터 및 수평 확장 솔루션을 제공하나 SQLite 는 제공하지 않음
+    * MySQL 은 여러 명의 동시 사용자에 대응하도록 설계
+    * MySQL 은 클러스터 및 수평 확장 솔루션을 제공하나 SQLite 는 제공하지 않음
   * MySQL 의 다양한 데이터 형식 제공
     * MySQL 에 비해 SQLite 은 적은 수의 데이터 형식을 제공
     * 예> SQLite 에는 기본 datetime 형식이 존재하지 않아 애플리케이션에서 이러한 형식을 처리해야 함
@@ -35,7 +33,7 @@
 
 
 
-### 3. 역할
+### ROLES
 
 |       Frontend       |       Backend       |
 | :------------------: | :-----------------: |
@@ -45,27 +43,45 @@
 
 
 
-### 4. System Architecture
-
-![system_architecture](https://user-images.githubusercontent.com/52685206/73622923-59860380-467e-11ea-99e6-90881f1f614c.png) 
 
 
-
-### 5. ER Diagram
-
-<img src="https://user-images.githubusercontent.com/52685206/73713380-91f61200-4750-11ea-84d0-10d5c2766604.png" alt="erd" style="width: 70%; height: 70%;" />
+<img src="https://user-images.githubusercontent.com/52685206/73917727-5780a680-4903-11ea-969c-c48dd3d8ff10.png" alt="system_architecture"/>
 
 
 
 
 
-### 6. Git Workflow (기능별로 세분화하여 수정 예정)
+### ER Diagram
 
-![git_workflow](https://user-images.githubusercontent.com/52685206/73424672-e1b09400-4372-11ea-9f27-163147f844d2.png)
-
-
+<img src="https://user-images.githubusercontent.com/52685206/73899106-ed4e0e80-48ce-11ea-9fe5-df61f8029bfd.png" alt="erd"/>
 
 
+
+
+
+<img src="https://user-images.githubusercontent.com/52685206/73899976-9269e680-48d1-11ea-8d7b-bf01a1e138ab.png" alt="git_workflow"/>
+
+#### Rules of writing a commit message
+
+1. **핵심: 어느 이슈에 대하여 어떤 일이 이루어졌는지 누구든지 보고 이해할 수 있어야 함**
+2. 규칙: `"JIRA ISSUE # | status | 'Message of the issue' "`
+   * Sample: `"S02P13B203-14 | -ing | Add FEED templates on sth"`
+3. 영문 기준 50자 이내
+4. 시작 단어: 동사로
+   * In progress: `-ing`
+   * Finished: `-ed`
+
+4. 끝에 `.` 붙이지 않음
+
+
+
+
+
+<img src="https://user-images.githubusercontent.com/52685206/73917713-4e8fd500-4903-11ea-9ccb-b70b38a15480.png" alt="differences"/>
+
+
+
+-----
 
 -----
 
@@ -73,25 +89,15 @@
 
 ### Screenshot
 
-#### 1. Mobile @ Android
+#### 1. Android
 
-<img src="https://user-images.githubusercontent.com/52685206/73453138-bb104e80-43ae-11ea-946e-de54e9845c94.jpg" alt="Screenshot_20200130-214239_Samsung Internet" style="width: 50%; height: 50%;" />
-
-<img src="https://user-images.githubusercontent.com/52685206/73453140-bc417b80-43ae-11ea-81e6-ae27c2ba9a14.jpg" alt="Screenshot_20200130-214247_Samsung Internet" style="width: 50%; height: 50%;" />
-
-<img src="https://user-images.githubusercontent.com/52685206/73453142-bcda1200-43ae-11ea-9e36-0e3c9063a5a1.jpg" alt="Screenshot_20200130-214300_Samsung Internet" style="width: 50%; height: 50%;" />
-
-<img src="https://user-images.githubusercontent.com/52685206/73453145-be0b3f00-43ae-11ea-8861-55b8c54658a4.jpg" alt="Screenshot_20200130-214311_Samsung Internet" style="width: 50%; height: 50%;" />
+<img src="https://user-images.githubusercontent.com/52685206/73724521-df817780-476e-11ea-8b6f-ddadb806b225.jpg" alt="Screenshot_20200204-164832_Samsung Internet" style="width:50%;" />
 
 
 
 
 
-#### 2. Mobile @ IPadOS
+#### 2. IPadOS
 
-<img src="https://user-images.githubusercontent.com/52685206/73453064-9320eb00-43ae-11ea-8d3b-56c4678c7368.jpg" alt="Image from iOS - 1" style="width: 50%; height: 50%;" />
-
-<img src="https://user-images.githubusercontent.com/52685206/73453065-94521800-43ae-11ea-8a8f-6c2ccc78cb00.png" alt="Image from iOS - 2" style="width: 50%; height: 50%;" />
-
-<img src="https://user-images.githubusercontent.com/52685206/73453073-96b47200-43ae-11ea-8cfe-748a32ff3c99.png" alt="Image from iOS - 3" style="width:50%; height:50%" />
+<img src="https://user-images.githubusercontent.com/52685206/73724519-df817780-476e-11ea-8677-78bcf7b553f7.PNG" alt="IMG_0074" style="width:70%;" />
 

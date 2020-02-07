@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from imagekit.models import ProcessedImageField
-from imagekit.processors import Thumbnail
+from imagekit.processors import Thumbnail, ResizeToFit
 
 # Create your models here.
 class Hashtag(models.Model):
@@ -19,7 +19,7 @@ class Article(models.Model):
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_articles', blank=True)
     hashtags = models.ManyToManyField(Hashtag, blank=True)
     image = ProcessedImageField(
-        processors=[Thumbnail(300, 300)],
+        processors=[ResizeToFit(300, 300)],
         format='JPEG',
         options={'quality': 90},
         upload_to='articles/images',
@@ -45,3 +45,24 @@ class Comment(models.Model):
     
     def __str__(self):
         return self.comment
+
+
+class HonorArticle(models.Model):
+    article = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    hashtags = models.ManyToManyField(Hashtag, blank=True)
+    image = ProcessedImageField(
+        processors=[Thumbnail(300, 300)],
+        format='JPEG',
+        options={'quality': 90},
+        upload_to='articles/images',
+        blank=True,
+    )
+
+    class Meta:
+        ordering = ('-pk',)
+    
+    def __str__(self):
+        return self.article

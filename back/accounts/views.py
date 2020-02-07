@@ -51,7 +51,6 @@ class AccountList(APIView):
 @api_view(['POST',])
 def email_auth(request):
     waitings = Waiting.objects.all()
-
     for waiting in waitings:
         if waiting.created_at < datetime.now() - timedelta(minutes=30):
             waiting.delete()
@@ -190,6 +189,9 @@ def change_pwd(request):
 @api_view(['POST',])
 # @login_required
 def profile(request):
+    print('------------------')
+    print(request.data)
+    print('------------------')
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
     serializer = UserSerializer(user)

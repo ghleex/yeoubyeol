@@ -15,13 +15,19 @@ export default {
   created(){
     axios.get('http://192.168.31.80:8000/articles/')
       .then(response => {
-        console.log(response.data)
+        console.log(response.data);
+        this.articles = response.data;
       })
     // if (!this.$cookies.isKey('auth_cookie')){
     //   alert('로그인이 필요한 서비스에요')
     //   this.$router.push({path:'/'});
 
     // }
+  },
+  data:() => {
+    return {
+      articles: null,
+    }
   }
 
 }
