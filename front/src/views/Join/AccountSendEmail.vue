@@ -32,7 +32,7 @@
               style="color:#110b22;"
               block
               class="confirm"
-              @click="sendEmail"
+              @click.prevent="sendEmail"
               :disabled="!valid"
             >이메일 전송</v-btn>
           </v-col>

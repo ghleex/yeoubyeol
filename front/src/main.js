@@ -18,13 +18,13 @@ Vue.prototype.$EventBus = new Vue();
 Vue.use(VueCookies)
 Vue.use(VueAxios, axios)
 Vue.use(VueAuthenticate, {
-  baseUrl: 'http://192.168.31.89:8000',
+  baseUrl: 'http://192.168.31.87:8000',
 
   providers: {
     google: {
       clientId: '816014797066-epr1ld8dep07dat6na0mmcksdo6fv3s4.apps.googleusercontent.com',
-      redirectUri: 'http://192.168.31.89:8000/',
-      url: 'http://192.168.31.89:8000/api/login/social/token_user/google/',
+      redirectUri: 'http://192.168.31.87:8000/',
+      url: 'http://192.168.31.87:8000/api/login/social/token_user/google/',
       provider: 'google-oauth2'
     }
   }

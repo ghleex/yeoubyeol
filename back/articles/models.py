@@ -45,3 +45,24 @@ class Comment(models.Model):
     
     def __str__(self):
         return self.comment
+
+
+class HonorArticle(models.Model):
+    article = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    hashtags = models.ManyToManyField(Hashtag, blank=True)
+    image = ProcessedImageField(
+        processors=[Thumbnail(300, 300)],
+        format='JPEG',
+        options={'quality': 90},
+        upload_to='articles/images',
+        blank=True,
+    )
+
+    class Meta:
+        ordering = ('-pk',)
+    
+    def __str__(self):
+        return self.article
