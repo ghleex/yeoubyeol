@@ -3,7 +3,6 @@
     <v-card dark color="#110b22" style="border:solid 2px #888">
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-row class="py-0 ma-2">
-          
           <v-col cols="12" class="pa-1">
             <v-btn
               class="mb-2"
@@ -16,14 +15,20 @@
             >피드 발행하기</v-btn>
           </v-col>
           <v-col cols="12" class="pa-1">
-            <v-file-input
+            <!-- <v-file-input
+              id="file"
+              ref="file"
               prepend-icon="mdi-camera"
               outlined
               dense
               label="Image"
-              accept=".png, .jpg, .jpeg"
+              accept="image/*"
               @change="onFileChanged"
-            ></v-file-input>
+            ></v-file-input> -->
+            <v-file-input accept="image/*"  prepend-icon="mdi-camera"
+              outlined
+              dense
+              label="Image" @change="onFileChanged"></v-file-input>
           </v-col>
 
           <v-col cols="12" class="pa-1">
@@ -91,7 +96,6 @@
                 </v-list-item-action>
               </template>
             </v-combobox>
-
           </v-col>
         </v-row>
       </v-form>
@@ -156,8 +160,8 @@ export default {
       );
     },
     onFileChanged(event) {
-      console.log(this.$refs)
-      this.selectedFile = this.$refs.selectedFile.files[0]
+      // console.log(this.$refs);
+      this.selectedFile = event;
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -169,25 +173,23 @@ export default {
       console.log(this.hash_check);
       let form = new FormData();
       let tagLists = [];
-      for (let i=0; i<this.model.length; i++){
+      for (let i = 0; i < this.model.length; i++) {
         tagLists.push(this.model[i].text);
       }
-  console.log(tagLists[0]);
-  console.log(tagLists[1]);
-  console.log(tagLists[2]);
-      
+      console.log(tagLists[0]);
+      console.log(tagLists[1]);
+      console.log(tagLists[2]);
 
       form.append("nickname", this.loginedNickname);
       form.append("article", this.inputPostContent);
       form.append("image", this.selectedFile);
-      form.append("hashtags",tagLists);
+      form.append("hashtags", tagLists);
       FeedApi.newPost(
         form,
         res => {
           console.log(res);
           alert("글이 성공적으로 게시되었습니다.");
           window.close();
-          
         },
         error => {
           console.log("error");
@@ -229,7 +231,7 @@ export default {
       this.model = val.map(v => {
         if (typeof v === "string") {
           v = {
-            text: v,
+            text: v
           };
 
           this.items.push(v);
