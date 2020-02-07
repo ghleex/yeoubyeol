@@ -8,12 +8,15 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import ArticleSerializer, CommentSerializer, HonorArticleSerializer
-from .models import Article, Comment, HonorArticle
+from .serializers import ArticleSerializer, CommentSerializer, HonorArticleSerializer, HashtagSerializer
+from .models import Article, Comment, HonorArticle, Hashtag
 from accounts.models import Notification, User
 from accounts.serializers import UserSerializer, NotificationSerializer
+from string import ascii_letters
+from konlpy.tag import Okt, Kkma, Komoran, Hannanum
+from collections import Counter
+import operator
 import konlpy
-from konlpy.tag import Okt, Komoran
 import secrets, json
 
 # Create your views here.
@@ -21,23 +24,40 @@ class ArticleList(APIView):
     # 글 생성 request = 'username', 
     def post(self, request, format=None):
         nickname = request.data.get('nickname')
-        print('000000000000000000000')
-        print(nickname)
-        print('000000000000000000000')
+        article = request.POST.get('article')
+        hashtags = request.POST.get('hashtags')
+        print('-------------123123123---')
+        hashtags = hashtags.split(',')
+        print(hashtags)
+        print('----------------123123')
         user = get_object_or_404(User, nickname=nickname)
-        print('---------------------------')
-        print(request.POST.get('article'))
-        print('---------------------------')
         data = {
-            'author_id': user.id,
             'article': request.data.get('article'),
-            'image': request.FILES['image'],
+            'author': user.id,
+            'image': request.data.get('image'),
         }
         serializer = ArticleSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            article = serializer.save()
+            for word in hashtags:
+                hashtag, created = Hashtag.objects.get_or_create(
+                    hashtag=word)
+                print('----------------')
+                print(word)
+                print(hashtag)
+                print('----------------')
+                hash_serializer = HashtagSerializer(data=hashtag)
+                if hash_serializer.is_valid():
+                    print('1111111111111111111111')
+                    print(hash_serializer.data)
+                    print('1111111111111111111111')
+                    hash_serializer.save()
+                print(hashtag.id)
+                print(serializer)
+                article.hashtags.add(hashtag)
+            print(data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(data)
+        return Response(data, status=status.HTTP_204_NO_CONTENT)
     # 글 리스트 조회
     def get(self, request, format=None):
         queryset = Article.objects.all()
@@ -45,33 +65,21 @@ class ArticleList(APIView):
 
         return Response(serializer.data)
 
-# ----------------------------------------------------------------------------------
+
 @api_view(['POST', ])
-def article(request):
-    nickname = request.data.get('nickname')
-    print('000000000000000000000')
-    print(nickname)
-    print('000000000000000000000')
-    user = get_object_or_404(User, nickname=nickname)
-    print('---------------------------')
-    print(request.POST.get('article'))
-    request.data.get('image')
-    print(user.id)
-    print('---------------------------')
-    data = {
-        'article': request.data.get('article'),
-        'author': user.id,
-        'image': request.data.get('image'),
-    }
-    serializer = ArticleSerializer(data=data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+def recommend(request):
+    content = request.data.get('article')
+    okt = Hannanum()
+    keywords = okt.nouns(request.POST.get('article'))
+    count = Counter(keywords)
+    count = sorted(sorted(count.items(), key=operator.itemgetter(0)), key=lambda x: x[1], reverse=True) 
+    data = []
+    for k in count:
+        data.append(k[0])
+        if len(data) > 2:
+            break
     return Response(data)
-# ----------------------------------------------------------------------------------
-
-
-
+        
 
 # 글 상세보기
 class ArticleDetail(APIView):
@@ -298,3 +306,14 @@ def honor(request):
     articles = HonorArticle.objects.all()
     serializer = HonorArticleSerializer(articles, many=True)
     return Response(serializer.data)
+
+def hashtag(request):
+    hashtag_pk = request.data.get('hashtag_pk')
+    articles = hashtag.article_set.order_by('-pk')
+    hashtag = get_object_or_404(Hashtag, id=hashtag_pk)
+    data = {
+        'articles': articles,
+        'hashtag': hashtag
+    }
+    return Response(data)
+    
