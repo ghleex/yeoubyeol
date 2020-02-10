@@ -10,7 +10,7 @@
       <v-list-item>
         <v-list-item-avatar color="grey darken-3">
           <v-img
-            :src="picname"
+            :src="pic_name"
           ></v-img>
         </v-list-item-avatar>
 
@@ -19,28 +19,7 @@
         </v-list-item-content>
       </v-list-item>
       <v-card-text class="subtitle-2 grey--text text--lighten-5 pb-0">
-<<<<<<< HEAD
-        {{ article }}
-        '뭐해?'라는 두 글자에 <br>
-        '네가 보고 싶어' 나의 속마음을 담아 우 <br>
-        이모티콘 하나하나 속에 <br>
-        달라지는 내 미묘한 심리를 알까 우 <br>
-        <br>
-        아니 바쁘지 않아 nothing no no <br>
-        잠들어 있지 않아 insomnia nia nia <br>
-        지금 다른 사람과 함께이지 않아 <br>
-        응, 나도 너를 생각 중 <br>
-        <br>
-        우리의 네모 칸은 bloom <br>
-        엄지손가락으로 장미꽃을 피워 <br>
-        향기에 취할 것 같아 우 <br>
-        오직 둘만의 비밀의 정원 <br>
-        <br>
-        I feel bloom I feel bloom I feel bloom <br>
-        너에게 한 송이를 더 보내 <br>
-=======
         {{article}}
->>>>>>> 7a4f844016675c21a0da49d442b5e5fe15342237
         <br>
         <v-row class="overline font-weight-thin pr-4" align="center" justify="end">
           2시간 전
@@ -74,9 +53,12 @@
 import axios from 'axios'
 export default {
   name: "Post",
-  // props : ['text', 'image','isLiked','picname'],
   props:{
-    nickName:{
+    id: {
+      required: true,
+    }
+    ,
+    nickname:{
       type:String,
     },
     article:{
@@ -85,7 +67,7 @@ export default {
     image:{
         type:String,
     },
-    picName:{
+    pic_name:{
         type:String,
         default:"no-image",
     },
@@ -121,7 +103,7 @@ export default {
     },
     comment() {
       var router = this.$router
-      router.push()
+      router.push(`comment/${this.id}`)
     }
   }
 }
