@@ -108,13 +108,14 @@ def social_auth(request):
         User = get_user_model()
         targetUser = User.objects.filter(username=idinfo['email'])
         if len(targetUser):
-            print('Geeeeeeeeeee')
+            pass
+            # print('Geeeeeeeeeee')
         else:
             newUser = User(username=idinfo['email'], email=idinfo['email'], nickname=idinfo['email'])
             newUser.set_password(idinfo['sub'] + 'salt')
             newUser.save()
-            print(newUser)
-            print('Baaaaaaaaaaaa')
+            # print(newUser)
+            # print('Baaaaaaaaaaaa')
 
     except ValueError:
         # Invalid token
@@ -155,7 +156,7 @@ def find_pwd(request):
 
     symbols = ascii_letters + digits + punctuation
     new_pwd = ''.join(secrets.SystemRandom().choice(symbols) for i in range(10))
-    print(new_pwd)
+    # print(new_pwd)
     user.set_password(new_pwd)
     user.save()
     
@@ -189,9 +190,9 @@ def change_pwd(request):
 @api_view(['POST',])
 # @login_required
 def profile(request):
-    print('------------------')
-    print(request.data)
-    print('------------------')
+    # print('------------------')
+    # print(request.data)
+    # print('------------------')
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
     serializer = UserSerializer(user)
