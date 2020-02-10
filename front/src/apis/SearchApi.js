@@ -1,4 +1,5 @@
 import axios from 'axios'
+const ip ="http://192.168.31.87:8000"; 
 
 const SearchUser = (data, callback, errorCallback) => {
     let searchKeyword = new FormData()
@@ -6,7 +7,7 @@ const SearchUser = (data, callback, errorCallback) => {
 
     console.log("여기서보낼거야~!"+searchKeyword);
 
-    axios.post('http://192.168.31.87:8000/articles/search/', searchKeyword)
+    axios.post(`${ip}/articles/search/`, searchKeyword)
         .then(res => {
             console.log(res)
             console.log('검색쿠성공')

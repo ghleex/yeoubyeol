@@ -1,7 +1,4 @@
-/*
- User API 예시
- */
-
+const ip ="http://192.168.31.87:8000"; 
 //가입
 import axios from 'axios'
 const requestSignup = (data, callback, errorCallback) => {
@@ -11,7 +8,7 @@ const requestSignup = (data, callback, errorCallback) => {
     form.append('nickname', data.nickname)
     form.append('username', data.email)
     form.append('password', data.password)
-    axios.post(`http://192.168.31.87:8000/accounts/signup/${data.key}/`, form)
+    axios.post(`${ip}/accounts/signup/${data.key}/`, form)
         .then((response) => {
             console.log(response)
             callback(response)
@@ -31,7 +28,7 @@ const requestLogin = (data, callback, errorCallback) => {
         username: data.email,
         password: data.password,
     }
-    axios.post('http://192.168.31.87:8000/auth/', credentials)
+    axios.post(`${ip}/auth/`, credentials)
         .then(res => {
             // console.log(res)
             // this.$store.dispatch('login', res.data.token)
@@ -50,7 +47,7 @@ const requestUserProfile = (data, callback, errorCallback) => {
         nickname: data,
     }
     // console.log(nickname)
-    axios.post('http://192.168.31.87:8000/accounts/profile/', nickname)
+    axios.post(`${ip}/accounts/profile/`, nickname)
         .then(res => {
             // console.log(res)
             // this.$store.dispatch('login', res.data.token)
@@ -69,7 +66,7 @@ const requestFollowers= (data, callback, errorCallback) => {
         nickname: data,
     }
     // console.log(nickname)
-    axios.post('http://192.168.31.87:8000/articles/followerlist/', nickname)
+    axios.post(`${ip}/articles/followerlist/`, nickname)
         .then(res => {
             console.log('팔로워리스트 가져오기 성공')
             callback(res)
@@ -86,7 +83,7 @@ const requestFollowings= (data, callback, errorCallback) => {
         nickname: data,
     }
     // console.log(nickname)
-    axios.post('http://192.168.31.87:8000/articles/following/', nickname)
+    axios.post(`${ip}/articles/following/`, nickname)
         .then(res => {
             console.log('팔로잉리스트 가져오기 성공')
             callback(res)

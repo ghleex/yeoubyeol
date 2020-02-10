@@ -1,11 +1,13 @@
 //follow 친구 맺기 /끊기 
+const ip ="http://192.168.31.87:8000"; 
+
 import axios from 'axios'
 const requestFollow = (data, callback, errorCallback) => {
     console.log(data);
     let form = new FormData()
     form.append('my_nickname', data.loginedNickname)
     form.append('your_nickname', data.shownNickname)
-    axios.post(`http://192.168.31.87:8000/articles/follower/`, form)
+    axios.post(`${ip}/articles/follower/`, form)
         .then((response) => {
             console.log(response)
             callback(response)
@@ -22,7 +24,7 @@ const requestFollow = (data, callback, errorCallback) => {
 const newPost = (form, callback, errorCallback) => {
     
 
-     axios.post(`http://192.168.31.87:8000/articles/`, form,{
+     axios.post(`${ip}/articles/`, form,{
         headers: {
             'Content-Type': 'multipart/form-data',
         }
@@ -43,7 +45,7 @@ const newPost = (form, callback, errorCallback) => {
 const requestHashTags = (form, callback, errorCallback) => {
     
 
-     axios.post(`http://192.168.31.87:8000/articles/recommend/`, form,{
+     axios.post(`${ip}/articles/recommend/`, form,{
      })
         .then((response) => {
             console.log('해시태그 받기 성공 :',response)
@@ -61,7 +63,23 @@ const requestHashTags = (form, callback, errorCallback) => {
 const getArticles = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('nickname', data)
-    axios.post(`http://192.168.31.87:8000/articles/mainfeed/`, form,{
+    axios.post(`${ip}/articles/mainfeed/`, form,{
+    })
+       .then((response) => {
+           console.log('게시글 받기 성공 :',response)
+           callback(response)
+       
+       })
+       .catch((response) => {
+           console.log(response)
+           console.log('게시글 받기 오류'  + response)
+           errorCallback('error')
+       }) 
+}
+
+//게시글 가져오기 : 아이디로 조회하기
+const getArticleById = (data, callback, errorCallback) => {
+    axios.get(`${ip}/articles/${data}/`,{
     })
        .then((response) => {
            console.log('게시글 받기 성공 :',response)
@@ -81,5 +99,6 @@ const FeedApi = {
     newPost: (data, callback, errorCallback) => newPost(data, callback, errorCallback),
     requestHashTags: (data, callback, errorCallback) => requestHashTags(data, callback, errorCallback),
     getArticles: (data, callback, errorCallback) => getArticles(data, callback, errorCallback),
+    getArticleById: (data, callback, errorCallback) => getArticleById(data, callback, errorCallback),
 }
 export default FeedApi

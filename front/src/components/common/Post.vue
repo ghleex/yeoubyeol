@@ -54,13 +54,10 @@ import axios from 'axios'
 export default {
   name: "Post",
   props:{
-<<<<<<< HEAD
     id: {
       required: true,
     }
     ,
-=======
->>>>>>> c566ff0ae95d99634d4da7f075ad76c891291bf6
     nickname:{
       type:String,
     },
@@ -106,7 +103,7 @@ export default {
     },
     comment() {
       var router = this.$router
-      router.push(`comment/${this.id}`)
+      router.push(`feed/${this.id}`)
     }
   }
 }
