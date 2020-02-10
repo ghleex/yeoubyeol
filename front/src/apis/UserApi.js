@@ -11,7 +11,7 @@ const requestSignup = (data, callback, errorCallback) => {
     form.append('nickname', data.nickname)
     form.append('username', data.email)
     form.append('password', data.password)
-    axios.post(`http://192.168.31.80:8000/accounts/signup/${data.key}/`, form)
+    axios.post(`http://192.168.31.87:8000/accounts/signup/${data.key}/`, form)
         .then((response) => {
             console.log(response)
             callback(response)

@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    
+    # 'directmessages',
     'social_django',
     'rest_social_auth',
     'oauth2_provider', 

@@ -1,16 +1,24 @@
 <template>
   <v-container>
-      <h1 class="white--text">어서오세용 홍주의 랩실3에서는 아이콘변경 / 파일 업로드 입니당.</h1>
+    <h1 class="white--text">어서오세용 홍주의 랩실3에서는 아이콘변경 / 파일 업로드 입니당.</h1>
     <div class="white">
       <label>
         File
-        <v-file-input id="file" ref="file" v-on:change="handleFileUpload()" />
+        <div id="preview">
+          <img v-if="url" :src="url" />
+        </div>
+        <v-file-input
+          accept="image/*"
+          prepend-icon="mdi-camera"
+          outlined
+          dense
+          label="Image"
+          @change="onFileChanged"
+        ></v-file-input>
       </label>
       <v-btn v-on:click="submitFile()">Submit</v-btn>
     </div>
-    <h2 class="grey--text">
-     ---------- 절취선 ----------
-    </h2>
+    <h2 class="grey--text">---------- 절취선 ----------</h2>
     <div class="white">
       <v-text-field v-model="name" label="file name" solo-inverted></v-text-field>
       <v-btn @click="setFileName">click</v-btn>
@@ -34,10 +42,10 @@ export default {
   data() {
     return {
       file: "",
-      source:'profile_default.png',
-      name:'',
-      test:"",
-
+      source: "profile_default.png",
+      name: "",
+      test: "",
+      url: null
     };
   },
 
@@ -60,7 +68,7 @@ export default {
           Make the request to the POST /single-file URL
         */
       axios
-        .post(`http://192.168.31.80:8000/articles/`, formData, {
+        .post(`http://192.168.31.87:8000/articles/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -76,20 +84,33 @@ export default {
     /*
         Handles a change on the file upload
       */
-    handleFileUpload() {
-      this.file = this.$refs.file.files[0];
+    onFileChanged(event) {
+      this.file = event;
+      console.log(this.file);
+      this.url = URL.createObjectURL(this.file);
     },
-    setFileName(){
+    setFileName() {
       this.source = this.name;
       // console.log(this.setBG);
-      this.test = require('../assets/images/'+this.source);
+      this.test = require("../assets/images/" + this.source);
       console.log(this.test);
-
     },
-     setBG(){
+    setBG() {
       return `@/assets/images/${this.source}`;
     }
-  },
-
+  }
 };
 </script>
+
+<style scoped>
+#preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview img {
+  max-width: 100%;
+  max-height: 500px;
+}
+</style>
