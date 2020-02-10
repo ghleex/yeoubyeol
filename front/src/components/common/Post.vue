@@ -11,15 +11,16 @@
       <v-list-item>
         <v-list-item-avatar color="grey darken-3">
           <v-img
-            src=""
+            :src="picname"
           ></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title>Evan You</v-list-item-title>
+          <v-list-item-title>{{ nickname }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
       <v-card-text class="subtitle-2 grey--text text--lighten-5 pb-0">
+        {{ article }}
         '뭐해?'라는 두 글자에 <br>
         '네가 보고 싶어' 나의 속마음을 담아 우 <br>
         이모티콘 하나하나 속에 <br>
@@ -50,10 +51,15 @@
             align="center"
             justify="end"
           >
-            <v-icon class="mr-1" size="x-large">mdi-heart-outline</v-icon>
-            <span class="subheading mr-2">256</span>
-            <v-icon class="mr-1" size="x-large">mdi-star-outline</v-icon>
-            <span class="subheading">45</span>
+            <a href="#" @click.prevent="iLoveIt">
+              <v-icon class="mr-1" size="x-large" v-if="!isLike">mdi-heart-outline</v-icon>
+              <v-icon class="mr-1" size="x-large" color="red" v-if="isLike">mdi-heart</v-icon>
+              <span class="subheading mr-2">{{likes}}</span>
+            </a>
+            <a href="#" @click.prevent="comment">
+              <v-icon class="mr-1" size="x-large">mdi-comment-outline</v-icon>
+              <span class="subheading">{{comments}}</span>
+            </a>
           </v-row>
         </v-list-item>
       </v-card-actions>
@@ -62,36 +68,63 @@
 </template>
 
 <script>
-    export default {
-        name: "Post",
-        // props : ['text', 'image','isLiked','picname'],
-        props:{
-            // content:{
-            //     type: Object,
-            // },
-            image:{
-                type:String,
-            },
-            // isLiked:{
-            //     type:Boolean,
-            //     required:true
-            // },
-            picName:{
-                type:String,
-                default:"no-image",
-            },
-            // isClipped:{
-            //     type:Boolean,
-            //     required:true
-            // }
+import axios from 'axios'
+export default {
+  name: "Post",
+  // props : ['text', 'image','isLiked','picname'],
+  props:{
+    // content:{
+    //     type: Object,
+    // },
+    image:{
+        type:String,
+    },
+    // isLiked:{
+    //     type:Boolean,
+    //     required:true
+    // },
+    picName:{
+        type:String,
+        default:"no-image",
+    },
+    // isClipped:{
+    //     type:Boolean,
+    //     required:true
+    // }
+  },
+    data: function () {
+      return {
+          show: false,
+          likes: 21,
+          comments: 1,
+          isLike: false,
+      }
+  },
+  methods: {
+    iLoveIt() {
+      if (this.isLike) {
+        this.likes -= 1;
+      } else {
+        this.likes += 1;
+      }
 
-        },
-          data: function () {
-            return {
-                show:false,
-                likes:213,
-            }
-        },
+      var userinfo = JSON.parse(sessionStorage.getItem('LoginUserInfo')).nickname
+      console.log(userinfo)
+      var form = new FormData();
+      form.append('article_id', 1)
+      form.append('username', userinfo)
+      form.append('isLike', this.isLike)
+      axios.post('http://192.168.31.87:8000/articles/like/', form)
+        .then(response => {
+          console.log(response)
+        })
+      this.isLike = !this.isLike
+    },
+    comment() {
+      var router = this.$router
+      router.push()
     }
+  }
+}
 </script>
 \
