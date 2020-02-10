@@ -1,7 +1,6 @@
 <template>
   <v-card class="overflow-hidden">
     <v-app-bar
-      absolute
       color="#110B22"
       dark
       elevate-on-scroll
@@ -42,9 +41,9 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-item @click="changeViewProfile('팔로',currUserInfo.nickname)">
-          <v-content class="left">{{currUserInfo.followers}} 팔로워</v-content>
+          <v-list-item-content class="left">{{currUserInfo.followers}} 팔로워</v-list-item-content>
           <v-spacer></v-spacer>
-          <v-content>{{currUserInfo.followings}} 팔로잉</v-content>
+          <v-list-item-content>{{currUserInfo.followings}} 팔로잉</v-list-item-content>
         </v-list-item>
 
         <v-divider></v-divider>
@@ -74,11 +73,11 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-sheet>
-      <v-container style="background-color:#110b22">
-        <router-view :key="$route.fullPath"></router-view>
-      </v-container>
-    </v-sheet>
+    <!-- <v-sheet style="background-color:#110b22">
+      <v-responsive style="background-color:#110b22">
+       <router-view :key="$route.fullPath"></router-view>
+      </v-responsive>
+    </v-sheet> -->
   </v-card>
 </template>
 
@@ -113,14 +112,16 @@ export default {
       this.pageTitle = this.$route.name;
     }
     this.getLoginUserProfile();
-  },
-  created() {
-    //이거 선행님이 바꾼거 밑에 넣어야해
+
+     //이거 선행님이 바꾼거 밑에 넣어야해
     if (this.$route.name === "검색") {
       this.isSearchPage = true;
     } else {
       this.isSearchPage = false;
     }
+  },
+  created() {
+   
 
     //가라천국....heaven
     // this.$vuetify.theme.dark = true
