@@ -15,20 +15,20 @@
             >피드 발행하기</v-btn>
           </v-col>
           <v-col cols="12" class="pa-1">
-            <!-- <v-file-input
-              id="file"
-              ref="file"
+            <div id="preview">
+              <img v-if="url" :src="url" style="padding-bottom:5px" />
+              <br />
+            </div>
+            <v-file-input
+              accept="image/*"
               prepend-icon="mdi-camera"
               outlined
               dense
+              required
+              :clearable=false
               label="Image"
-              accept="image/*"
               @change="onFileChanged"
-            ></v-file-input> -->
-            <v-file-input accept="image/*"  prepend-icon="mdi-camera"
-              outlined
-              dense
-              label="Image" @change="onFileChanged"></v-file-input>
+            ></v-file-input>
           </v-col>
 
           <v-col cols="12" class="pa-1">
@@ -43,7 +43,7 @@
               clearable
             >{{inputPostContent}}</v-textarea>
 
-            <v-btn @click="requestHashTags">해시태그 추천받기</v-btn>
+            <v-btn @click="requestHashTags" text>해시태그 추천받기</v-btn>
             <!-- 여기부터 시작야이             -->
             <v-combobox
               v-model="model"
@@ -160,8 +160,8 @@ export default {
       );
     },
     onFileChanged(event) {
-      // console.log(this.$refs);
-      this.selectedFile = event;
+        this.selectedFile = event;
+        this.url = URL.createObjectURL(this.selectedFile);
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -203,6 +203,7 @@ export default {
       activator: null,
       attach: null,
       editing: null,
+      url: null,
       index: -1,
       items: [{ header: "아래 중 하나를 입력하거나, 새로 입력해보세요!" }],
       nonce: 1,
@@ -245,3 +246,15 @@ export default {
   }
 };
 </script>
+<style scoped>
+#preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview img {
+  max-width: 50%;
+  max-height: 100px;
+}
+</style>
