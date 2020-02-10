@@ -207,7 +207,7 @@ def followerlist(request):
         return Response({'message': '팔로워를 찾을 수 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
-@login_required
+@api_view(['POST', ])
 def like(request):
     # 요청 보낸 유저 정보
     username = request.data.get('username')
