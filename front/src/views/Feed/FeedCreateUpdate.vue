@@ -175,9 +175,6 @@ export default {
       for (let i = 0; i < this.model.length; i++) {
         tagLists.push(this.model[i].text);
       }
-      console.log(tagLists[0]);
-      console.log(tagLists[1]);
-      console.log(tagLists[2]);
 
       form.append("nickname", this.loginedNickname);
       form.append("article", this.inputPostContent);

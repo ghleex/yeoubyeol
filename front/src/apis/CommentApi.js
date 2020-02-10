@@ -1,4 +1,6 @@
 import axios from 'axios'
+import dotenv from 'dotenv';
+dotenv.config();
 
 // 댓글 작성하기
 const PostComments = (data, callback, errorCallback) => {

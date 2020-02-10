@@ -12,7 +12,7 @@
 
     <v-card-actions>
       <v-btn v-show="isMyComment">Edit</v-btn>
-      <v-btn v-show="isMyComment">Remove</v-btn>
+      <v-btn v-show="isMyComment" @click="removeComment">Remove</v-btn>
       <v-spacer></v-spacer>
       {{created_at}}
     </v-card-actions>
@@ -58,7 +58,18 @@ export default {
       isMyComment: false
     };
   },
-  methods: {},
+  methods: {
+    removeComment() {
+      var txt;
+      var r = confirm("Press a button!");
+      if (r == true) {
+        txt = "You pressed OK!";
+      } else {
+        txt = "You pressed Cancel!";
+      }
+      console.log(txt);
+    }
+  },
   created() {
     const LoginNickname = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
       .nickname;

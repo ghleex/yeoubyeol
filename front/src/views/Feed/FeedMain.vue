@@ -44,7 +44,7 @@ export default {
               id: res.data[i].id,
               article: res.data[i].article,
               hashtags: res.data[i].hashtags,
-              likes: JSON.stringify(res.data[i].like_users.length),
+              likes: res.data[i].like_users.length,
               comments: res.data[i].comments,
               created_at: res.data[i].created_at,
             };
