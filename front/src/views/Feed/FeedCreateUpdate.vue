@@ -3,32 +3,31 @@
     <v-card dark color="#110b22" style="border:solid 2px #888">
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-row class="py-0 ma-2">
-          <v-col cols="12" class="pa-1">
+          <v-col cols="12" class="pa-1 d-flex justify-end">
             <v-btn
               class="mb-2"
               color="#71d087"
               style
               text
-              justify="end"
               @click="validate"
               :disabled="!valid"
             >피드 발행하기</v-btn>
           </v-col>
           <v-col cols="12" class="pa-1">
-            <!-- <v-file-input
-              id="file"
-              ref="file"
+            <div id="preview">
+              <img v-if="url" :src="url" style="padding-bottom:5px" />
+              <br />
+            </div>
+            <v-file-input
+              accept="image/*"
               prepend-icon="mdi-camera"
               outlined
               dense
+              required
+              :clearable=false
               label="Image"
-              accept="image/*"
               @change="onFileChanged"
-            ></v-file-input> -->
-            <v-file-input accept="image/*"  prepend-icon="mdi-camera"
-              outlined
-              dense
-              label="Image" @change="onFileChanged"></v-file-input>
+            ></v-file-input>
           </v-col>
 
           <v-col cols="12" class="pa-1">
@@ -43,7 +42,7 @@
               clearable
             >{{inputPostContent}}</v-textarea>
 
-            <v-btn @click="requestHashTags">해시태그 추천받기</v-btn>
+            <v-btn @click="requestHashTags" text>해시태그 추천받기</v-btn>
             <!-- 여기부터 시작야이             -->
             <v-combobox
               v-model="model"
@@ -160,8 +159,8 @@ export default {
       );
     },
     onFileChanged(event) {
-      // console.log(this.$refs);
-      this.selectedFile = event;
+        this.selectedFile = event;
+        this.url = URL.createObjectURL(this.selectedFile);
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -176,9 +175,6 @@ export default {
       for (let i = 0; i < this.model.length; i++) {
         tagLists.push(this.model[i].text);
       }
-      console.log(tagLists[0]);
-      console.log(tagLists[1]);
-      console.log(tagLists[2]);
 
       form.append("nickname", this.loginedNickname);
       form.append("article", this.inputPostContent);
@@ -203,6 +199,7 @@ export default {
       activator: null,
       attach: null,
       editing: null,
+      url: null,
       index: -1,
       items: [{ header: "아래 중 하나를 입력하거나, 새로 입력해보세요!" }],
       nonce: 1,
@@ -245,3 +242,15 @@ export default {
   }
 };
 </script>
+<style scoped>
+#preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview img {
+  max-width: 50%;
+  max-height: 100px;
+}
+</style>

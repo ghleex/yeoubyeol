@@ -16,6 +16,7 @@ import UserProfile from './views/User/UserProfile.vue'
 //피드
 import FeedMain from './views/Feed/FeedMain.vue'
 import FeedCreateUpdate from '@/views/Feed/FeedCreateUpdate.vue'
+import FeedComment from '@/views/Feed/FeedComment.vue'
 
 //에러
 import EPageNotFound from './views/Error/EPageNotFound.vue'
@@ -111,6 +112,12 @@ export default [
         path: '/feed/up',
         name: '피드 저장',
         component: FeedCreateUpdate,
+        beforeEnter: requireAuth()
+    },
+    {
+        path: '/feed/:id',
+        name: '댓글',
+        component: FeedComment,
         beforeEnter: requireAuth()
     },
     //에러

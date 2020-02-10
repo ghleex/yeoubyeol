@@ -2,6 +2,7 @@
   <v-app style="background-color:#110b22;">
     <v-content v-if="isLogin && userNickname">
       <hongjulab :pr_username="userNickname" />
+       <router-view :key="$route.fullPath"></router-view>
       <v-dialog max-width="600px">
         <template v-slot:activator="{ on }">
           <v-btn fixed dark fab bottom right color="#71d087" v-on="on">
