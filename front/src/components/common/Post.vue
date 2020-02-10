@@ -22,7 +22,7 @@
         {{article}}
         <br>
         <v-row class="overline font-weight-thin pr-4" align="center" justify="end">
-          2시간 전
+          {{ timedelta }}
         </v-row>
       </v-card-text>
   
@@ -51,54 +51,68 @@
 
 <script>
 import axios from 'axios'
+import dotenv from 'dotenv';
+
+dotenv.config();
 export default {
   name: "Post",
   props:{
-<<<<<<< HEAD
     id: {
       required: true,
     }
     ,
-=======
->>>>>>> c566ff0ae95d99634d4da7f075ad76c891291bf6
     nickname:{
-      type:String,
+      type: String,
     },
     article:{
-      type:String,
+      type: String,
     },
     image:{
-        type:String,
+      type: String,
     },
     pic_name:{
-        type:String,
-        default:"no-image",
+      type: String,
+      default: "no-image",
     },
-    
+    comments: {
+      type: Number
+    },
+    likes: {
+      type: Number
+    },
+    created_at: {
+      type: String
+    }
   },
     data: function () {
       return {
           show: false,
-          likes: 21,
-          comments: 1,
           isLike: false,
+          timedelta: '',
       }
+  },
+  created() {
+    let date = new Date();
+    let maybe = new Date(this.created_at)
+    let diffTime = Math.ceil((date - maybe) / 1000 / 60 / 60 )
+
+    if (diffTime < 30) {
+      this.timedelta = '조금 전'
+    } else if (diffTime < 24) {
+      this.timedelta = `${diffTime}시간 전`
+    } else {
+      this.timedelta = `${date.getDate() - maybe.getDate()}일 전`
+    }
   },
   methods: {
     iLoveIt() {
-      if (this.isLike) {
-        this.likes -= 1;
-      } else {
-        this.likes += 1;
-      }
-
       var userinfo = JSON.parse(sessionStorage.getItem('LoginUserInfo')).nickname
       console.log(userinfo)
       var form = new FormData();
       form.append('article_id', 1)
       form.append('username', userinfo)
       form.append('isLike', this.isLike)
-      axios.post('http://192.168.31.87:8000/articles/like/', form)
+      axios.post(`http://${process.env.VUE_APP_IP}/articles/like/`, form)
         .then(response => {
           console.log(response)
         })
@@ -106,7 +120,7 @@ export default {
     },
     comment() {
       var router = this.$router
-      router.push(`comment/${this.id}`)
+      router.push(`feed/${this.id}`)
     }
   }
 }
