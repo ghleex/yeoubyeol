@@ -54,10 +54,13 @@ import axios from 'axios'
 export default {
   name: "Post",
   props:{
+<<<<<<< HEAD
     id: {
       required: true,
     }
     ,
+=======
+>>>>>>> c566ff0ae95d99634d4da7f075ad76c891291bf6
     nickname:{
       type:String,
     },
