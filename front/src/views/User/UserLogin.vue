@@ -141,7 +141,8 @@ export default {
                   sessionStorage.setItem("AUTH_token", this.tokenFromLogin);
                   const LoginUserInfo={
                     nickname : response.data[0].nickname,
-                    id : response.data[0].id
+                    id : response.data[0].id,
+                    pic_name:response.data[0].pic_name
                   }
                   sessionStorage.setItem('LoginUserInfo',JSON.stringify(LoginUserInfo));
                   router.push({ name: "홈" });

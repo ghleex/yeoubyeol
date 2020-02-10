@@ -1,4 +1,5 @@
- //가입
+const ip ="http://192.168.31.87:8000"; 
+//가입
 import axios from 'axios'
 import dotenv from 'dotenv';
 
