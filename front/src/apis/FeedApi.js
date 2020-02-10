@@ -1,6 +1,4 @@
 //follow 친구 맺기 /끊기 
-const ip ="http://192.168.31.87:8000"; 
-
 import axios from 'axios'
 import dotenv from 'dotenv';
 

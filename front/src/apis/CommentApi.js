@@ -1,10 +1,8 @@
-const ip ="http://192.168.31.87:8000"; 
-
 import axios from 'axios'
 
 // 댓글 작성하기
 const PostComments = (data, callback, errorCallback) => {
-    axios.post(`${ip}/articles/comment/`, data)
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/comment/`, data)
         .then((response) => {
             console.log(response)
             callback(response)
@@ -21,7 +19,7 @@ const PostComments = (data, callback, errorCallback) => {
 const newPost = (form, callback, errorCallback) => {
     
 
-     axios.post(`http://192.168.31.87:8000/articles/`, form,{
+     axios.post(`http://${process.env.VUE_APP_IP}/articles/`, form,{
         headers: {
             'Content-Type': 'multipart/form-data',
         }
