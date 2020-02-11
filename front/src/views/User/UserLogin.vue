@@ -87,6 +87,9 @@ import PV from "password-validator";
 import axios from 'axios'
 import * as EmailValidator from "email-validator";
 import UserApi from "../../apis/UserApi";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 let tokenFromLogin='';
 export default {
@@ -145,6 +148,20 @@ export default {
                     pic_name:response.data[0].pic_name
                   }
                   sessionStorage.setItem('LoginUserInfo',JSON.stringify(LoginUserInfo));
+                  this.$cookies.set('auth_cookie', this.tokenFromLogin, 60 * 5)
+                  
+                  var token = this.$cookies.get('auth_cookie')
+                  // var userInfo = new FormData();
+                  // userInfo.append('username', response.data[0].username)
+                  // userInfo.append('token', token)
+
+                  // axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
+                  //   .then(reponse => {
+                  //     console.log(response)
+                  //   })
+                  //   .else(error => {
+                  //     console.log(error)
+                  //   })
                   router.push({ name: "홈" });
               }),error=>{
                 console.log("로그인 후 프로필 가져오기 문제");

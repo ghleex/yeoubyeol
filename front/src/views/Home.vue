@@ -30,10 +30,8 @@
 import "../assets/css/home.scss";
 export default {
   created() {
-    if (
-      sessionStorage.getItem("AUTH_token") &&
-      sessionStorage.getItem("LoginUserInfo")
-    ) {
+    var cookie = document.cookie.replace(/(?:(?:^|.*;\s*)auth_cookie\s*=\s*([^;]*).*$)|^.*$/, "$1");
+    if (cookie) {
       this.isOk = true;
     }
   },

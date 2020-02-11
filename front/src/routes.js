@@ -32,10 +32,9 @@ import hongjuLab2 from './views/hongjuLab2.vue'
 import hongjuLab3 from './views/hongjuLab3.vue'
 import hongjuLab4 from './views/hongjuLab4.vue'
 
-
-
+var cookie = document.cookie.replace(/(?:(?:^|.*;\s*)auth_cookie\s*=\s*([^;]*).*$)|^.*$/, "$1");
 const requireAuth = () => (to, from, next) => {
-    if(sessionStorage.getItem('AUTH_token')){
+    if(cookie){
     // if (this.$cookies.isKey('auth_cookie')) {
       return next();
     }
@@ -43,7 +42,7 @@ const requireAuth = () => (to, from, next) => {
   };
 
 const LoginUsersCantAccess = () => (to, from, next) => {
-    if(!sessionStorage.getItem('AUTH_token')){
+    if(!cookie){
     // if (this.$cookies.isKey('auth_cookie')) {
       return next();
     }
