@@ -30,6 +30,10 @@ const requestLogin = (data, callback, errorCallback) => {
         username: data.email,
         password: data.password,
     }
+
+    axios.defaults.xsrfCookieName = 'csrftoken'
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
     axios.post(`http://${process.env.VUE_APP_IP}/auth/`, credentials)
         .then(res => {
             // console.log(res)

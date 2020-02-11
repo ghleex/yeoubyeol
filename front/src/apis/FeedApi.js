@@ -23,8 +23,6 @@ const requestFollow = (data, callback, errorCallback) => {
 
 //새 글 작성하기
 const newPost = (form, callback, errorCallback) => {
-    
-
      axios.post(`http://${process.env.VUE_APP_IP}/articles/`, form,{
         headers: {
             'Content-Type': 'multipart/form-data',

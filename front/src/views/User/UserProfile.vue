@@ -219,7 +219,7 @@ export default {
 
   data: () => {
     return {
-      loginedNickname:'',
+      loginedNickname: '',
       isFollow: false,
       isMyAccount: false,
       loginUsername: "",

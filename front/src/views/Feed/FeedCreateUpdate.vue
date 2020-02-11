@@ -175,7 +175,13 @@ export default {
       for (let i = 0; i < this.model.length; i++) {
         tagLists.push(this.model[i].text);
       }
-
+      // console.log(tagLists[0]);
+      // console.log(tagLists[1]);
+      // console.log(tagLists[2]);
+      
+      var token = sessionStorage.getItem('AUTH_token')
+      console.log(token)
+      form.append('token', token)
       form.append("nickname", this.loginedNickname);
       form.append("article", this.inputPostContent);
       form.append("image", this.selectedFile);
