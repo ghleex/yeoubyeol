@@ -7,13 +7,12 @@
         <v-list-item-avatar color="grey darken-3">
           <v-img
             class="elevation-6"
-            src="../../assets/images/profile_default.png" />
+            :src="pic_name" />
           </v-list-item-avatar>
 
         <v-list-item-content>
           <v-list-item-title style="color:#71d087">{{nickname}}</v-list-item-title>
-        username
-
+    {{intro}}
         </v-list-item-content>
       </v-list-item>
     </v-card-actions>
@@ -27,9 +26,12 @@
             nickname:{
                 type:String,
             },
-            username:{
-                type:String,
-            },
+           pic_name:{
+             type:String,
+           },
+           intro:{
+             type:String
+           }
 
         },
           data: function () {

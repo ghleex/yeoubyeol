@@ -111,7 +111,7 @@ export default {
     } else {
       this.pageTitle = this.$route.name;
     }
-    this.getLoginUserProfile();
+    // this.getLoginUserProfile();
 
      //이거 선행님이 바꾼거 밑에 넣어야해
     if (this.$route.name === "검색") {

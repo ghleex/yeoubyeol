@@ -76,22 +76,6 @@ const getArticles = (data, callback, errorCallback) => {
        }) 
 }
 
-// 좋아요한 글 가져오기
-const getLikeArticles = (data, callback, errorCallback) => {
-    let form = new FormData()
-    form.append('nickname', data)
-    axios.post(`http://${process.env.VUE_APP_IP}/articles/myarticle/`, form)
-        .then((response) => {
-            console.log('게시글 받기 성공 :',response)
-            callback(response)
-        
-        })
-        .catch((response) => {
-            console.log(response)
-            console.log('게시글 받기 오류'  + response)
-            errorCallback('error')
-        }) 
-    }
     
 //게시글 가져오기 : 아이디로 조회하기
 const getArticleById = (data, callback, errorCallback) => {
@@ -109,30 +93,49 @@ const getArticleById = (data, callback, errorCallback) => {
        }) 
 }
 
-// 내 게시글 가져오기
-const getMyArticles = (data, callback, errorCallback) => {
+// 사용자 프로필에서 게시피드와 좋아한 피드 받아오기
+const getPostLikedArticles = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('nickname', data)
     axios.post(`http://${process.env.VUE_APP_IP}/articles/myarticle/`, form,{
     })
        .then((response) => {
-           console.log('게시글 받기 성공 :',response)
+           console.log('내 게시글 받기 성공 :',response)
            callback(response)
        
        })
        .catch((response) => {
            console.log(response)
-           console.log('게시글 받기 오류'  + response)
+           console.log('내 게시글 받기 오류'  + response)
            errorCallback('error')
        }) 
 }
+
+
+// 게시글에 좋아요 누르기 
+const userLikesPost = (form, callback, errorCallback) => {
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/like/`, form,{
+    })
+       .then((response) => {
+           console.log('게시글 좋아요 성공 :',response)
+           callback(response)
+       
+       })
+       .catch((response) => {
+           console.log(response)
+           console.log('게시글 좋아요 오류'  + response)
+           errorCallback('error')
+       }) 
+}
+
 
 const FeedApi = {
     requestFollow: (data, callback, errorCallback) => requestFollow(data, callback, errorCallback),
     newPost: (data, callback, errorCallback) => newPost(data, callback, errorCallback),
     requestHashTags: (data, callback, errorCallback) => requestHashTags(data, callback, errorCallback),
     getArticles: (data, callback, errorCallback) => getArticles(data, callback, errorCallback),
-    getMyArticles: (data, callback, errorCallback) => getMyArticles(data, callback, errorCallback),
+    getPostLikedArticles: (data, callback, errorCallback) => getPostLikedArticles(data, callback, errorCallback),
     getArticleById: (data, callback, errorCallback) => getArticleById(data, callback, errorCallback),
+    userLikesPost: (data, callback, errorCallback) => userLikesPost(data, callback, errorCallback),
 }
 export default FeedApi
