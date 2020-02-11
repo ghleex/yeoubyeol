@@ -1,12 +1,14 @@
 import axios from 'axios'
+import dotenv from 'dotenv';
 
+dotenv.config();
 const SearchUser = (data, callback, errorCallback) => {
     let searchKeyword = new FormData()
     searchKeyword.append('keyword', data.keyword)
 
     console.log("여기서보낼거야~!"+searchKeyword);
 
-    axios.post('http://192.168.31.87:8000/articles/search/', searchKeyword)
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/search/`, searchKeyword)
         .then(res => {
             console.log(res)
             console.log('검색쿠성공')
