@@ -5,7 +5,7 @@
     <article>
       <div dark color="transparent" style="top: 60%; margin-top:70px">
         <h1>
-          <br />달이 떴어요.                                                                       
+          <br />달이 떴어요.
           <br />모두 나오세요.
           <br />
         </h1>
@@ -21,7 +21,8 @@
     </article>
     <!--  Video is muted & autoplays, placed after major DOM elements for performance & has an image fallback  -->
     <video autoplay loop id="video-background" muted plays-inline>
-      <source src="../assets/images/example/7.mp4" />
+      <!-- <source :src="../assets/images/example/7.mp4" /> -->
+      <source :src="homeVideo" />
     </video>
   </div>
 </template>
@@ -30,6 +31,7 @@
 import "../assets/css/home.scss";
 export default {
   created() {
+    this.setVideo();
     if (
       sessionStorage.getItem("AUTH_token") &&
       sessionStorage.getItem("LoginUserInfo")
@@ -39,11 +41,18 @@ export default {
   },
   data: () => {
     return {
-      isOk: false
+      isOk: false,
+      homeVideo: ""
     };
   },
 
   methods: {
+    setVideo() {
+      let max = 6;
+      let min = 1;
+      var name = Math.floor(Math.random() * max) + min;
+      this.homeVideo = require("@/assets/images/example/" + name + ".mp4");
+    },
     logout() {
       sessionStorage.removeItem("AUTH_token");
       sessionStorage.removeItem("LoginUserInfo");

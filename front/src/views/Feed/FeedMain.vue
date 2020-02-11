@@ -1,7 +1,7 @@
 <template>
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
-      <v-col cols="12" v-for="arti in articles" :key="arti.article">
+      <v-col cols="12" v-for="arti in articles" :key="arti.id">
         <Post v-bind="arti" />
       </v-col>
     </v-row>
@@ -32,8 +32,6 @@ export default {
       FeedApi.getArticles(
         this.loginedNickname,
         res => {
-          console.log("---------------");
-          console.log(res.data);
           for (let i = 0; i < res.data.length; i++) {
             let article_prop = {
               nickname: res.data[i].nickname,

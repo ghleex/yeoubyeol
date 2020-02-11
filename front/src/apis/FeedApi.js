@@ -118,13 +118,13 @@ const getMyArticles = (data, callback, errorCallback) => {
     axios.post(`http://${process.env.VUE_APP_IP}/articles/myarticle/`, form,{
     })
        .then((response) => {
-           console.log('게시글 받기 성공 :',response)
+           console.log('내 게시글 받기 성공 :',response)
            callback(response)
        
        })
        .catch((response) => {
            console.log(response)
-           console.log('게시글 받기 오류'  + response)
+           console.log('내 게시글 받기 오류'  + response)
            errorCallback('error')
        }) 
 }
@@ -136,5 +136,6 @@ const FeedApi = {
     getArticles: (data, callback, errorCallback) => getArticles(data, callback, errorCallback),
     getMyArticles: (data, callback, errorCallback) => getMyArticles(data, callback, errorCallback),
     getArticleById: (data, callback, errorCallback) => getArticleById(data, callback, errorCallback),
+    getLikeArticles: (data, callback, errorCallback) => getLikeArticles(data, callback, errorCallback),
 }
 export default FeedApi
