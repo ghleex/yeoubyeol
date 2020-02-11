@@ -1,13 +1,5 @@
 import axios from 'axios'
 import dotenv from 'dotenv';
-<<<<<<< HEAD
-dotenv.config();
-//  ------------------ 현재 기능
-//댓글 작성
-//댓글 수정
-
-=======
->>>>>>> 01e8ff67b174819e6e465a34a164bd7d76e47b56
 
 dotenv.config();
 // 댓글 작성하기

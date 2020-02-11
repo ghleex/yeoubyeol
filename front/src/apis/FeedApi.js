@@ -111,6 +111,24 @@ const getPostLikedArticles = (data, callback, errorCallback) => {
        }) 
 }
 
+
+// 게시글에 좋아요 누르기 
+const userLikesPost = (form, callback, errorCallback) => {
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/like/`, form,{
+    })
+       .then((response) => {
+           console.log('게시글 좋아요 성공 :',response)
+           callback(response)
+       
+       })
+       .catch((response) => {
+           console.log(response)
+           console.log('게시글 좋아요 오류'  + response)
+           errorCallback('error')
+       }) 
+}
+
+
 const FeedApi = {
     requestFollow: (data, callback, errorCallback) => requestFollow(data, callback, errorCallback),
     newPost: (data, callback, errorCallback) => newPost(data, callback, errorCallback),
@@ -118,5 +136,6 @@ const FeedApi = {
     getArticles: (data, callback, errorCallback) => getArticles(data, callback, errorCallback),
     getPostLikedArticles: (data, callback, errorCallback) => getPostLikedArticles(data, callback, errorCallback),
     getArticleById: (data, callback, errorCallback) => getArticleById(data, callback, errorCallback),
+    userLikesPost: (data, callback, errorCallback) => userLikesPost(data, callback, errorCallback),
 }
 export default FeedApi

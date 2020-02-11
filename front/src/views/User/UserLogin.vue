@@ -148,7 +148,7 @@ export default {
                     pic_name:response.data[0].pic_name
                   }
                   sessionStorage.setItem('LoginUserInfo',JSON.stringify(LoginUserInfo));
-                  this.$cookies.set('auth_cookie', this.tokenFromLogin, 60 * 5)
+                  this.$cookies.set('auth_cookie', this.tokenFromLogin, 60 * 60)
                   
                   var token = this.$cookies.get('auth_cookie')
                   // var userInfo = new FormData();

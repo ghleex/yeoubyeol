@@ -29,8 +29,6 @@ import Follow from './views/Settings/Follow.vue'
 //검색
 import Search from './views/Search.vue'
 import hongjuLab2 from './views/hongjuLab2.vue'
-import hongjuLab3 from './views/hongjuLab3.vue'
-import hongjuLab4 from './views/hongjuLab4.vue'
 
 var cookie = document.cookie.replace(/(?:(?:^|.*;\s*)auth_cookie\s*=\s*([^;]*).*$)|^.*$/, "$1");
 const requireAuth = () => (to, from, next) => {
@@ -162,15 +160,5 @@ export default [
         path: '/lab2',
         name: '홍주랩실2',
         component: hongjuLab2
-    },
-    {
-        path: '/lab3',
-        name: '홍주랩실3',
-        component: hongjuLab3
-    },
-    {
-        path: '/lab4',
-        name: '홍주랩실4',
-        component: hongjuLab4
     },
 ]

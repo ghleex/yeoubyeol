@@ -3,11 +3,8 @@
     <v-row class="pt-0" align="start" justify="center">
       <!-- 글 원문  -->
       <v-col cols="12">
-        <div class="pa-2">
-          <router-link :to="{name:'메인피드'}">
-            <v-icon class="white--text">mdi-chevron-left</v-icon>
-            <b style="color:#bbb">메인피드</b>
-          </router-link>
+        <div class="pa-2" @click="backward">
+          <v-icon class="white--text">mdi-chevron-left</v-icon>
         </div>
         <CommentArticle v-bind="article" />
       </v-col>
@@ -70,6 +67,10 @@ export default {
     this.getArticleById(this.$route.params.id);
   },
   methods: {
+    backward() {
+      var router = this.$router;
+      router.go(-1);
+    },
     validate() {
       if (this.$refs.form.validate()) {
         this.PostComments();
@@ -195,7 +196,17 @@ export default {
       content: ""
     },
 
-    article: {},
+    article: {
+      nickname: "",
+      picname: "",
+      id: 0,
+      article: "",
+      hashtags: [],
+      likes: 0,
+      comment: 0,
+      created_at: "",
+      like_users: []
+    },
     comments: [
       {
         nickname: "",

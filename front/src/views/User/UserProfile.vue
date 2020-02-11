@@ -51,27 +51,61 @@
           <v-tab href="#tab-1">
             게시한 피드
             <br />
-            {{myArticles.length}}
+            {{PostArticle.length}}
           </v-tab>
 
           <v-tab href="#tab-2">
             좋아한 피드
             <br />
-            {{myArticles.length}}
+            {{LikeArticle.length}}
           </v-tab>
 
           <v-tab-item id="tab-1">
-            <v-row class="pt-0" align="start" justify="center" style="background-color:#110b22">
-              <v-col cols="12" v-for="article in myArticles" :key="article.id">
-                <Post v-bind="article" />
+            <v-row
+              class="pt-0"
+              align="start"
+              v-if="PostArticle.length>0"
+              justify="center"
+              style="background-color:#110b22"
+            >
+              <v-col cols="12" v-for="(article,i) in PostArticle" :key="i">
+                <Post v-on:userLikes="userLikes" v-bind="article" />
+              </v-col>
+            </v-row>
+            <v-row
+              class="pt-0"
+              align="start"
+              v-else
+              justify="center"
+              style="background-color:#110b22"
+            >
+              <v-col cols="12" style="border:2px solid #110b22">
+                <p class="white--text px-3">노 게시피드</p>
               </v-col>
             </v-row>
           </v-tab-item>
 
           <v-tab-item id="tab-2">
-            <v-row class="pt-0" align="start" justify="center" style="background-color:#110b22">
-              <v-col cols="12" v-for="article in myArticles" :key="article.id">
+            <v-row
+              class="pt-0"
+              align="start"
+              v-if="LikeArticle.length>0"
+              justify="center"
+              style="background-color:#110b22"
+            >
+              <v-col cols="12" v-for="article in LikeArticle" :key="article.id">
                 <Post v-bind="article" />
+              </v-col>
+            </v-row>
+            <v-row
+              class="pt-0"
+              align="start"
+              v-else
+              justify="center"
+              style="background-color:#110b22"
+            >
+              <v-col cols="12">
+                <p class="white--text px-3">노 좋아한피드</p>
               </v-col>
             </v-row>
           </v-tab-item>
@@ -82,11 +116,6 @@
 </template>
 
 <script>
-// import "../../assets/css/components.scss";
-// import "../../assets/css/common.scss";
-// import "../../assets/css/style.scss";
-// import "../../assets/css/user.scss";
-
 import Post from "../../components/common/Post";
 import UserApi from "../../apis/UserApi";
 import FeedApi from "../../apis/FeedApi";
@@ -96,6 +125,20 @@ export default {
     Post
   },
   methods: {
+    userLikes(data) {
+      let key = data[1];
+      
+      // this.PostArticle[data[1]].article="SSSSSSs";
+      FeedApi.userLikesPost(data[0],res=>{
+        console.log(res);
+        this.PostArticle[key].like_users=res.data.like_users;
+        console.log(res.data.like_users);
+        this.PostArticle[key].likes = res.data.like_users.length;
+
+      },error=>{
+        console.log("에러얌 ");
+      })
+    },
     clickFollowBtn() {
       if (!this.isMyAccount) {
         let { loginedNickname, shownNickname } = this;
@@ -144,6 +187,8 @@ export default {
           this.userInfo.picname = require("@/assets/images/profile/" +
             res.data.pic_name +
             ".png");
+          this.userInfo.likes = res.data.like_nums;
+          // this.userInfo.likes = 0;
           this.shownNickname = res.data.nickname;
 
           if (this.userInfo.nickname === this.loginedNickname) {
@@ -162,7 +207,7 @@ export default {
               this.isFollow = false;
             }
 
-            console.log(followerList);
+            // console.log(followerList);
             this.isMyAccount = false;
             //내 계정이 아니고,
           }
@@ -170,35 +215,43 @@ export default {
         err => {
           this.$router.push({ path: "/404" });
         }
-      )
+      );
     },
-    getMyArticlesFromServer() {
-      this.myArticles=[];
+    getDataFromResponse(dataList, target) {
+      for (let i = 0; i < dataList.length; i++) {
+        let article_prop = {
+          nickname: dataList[i].nickname,
+          pic_name: require("@/assets/images/profile/" +
+            dataList[i].pic_name +
+            ".png"),
+          img: dataList[i].image,
+          id: dataList[i].id,
+          keyIdx:i,
+          article: dataList[i].article,
+          hashtags: dataList[i].hashtags,
+          likes: dataList[i].like_users.length,
+          comments: dataList[i].comments,
+          created_at: dataList[i].created_at,
+          like_users: dataList[i].like_users
+        };
 
-        console.log("--->"+this.loginedNickname);
+        target.push(article_prop);
+        console.log(this.target);
+      }
+    },
+
+    getMyArticlesFromServer() {
+      this.PostArticle = [];
+      this.LikeArticle = [];
+
+      // console.log("--->"+this.loginedNickname);
       FeedApi.getPostLikedArticles(
         this.loginedNickname,
         res => {
-          console.log(res.data);
-          for (let i = 0; i < res.data.length; i++) {
-            let article_prop = {
-              nickname: res.data[i].nickname,
-              pic_name: require("@/assets/images/profile/" +
-                res.data[i].pic_name +
-                ".png"),
-                img:res.data[i].image,
-              id: res.data[i].id,
-              article: res.data[i].article,
-              hashtags: res.data[i].hashtags,
-              likes: res.data[i].like_users.length,
-              comments: res.data[i].comments,
-              created_at: res.data[i].created_at,
-            };
-
-            console.log(article_prop);
-            this.myArticles.push(article_prop);
-
-          }
+          // console.log(res.data);
+          //게시피드
+          this.getDataFromResponse(res.data.my_articles, this.PostArticle);
+          this.getDataFromResponse(res.data.like_articles, this.LikeArticle);
         },
         error => {
           console.log(error);
@@ -219,7 +272,7 @@ export default {
 
   data: () => {
     return {
-      loginedNickname: '',
+      loginedNickname: "",
       isFollow: false,
       isMyAccount: false,
       loginUsername: "",
@@ -234,7 +287,19 @@ export default {
         picname: "",
         intro: ""
       },
-      myArticles: [
+      PostArticle: [
+        {
+          nickname: "",
+          picname: "",
+          id: 0,
+          article: "",
+          hashtags: [],
+          likes: 0,
+          comment: 0,
+          time: ""
+        }
+      ],
+      LikeArticle: [
         {
           nickname: "",
           picname: "",
@@ -252,9 +317,7 @@ export default {
         comments: "",
         isLiked: "",
         isClipped: ""
-      },
-      text:
-        "이곳에 내용이 들어갑니다..... 내용상관없이 모든내용이 나올 예정스 라랄랄"
+      }
     };
   },
   computed: {
