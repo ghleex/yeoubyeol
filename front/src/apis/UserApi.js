@@ -47,6 +47,20 @@ const requestLogin = (data, callback, errorCallback) => {
         })
 }
 
+// 로그인 체크 data = token
+const requestLoginCheck = (data, callback, errorcallback) => {
+
+    axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, data)
+        .then(response => {
+            console.log(response)
+            callback(true)
+        })
+        .catch(error => {
+            console.log(error)
+            errorcallback(error)
+    })
+}
+
 //회원프로필가져올래
 const requestUserProfile = (data, callback, errorCallback) => {
     let nickname = {
@@ -108,5 +122,6 @@ const UserApi = {
     requestUserProfile: (data, callback, errorCallback) => requestUserProfile(data, callback, errorCallback),
     requestFollowers: (data, callback, errorCallback) => requestFollowers(data, callback, errorCallback),
     requestFollowings: (data, callback, errorCallback) => requestFollowings(data, callback, errorCallback),
+    requestLoginCheck: (data, callback, errorCallback) => requestLoginCheck(data, callback, errorCallback),
 }
 export default UserApi

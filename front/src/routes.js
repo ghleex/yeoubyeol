@@ -32,9 +32,14 @@ import hongjuLab2 from './views/hongjuLab2.vue'
 import hongjuLab3 from './views/hongjuLab3.vue'
 import hongjuLab4 from './views/hongjuLab4.vue'
 
-var cookie = document.cookie.replace(/(?:(?:^|.*;\s*)auth_cookie\s*=\s*([^;]*).*$)|^.*$/, "$1");
+var value1 = document.cookie.match('(^|;) ?' + 'auth_cookie' + '=([^;]*)(;|$)');
+var cookie1 = value1? value1[2] : null;
+
+var value2 = document.cookie.match('(^|;) ?' + 'refresh_cookie' + '=([^;]*)(;|$)');
+var cookie2 = value2? value2[2] : null;
+
 const requireAuth = () => (to, from, next) => {
-    if(cookie){
+    if(cookie1 && cookie2){
     // if (this.$cookies.isKey('auth_cookie')) {
       return next();
     }
@@ -42,7 +47,7 @@ const requireAuth = () => (to, from, next) => {
   };
 
 const LoginUsersCantAccess = () => (to, from, next) => {
-    if(!cookie){
+    if(!cookie1 || !cookie2){
     // if (this.$cookies.isKey('auth_cookie')) {
       return next();
     }
