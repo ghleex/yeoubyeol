@@ -57,12 +57,10 @@ class HonorArticle(models.Model):
         processors=[Thumbnail(300, 300)],
         format='JPEG',
         options={'quality': 90},
-        upload_to='articles/images',
+        upload_to='articles/honorimages',
         blank=True,
     )
 
     class Meta:
         ordering = ('-pk',)
     
-    def __str__(self):
-        return self.article

@@ -19,6 +19,7 @@ urlpatterns = [
     path('myarticle/', views.myarticle),
     path('like/', views.like, name='like'),
     path('comment/', views.CommentList.as_view(), name='comment'),
+    path('comment/<int:pk>', views.CommentList.as_view(), name='comment'),
     path('honor/', views.honor, name='honor'),
     path('recommend/', views.recommend),
     path('hashtag/', views.hashtag),

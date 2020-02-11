@@ -8,9 +8,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
-from .serializers import UserCreationSerializer, UserSerializer, WaitingSerializer
-from .models import User, Waiting
+from articles.models import Article
+from .serializers import UserCreationSerializer, UserSerializer, WaitingSerializer, AccountCookieSerializer
+from .models import User, Waiting, AccountCookie
 from .forms import WaitingForm, CustomUserCreationForm
 from datetime import datetime, timedelta
 from string import punctuation, ascii_letters, digits
@@ -52,7 +52,7 @@ class AccountList(APIView):
 def email_auth(request):
     waitings = Waiting.objects.all()
     for waiting in waitings:
-        if waiting.created_at < datetime.now() - timedelta(minutes=30):
+        if waiting.created_at < datetime.now() - timedelta(minutes=1):
             waiting.delete()
     username = request.data.get('username')
     user = User.objects.filter(username=username)
@@ -136,11 +136,60 @@ def user_signup(request, secret_key):
             user.save()
             waiting.delete()
             return Response({'message': '회원가입이 성공적으로 완료되었습니다.'}, status=status.HTTP_200_OK)
-
     else:
         waiting.delete()
         return Response({'message': '인증 메일을 다시 요청해주세요.'}, status=status.HTTP_202_ACCEPTED)
 
+@api_view(['POST', ])
+def check(request):
+    account = AccountCookie.objects.filter(username=request.data.get('username'))
+    if not account:
+        token_1 = request.data.get('token_1')
+        token_2 = request.data.get('token_2')
+        username = request.data.get('username')
+        if not token_2:
+            token_2 = secrets.token_urlsafe(50)
+            data = {
+                'username': username,
+                'token_1': token_1,
+                'token_2': token_2,
+            }
+            serializer = AccountCookieSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+        else:
+            accountcookie = AccountCookie.objects.filter(username=username)
+            if accountcookie.login_at < datetime.now() - timedelta(minutes=30):
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+    else:
+        account = account[0]
+        re_token_1 = request.data.get('token_1')
+        re_token_2 = request.data.get('token_2')
+        if re_token_1 == account.token_1 and re_token_2 == account.token_2:
+            account.token_2 = secrets.token_urlsafe(50)
+            account_data = {
+                'username': account.username,
+                'token_1': account.token_1,
+                'token_2': account.token_2,
+            }
+            serializer = AccountCookieSerializer(account, data=account_data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def logout(request):
+    username = request.data.get('username')
+    print(username)
+    account = get_object_or_404(AccountCookie, username=username)
+    account.delete()
+    return Response({'message': '삭제 성공이다!!'})
 
 @api_view(['GET'])
 def user_detail(request):
@@ -171,7 +220,6 @@ def find_pwd(request):
 
 
 @api_view(['PUT',])
-@login_required
 def change_pwd(request):
     username = request.data.get('username')
     user = get_object_or_404(User, username=username)
@@ -188,12 +236,22 @@ def change_pwd(request):
 
 # 타 유저 프로필 조회
 @api_view(['POST',])
-# @login_required
 def profile(request):
-    # print('------------------')
-    # print(request.data)
-    # print('------------------')
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
     serializer = UserSerializer(user)
-    return Response(serializer.data)
+    articles = Article.objects.filter(author=user.id)
+    like_nums = 0
+    for article in articles:
+        like_nums += len(article.like_users.all())
+    data = {
+        'id': serializer.data.get('id'),
+        'nickname': serializer.data.get('nickname'),
+        'intro': serializer.data.get('intro'),
+        'pic_name': serializer.data.get('pic_name'),
+        'username': serializer.data.get('username'),
+        'followers': serializer.data.get('followers'),
+        'followings': serializer.data.get('followings'),
+        'like_nums': like_nums
+    }
+    return Response(data)
