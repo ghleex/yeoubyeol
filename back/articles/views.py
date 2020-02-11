@@ -265,7 +265,7 @@ def like(request):
     serializer = ArticleSerializer(article)
     if len(article.like_uses_set.all()) == 30000:
         data = {
-            'article': article.article,
+            'h_article': article.article,
             'author': article.author,
             'hashtags': article.hashtags,
             'image': article.image

@@ -65,4 +65,4 @@ class HonorArticle(models.Model):
         ordering = ('-pk',)
     
     def __str__(self):
-        return self.article
+        return self.h_article
