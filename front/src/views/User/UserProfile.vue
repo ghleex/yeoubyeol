@@ -175,9 +175,9 @@ export default {
     getMyArticlesFromServer() {
       this.myArticles=[];
 
-        console.log("--->"+this.userInfo.nickname);
-      FeedApi.getMyArticles(
-        this.userInfo.nickname,
+        console.log("--->"+this.loginedNickname);
+      FeedApi.getPostLikedArticles(
+        this.loginedNickname,
         res => {
           console.log(res.data);
           for (let i = 0; i < res.data.length; i++) {
