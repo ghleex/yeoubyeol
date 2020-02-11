@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             name='HonorArticle',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('article', models.TextField()),
+                ('h_article', models.TextField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('image', imagekit.models.fields.ProcessedImageField(blank=True, upload_to='articles/honorimages')),
