@@ -128,6 +128,16 @@ const userLikesPost = (form, callback, errorCallback) => {
        }) 
 }
 
+const requestFeedOfFame = (callback, errorCallback) => {
+    axios.get(`http://${process.env.VUE_APP_IP}/articles/honor/`)
+        .then(response => {
+            callback(response)
+        })
+        .catch(error => {
+            errorCallback(error)
+        })
+}
+
 
 const FeedApi = {
     requestFollow: (data, callback, errorCallback) => requestFollow(data, callback, errorCallback),
@@ -137,5 +147,6 @@ const FeedApi = {
     getPostLikedArticles: (data, callback, errorCallback) => getPostLikedArticles(data, callback, errorCallback),
     getArticleById: (data, callback, errorCallback) => getArticleById(data, callback, errorCallback),
     userLikesPost: (data, callback, errorCallback) => userLikesPost(data, callback, errorCallback),
+    requestFeedOfFame: (callback, errorCallback) => requestFeedOfFame(callback, errorCallback),
 }
 export default FeedApi

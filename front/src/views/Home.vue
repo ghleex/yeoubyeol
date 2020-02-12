@@ -67,7 +67,7 @@ export default {
     setVideo() {
       let max = 6;
       let min = 1;
-      var name = Math.floor(Math.random() * max) + min;
+      let name = Math.floor(Math.random() * max) + min;
       this.homeVideo = require("@/assets/images/example/" + name + ".mp4");
     },
     logout() {
@@ -81,7 +81,9 @@ export default {
           sessionStorage.removeItem("AUTH_token");
           sessionStorage.removeItem("LoginUserInfo");
           this.$cookies.remove("auth_cookie");
-          this.$cookies.remove('refresh_cookie');
+          this.$cookies.remove("refresh_cookie");
+          this.$cookies.remove("LoginUserInfo");
+          this.$cookies.remove("username");
           alert("로그아웃되었습니다.");
           this.isOk = false;  
         })
