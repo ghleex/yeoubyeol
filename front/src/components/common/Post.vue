@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-card class="mx-2" color="#110B22" dark outlined style="border: 1px solid #71d087;">
+    <v-card class="mx-2" color="#110B22" dark outlined style="border: 1px solid #ccc;">
+      <!-- <v-card class="mx-2" color="#110B22" dark outlined style="border: 1px solid #71d087;"> -->
       <v-list-item>
         <v-list-item-avatar color="grey darken-3">
           <v-img :src="post.pic_name"></v-img>
@@ -30,6 +31,11 @@
               <v-icon class="mr-1" size="x-large">mdi-comment-outline</v-icon>
               <span class="subheading white--text">{{post.comments}}</span>
             </a>
+            <v-spacer></v-spacer>
+            <div v-show="isMyPost">
+              <v-btn x-small text style="color:#ccc;" @click="editPostBtn">수정</v-btn>
+              <v-btn x-small text style="color:#ccc;" @click="removePostBtn">삭제</v-btn>
+            </div>
           </v-row>
         </v-list-item>
       </v-card-actions>
@@ -47,6 +53,9 @@ dotenv.config();
 export default {
   name: "Post",
   props: {
+    author:{
+      type:Number
+    },
     id: {
       type: Number,
       required: true
@@ -82,48 +91,55 @@ export default {
   },
   data: function() {
     return {
-      imgUrl:'',
+      isMyPost: false,
+      imgUrl: "",
       post: {
         id: "",
-        nickname: '',
-        article: '',
+        nickname: "",
+        article: "",
         img: "../../assets/images/profile/1.png",
         pic_name: "../../assets/images/profile/1.png",
         comments: 0,
         likes: 0,
-        created_at: '',
+        created_at: "",
         hashtags: [],
         like_users: [],
         timedelta: "",
+        author:0,
         isLike: false
       }
     };
   },
   created() {
-    this.post= {
-        id: this.id,
-        nickname: this.nickname,
-        article: this.article,
-        img: this.img,
-        pic_name: this.pic_name,
-        comments: this.comments,
-        likes: this.likes,
-        created_at: this.created_at,
-        hashtags: this.hashtags,
-        like_users: this.like_users,
-        timedelta: "",
-        isLike: false
-      },
+    this.post = {
+      id: this.id,
+      nickname: this.nickname,
+      article: this.article,
+      img: this.img,
+      pic_name: this.pic_name,
+      comments: this.comments,
+      likes: this.likes,
+      created_at: this.created_at,
+      hashtags: this.hashtags,
+      like_users: this.like_users,
+      timedelta: "",
+      isLike: false,
+      author:this.author
+    };
+    let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
+    this.isMyPost = LoginId === this.post.author ? true : false;
     this.setTimeValues();
     this.isLikeCheck();
     this.getImageUrl();
   },
 
   methods: {
-      getImageUrl() {
-      this.imgUrl= `http://${process.env.VUE_APP_IP}${this.post.img}`;
+    editPostBtn() {},
+    removePostBtn() {},
+    getImageUrl() {
+      this.imgUrl = `http://${process.env.VUE_APP_IP}${this.post.img}`;
     },
-     isLikeCheck() {
+    isLikeCheck() {
       let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
       if (this.post.like_users.includes(LoginId)) {
         this.post.isLike = true;
@@ -131,7 +147,7 @@ export default {
         this.post.isLike = false;
       }
     },
-     setTimeValues() {
+    setTimeValues() {
       let date = new Date();
       let maybe = new Date(this.post.created_at);
       let Hours = Math.ceil((date - maybe) / 1000 / 60 / 60);
@@ -145,14 +161,14 @@ export default {
         this.post.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
       }
     },
-     iLoveIt() {
+    iLoveIt() {
       var form = new FormData();
       let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
       let LoginNickname = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
         .nickname;
       form.append("article_id", this.post.id);
       form.append("nickname", LoginNickname);
- console.log(this.post.id,'--1',LoginNickname);
+      console.log(this.post.id, "--1", LoginNickname);
       // this.PostArticle[data[1]].article="SSSSSSs";
       FeedApi.userLikesPost(
         form,

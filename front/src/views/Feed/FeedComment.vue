@@ -6,7 +6,8 @@
         <div class="pa-2" @click="backward">
           <v-icon class="white--text">mdi-chevron-left</v-icon>
         </div>
-        <CommentArticle v-bind="article" />
+        <!-- <CommentArticle v-bind="article" /> -->
+        <Post v-bind="article" />
       </v-col>
       <!-- 댓글 보여주기 -->
       <v-col cols="12" v-for="comm in comments" :key="comm.comment_id">
@@ -56,12 +57,12 @@
 </template>
 
 <script>
-import CommentArticle from "@/components/common/CommentArticle";
+import Post from "@/components/common/Post";
 import CommentComment from "@/components/common/CommentComment";
 import FeedApi from "@/apis/FeedApi";
 import CommentApi from "@/apis/CommentApi";
 export default {
-  components: { CommentArticle, CommentComment },
+  components: { Post, CommentComment },
   created() {
     this.getUserInformation();
     this.getArticleById(this.$route.params.id);
@@ -149,8 +150,10 @@ export default {
               pic_name: require("@/assets/images/profile/" +
            res.data.pic_name +
             ".png"),
+            img:res.data.article.image,
             id: res.data.article.id,
             article: res.data.article.article,
+            author:res.data.article.author,
             hashtags: res.data.hashtags,
             likes:res.data.article.like_users.length,
             comments:res.data.comments.length,

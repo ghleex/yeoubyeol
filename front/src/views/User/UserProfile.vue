@@ -217,6 +217,7 @@ export default {
           img: dataList[i].image,
           id: dataList[i].id,
           article: dataList[i].article,
+          author:dataList[i].author,
           hashtags: dataList[i].hashtags,
           likes: dataList[i].like_users.length,
           comments: dataList[i].comments,
@@ -225,7 +226,6 @@ export default {
         };
 
         target.push(article_prop);
-        console.log(this.target);
       }
     },
 
