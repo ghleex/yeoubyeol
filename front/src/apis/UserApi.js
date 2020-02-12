@@ -1,9 +1,8 @@
-/*
- User API 예시
- */
-
 //가입
 import axios from 'axios'
+import dotenv from 'dotenv';
+
+dotenv.config();
 const requestSignup = (data, callback, errorCallback) => {
     console.log(data);
     //백앤드와 로그인 통신하는 부분
@@ -11,7 +10,7 @@ const requestSignup = (data, callback, errorCallback) => {
     form.append('nickname', data.nickname)
     form.append('username', data.email)
     form.append('password', data.password)
-    axios.post(`http://192.168.31.87:8000/accounts/signup/${data.key}/`, form)
+    axios.post(`http://${process.env.VUE_APP_IP}/accounts/signup/${data.key}/`, form)
         .then((response) => {
             console.log(response)
             callback(response)
@@ -31,7 +30,11 @@ const requestLogin = (data, callback, errorCallback) => {
         username: data.email,
         password: data.password,
     }
-    axios.post('http://192.168.31.87:8000/auth/', credentials)
+
+    axios.defaults.xsrfCookieName = 'csrftoken'
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
+    axios.post(`http://${process.env.VUE_APP_IP}/auth/`, credentials)
         .then(res => {
             // console.log(res)
             // this.$store.dispatch('login', res.data.token)
@@ -44,13 +47,27 @@ const requestLogin = (data, callback, errorCallback) => {
         })
 }
 
+// 로그인 체크 data = token
+const requestLoginCheck = (data, callback, errorcallback) => {
+
+    axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, data)
+        .then(response => {
+            console.log(response)
+            callback(true)
+        })
+        .catch(error => {
+            console.log(error)
+            errorcallback(error)
+    })
+}
+
 //회원프로필가져올래
 const requestUserProfile = (data, callback, errorCallback) => {
     let nickname = {
         nickname: data,
     }
     // console.log(nickname)
-    axios.post('http://192.168.31.87:8000/accounts/profile/', nickname)
+    axios.post(`http://${process.env.VUE_APP_IP}/accounts/profile/`, nickname)
         .then(res => {
             // console.log(res)
             // this.$store.dispatch('login', res.data.token)
@@ -69,7 +86,7 @@ const requestFollowers= (data, callback, errorCallback) => {
         nickname: data,
     }
     // console.log(nickname)
-    axios.post('http://192.168.31.87:8000/articles/followerlist/', nickname)
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/followerlist/`, nickname)
         .then(res => {
             console.log('팔로워리스트 가져오기 성공')
             callback(res)
@@ -86,7 +103,7 @@ const requestFollowings= (data, callback, errorCallback) => {
         nickname: data,
     }
     // console.log(nickname)
-    axios.post('http://192.168.31.87:8000/articles/following/', nickname)
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/following/`, nickname)
         .then(res => {
             console.log('팔로잉리스트 가져오기 성공')
             callback(res)
@@ -105,5 +122,6 @@ const UserApi = {
     requestUserProfile: (data, callback, errorCallback) => requestUserProfile(data, callback, errorCallback),
     requestFollowers: (data, callback, errorCallback) => requestFollowers(data, callback, errorCallback),
     requestFollowings: (data, callback, errorCallback) => requestFollowings(data, callback, errorCallback),
+    requestLoginCheck: (data, callback, errorCallback) => requestLoginCheck(data, callback, errorCallback),
 }
 export default UserApi

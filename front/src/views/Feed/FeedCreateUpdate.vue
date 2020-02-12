@@ -1,36 +1,37 @@
 <template>
   <div>
-    <v-card dark color="#110b22" style="border:solid 2px #888">
+    <v-card dark color="#110b22" style="border:solid 2px #888;">
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-row class="py-0 ma-2">
-          <v-col cols="12" class="pa-1">
+           <v-col cols="6">
+            <b class="white--text caption">{{weather_detail}}</b>
+            <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
+          </v-col>
+          <v-col cols="6" class="pa-1 d-flex justify-end">
             <v-btn
               class="mb-2"
               color="#71d087"
-              style
-              text
-              justify="end"
+              style="color:#110b22;"
               @click="validate"
               :disabled="!valid"
             >피드 발행하기</v-btn>
           </v-col>
-          <v-col cols="12" class="pa-1">
-            <!-- <v-file-input
-              id="file"
-              ref="file"
+          <v-col cols="12" class="pa-0">
+            <div id="preview">
+              <img v-if="url" :src="url" style="padding-bottom:5px" />
+              <br />
+            </div>
+            <v-file-input
+              accept="image/*"
               prepend-icon="mdi-camera"
               outlined
               dense
+              required
+              :clearable="false"
               label="Image"
-              accept="image/*"
               @change="onFileChanged"
-            ></v-file-input> -->
-            <v-file-input accept="image/*"  prepend-icon="mdi-camera"
-              outlined
-              dense
-              label="Image" @change="onFileChanged"></v-file-input>
+            ></v-file-input>
           </v-col>
-
           <v-col cols="12" class="pa-1">
             <v-textarea
               dark
@@ -42,9 +43,13 @@
               :auto-grow="true"
               clearable
             >{{inputPostContent}}</v-textarea>
-
-            <v-btn @click="requestHashTags">해시태그 추천받기</v-btn>
+          </v-col>
+          <v-col cols="12" class="pa-1">
+            <v-btn @click="requestHashTags" text block style="color:#71d087;" class="ma-1">해시태그 추천받기</v-btn>
             <!-- 여기부터 시작야이             -->
+          </v-col>
+
+          <v-col cols="12" class="pa-1">
             <v-combobox
               v-model="model"
               :filter="filter"
@@ -97,6 +102,7 @@
               </template>
             </v-combobox>
           </v-col>
+         
         </v-row>
       </v-form>
     </v-card>
@@ -106,8 +112,12 @@
 <script>
 import FeedApi from "@/apis/FeedApi";
 
+const API_KEY = "241051bf13976dd3ddf8b8d9f247255e";
+const WEATHER_API = "https://api.openweathermap.org/data/2.5/weather?";
+
 export default {
   created() {
+    this.loadWeather();
     this.loginedNickname = JSON.parse(
       sessionStorage.getItem("LoginUserInfo")
     ).nickname;
@@ -160,8 +170,8 @@ export default {
       );
     },
     onFileChanged(event) {
-      // console.log(this.$refs);
       this.selectedFile = event;
+      this.url = URL.createObjectURL(this.selectedFile);
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -176,10 +186,10 @@ export default {
       for (let i = 0; i < this.model.length; i++) {
         tagLists.push(this.model[i].text);
       }
-      console.log(tagLists[0]);
-      console.log(tagLists[1]);
-      console.log(tagLists[2]);
 
+      var token = sessionStorage.getItem("AUTH_token");
+      console.log(token);
+      form.append("token", token);
       form.append("nickname", this.loginedNickname);
       form.append("article", this.inputPostContent);
       form.append("image", this.selectedFile);
@@ -196,13 +206,62 @@ export default {
           window.close();
         }
       );
+    },
+    // weatherapi -----------------------
+    getWeather(coords) {
+      fetch(
+        `${WEATHER_API}lat=${coords.lat}&lon=${coords.lng}&appid=${API_KEY}&units=metric`
+      )
+        .then(response => response.json())
+        .then(json => {
+          const name = json.name;
+          const temperature = json.main.temp;
+          console.log(json);
+          // this.data = json;
+          this.weather_icon = json.weather[0].icon;
+          this.weather_url = `http://openweathermap.org/img/w/${this.weather_icon}.png`;
+          this.weather_detail = `${Math.floor(temperature)}° @ ${name}`;
+        });
+    },
+
+    handleGeoSuccess(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const coords = {
+        lat,
+        lng
+      };
+      localStorage.setItem("coords", JSON.stringify(coords));
+      this.getWeather(coords);
+    },
+
+    handleGeoFailure() {
+      console.log("no location");
+    },
+
+    loadWeather() {
+      const currentCoords = localStorage.getItem("coords");
+      if (currentCoords !== null) {
+        const parsedCoords = JSON.parse(currentCoords);
+        this.getWeather(parsedCoords);
+        return;
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          this.handleGeoSuccess,
+          this.handleGeoFailure
+        );
+      }
     }
   },
   data: () => {
     return {
+      weather_icon: "",
+      weather_detail: "",
+      weather_url: "",
       activator: null,
       attach: null,
       editing: null,
+      url: null,
       index: -1,
       items: [{ header: "아래 중 하나를 입력하거나, 새로 입력해보세요!" }],
       nonce: 1,
@@ -245,3 +304,15 @@ export default {
   }
 };
 </script>
+<style scoped>
+#preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview img {
+  max-width: 50%;
+  max-height: 100px;
+}
+</style>

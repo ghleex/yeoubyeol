@@ -5,6 +5,9 @@
         <h1> 어서오세요 홍주의 랩실 2 는 날씨 API 입니당</h1>
         {{ data }}
         <h2>{{data1}}</h2>
+        <v-img src="http://openweathermap.org/img/w/02n.png"  max-width=40 max-height=40>
+
+        </v-img>
         <span class="weather__text"></span>
 
         <v-btn @click="setClear()">clear</v-btn>
@@ -45,7 +48,8 @@ export default {
   data() {
     return {
       data: "",
-      data1: ""
+      data1: "",
+      icon:'',
     };
   },
 
@@ -68,6 +72,7 @@ export default {
           const temperature = json.main.temp;
           console.log(json);
           this.data = json;
+          this.icon=json.weather.icon;
           this.data1 = `${Math.floor(temperature)}° @ ${name}`;
         });
     },

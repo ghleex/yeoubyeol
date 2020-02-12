@@ -21,6 +21,9 @@
     <button @click="backward">
       이전으로
     </button>
+    <button @click="toHome">
+      홈
+    </button>
   </div>
 </template>
 
@@ -36,6 +39,9 @@ export default {
     backward() {
       var router = this.$router
       router.go(-1)
+    },toHome(){
+       var router = this.$router
+      router.push({name: '홈'})
     }
   }
 }

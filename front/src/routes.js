@@ -16,6 +16,7 @@ import UserProfile from './views/User/UserProfile.vue'
 //피드
 import FeedMain from './views/Feed/FeedMain.vue'
 import FeedCreateUpdate from '@/views/Feed/FeedCreateUpdate.vue'
+import FeedComment from '@/views/Feed/FeedComment.vue'
 
 //에러
 import EPageNotFound from './views/Error/EPageNotFound.vue'
@@ -28,13 +29,15 @@ import Follow from './views/Settings/Follow.vue'
 //검색
 import Search from './views/Search.vue'
 import hongjuLab2 from './views/hongjuLab2.vue'
-import hongjuLab3 from './views/hongjuLab3.vue'
-import hongjuLab4 from './views/hongjuLab4.vue'
 
+var value1 = document.cookie.match('(^|;) ?' + 'auth_cookie' + '=([^;]*)(;|$)');
+var cookie1 = value1? value1[2] : null;
 
+var value2 = document.cookie.match('(^|;) ?' + 'refresh_cookie' + '=([^;]*)(;|$)');
+var cookie2 = value2? value2[2] : null;
 
 const requireAuth = () => (to, from, next) => {
-    if(sessionStorage.getItem('AUTH_token')){
+    if(cookie1 && cookie2){
     // if (this.$cookies.isKey('auth_cookie')) {
       return next();
     }
@@ -42,7 +45,7 @@ const requireAuth = () => (to, from, next) => {
   };
 
 const LoginUsersCantAccess = () => (to, from, next) => {
-    if(!sessionStorage.getItem('AUTH_token')){
+    if(!cookie1 || !cookie2){
     // if (this.$cookies.isKey('auth_cookie')) {
       return next();
     }
@@ -113,6 +116,12 @@ export default [
         component: FeedCreateUpdate,
         beforeEnter: requireAuth()
     },
+    {
+        path: '/feed/:id',
+        name: '댓글',
+        component: FeedComment,
+        beforeEnter: requireAuth()
+    },
     //에러
     {
         path: '/404',
@@ -156,15 +165,5 @@ export default [
         path: '/lab2',
         name: '홍주랩실2',
         component: hongjuLab2
-    },
-    {
-        path: '/lab3',
-        name: '홍주랩실3',
-        component: hongjuLab3
-    },
-    {
-        path: '/lab4',
-        name: '홍주랩실4',
-        component: hongjuLab4
     },
 ]
