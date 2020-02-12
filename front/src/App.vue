@@ -73,6 +73,12 @@ export default {
       this.userId = "";
     }
     // this.$vuetify.theme.themes.dark.background="#4caf50"
+  },
+  mounted() {
+    if (this.$cookies.isKey('auth_cookie')) {
+      console.log('=============cookies=============')
+      console.log(this.$cookies.get('auth_cookie'))
+    }
   }
 };
 </script>
