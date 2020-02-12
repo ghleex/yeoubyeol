@@ -1,11 +1,14 @@
 //follow 친구 맺기 /끊기 
 import axios from 'axios'
+import dotenv from 'dotenv';
+
+dotenv.config();
 const requestFollow = (data, callback, errorCallback) => {
     console.log(data);
     let form = new FormData()
     form.append('my_nickname', data.loginedNickname)
     form.append('your_nickname', data.shownNickname)
-    axios.post(`http://192.168.31.87:8000/articles/follower/`, form)
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/follower/`, form)
         .then((response) => {
             console.log(response)
             callback(response)
@@ -22,7 +25,7 @@ const requestFollow = (data, callback, errorCallback) => {
 const newPost = (form, callback, errorCallback) => {
     
 
-     axios.post(`http://192.168.31.87:8000/articles/`, form,{
+     axios.post(`http://${process.env.VUE_APP_IP}/articles/`, form,{
         headers: {
             'Content-Type': 'multipart/form-data',
         }
@@ -43,7 +46,7 @@ const newPost = (form, callback, errorCallback) => {
 const requestHashTags = (form, callback, errorCallback) => {
     
 
-     axios.post(`http://192.168.31.87:8000/articles/recommend/`, form,{
+     axios.post(`http://${process.env.VUE_APP_IP}/articles/recommend/`, form,{
      })
         .then((response) => {
             console.log('해시태그 받기 성공 :',response)
@@ -57,10 +60,81 @@ const requestHashTags = (form, callback, errorCallback) => {
         }) 
 }
 
+//게시글 가져오기
+const getArticles = (data, callback, errorCallback) => {
+    let form = new FormData()
+    form.append('nickname', data)
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/mainfeed/`, form,{
+    })
+       .then((response) => {
+           console.log('게시글 받기 성공 :',response)
+           callback(response)
+       
+       })
+       .catch((response) => {
+           console.log(response)
+           console.log('게시글 받기 오류'  + response)
+           errorCallback('error')
+       }) 
+}
+
+// 좋아요한 글 가져오기
+const getLikeArticles = (data, callback, errorCallback) => {
+    let form = new FormData()
+    form.append('nickname', data)
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/myarticle/`, form)
+        .then((response) => {
+            console.log('게시글 받기 성공 :',response)
+            callback(response)
+        
+        })
+        .catch((response) => {
+            console.log(response)
+            console.log('게시글 받기 오류'  + response)
+            errorCallback('error')
+        }) 
+    }
+    
+//게시글 가져오기 : 아이디로 조회하기
+const getArticleById = (data, callback, errorCallback) => {
+    axios.get(`http://${process.env.VUE_APP_IP}/articles/${data}/`,{
+    })
+       .then((response) => {
+           console.log('게시글 받기 성공 :',response)
+           callback(response)
+       
+       })
+       .catch((response) => {
+           console.log(response)
+           console.log('게시글 받기 오류'  + response)
+           errorCallback('error')
+       }) 
+}
+
+// 내 게시글 가져오기
+const getMyArticles = (data, callback, errorCallback) => {
+    let form = new FormData()
+    form.append('nickname', data)
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/myarticle/`, form,{
+    })
+       .then((response) => {
+           console.log('게시글 받기 성공 :',response)
+           callback(response)
+       
+       })
+       .catch((response) => {
+           console.log(response)
+           console.log('게시글 받기 오류'  + response)
+           errorCallback('error')
+       }) 
+}
 
 const FeedApi = {
     requestFollow: (data, callback, errorCallback) => requestFollow(data, callback, errorCallback),
     newPost: (data, callback, errorCallback) => newPost(data, callback, errorCallback),
     requestHashTags: (data, callback, errorCallback) => requestHashTags(data, callback, errorCallback),
+    getArticles: (data, callback, errorCallback) => getArticles(data, callback, errorCallback),
+    getMyArticles: (data, callback, errorCallback) => getMyArticles(data, callback, errorCallback),
+    getArticleById: (data, callback, errorCallback) => getArticleById(data, callback, errorCallback),
 }
 export default FeedApi

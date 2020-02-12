@@ -1,5 +1,5 @@
 from django.core.mail import EmailMessage
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
@@ -24,6 +24,7 @@ import secrets, json
 class ArticleList(APIView):
     # 글 생성 request = 'username', 
     def post(self, request, format=None):
+        print(request.data)
         nickname = request.data.get('nickname')
         article = request.POST.get('article')
         hashtags = request.POST.get('hashtags')
@@ -56,7 +57,9 @@ class ArticleList(APIView):
                 if hash_serializer.is_valid():
                     hash_serializer.save()
                 article.hashtags.add(hashtag)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            response = HttpResponse(serializer.data)
+            response.set_cookie('AUTH_TOKEN', request.data.get('token'))
+            return response
         return Response(data, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -104,7 +107,23 @@ def myarticle(request):
     nickname = request.data.get('nickname')
     account = get_object_or_404(User, nickname=nickname)
     articles = Article.objects.filter(author=account.id)
+    like_articles = Article.objects.all()
     datas = []
+    like_datas = []
+    for like_article in like_articles:
+        if like_article.like_users.filter(id=account.id).exists():
+            like_article_comments = like_article.comment_set.all()
+            like_article_serializer = ArticleSerializer(like_article)
+            like_data = like_article_serializer.data
+            like_article_author = like_article_serializer.data.get('author')
+            like_article_user = get_object_or_404(User, id=like_article_author)
+            like_data['pic_name'] = like_article_user.pic_name
+            for u in range(len(like_data.get('hashtags'))):
+                hashtag = get_object_or_404(Hashtag, id=like_data.get('hashtags')[u])
+                like_data.get('hashtags')[u] = hashtag.hashtag
+            like_data['nickname'] = like_article_user.nickname
+            like_data['comments'] = len(like_article_comments)
+            like_datas.append(like_data)
     for article in articles:
         comments = article.comment_set.all()
         article_serializer = ArticleSerializer(article)
@@ -116,7 +135,11 @@ def myarticle(request):
         data['nickname'] = account.nickname
         data['comments'] = len(comments)
         datas.append(data)
-    return Response(datas)
+    result = {
+        'my_articles': datas,
+        'like_articles': like_datas,
+    }
+    return Response(result)
 
 # 글 상세보기
 class ArticleDetail(APIView):
@@ -127,15 +150,21 @@ class ArticleDetail(APIView):
         user = get_object_or_404(User, id=serializer.data.get('author'))
         comments = article.comment_set.all()
         data = []
+        hashtags = serializer.data.get('hashtags')
+        hashtag_list = []
+        for hashtag in range(len(hashtags)):
+            hashs = get_object_or_404(Hashtag, id=hashtags[hashtag])
+            hashtag_list.append(hashs.hashtag)
         for comment in comments:
             comment_serializer = CommentSerializer(comment)
             author = comment_serializer.data.get('author')
             user = get_object_or_404(User, id=author)
-            data.append([user.nickname, user.pic_name, comment.comment, comment.created_at])
+            data.append([user.nickname, user.pic_name,comment.id, comment.comment, comment.created_at])
         result = {
             'nickname': user.nickname,
             'pic_name': user.pic_name,
             'article': serializer.data,
+            'hashtags': hashtag_list,
             'comments': data
         }
         return Response(result)
@@ -159,23 +188,21 @@ class ArticleDetail(APIView):
 # 유저 검색
 class SearchResultList(APIView):
     def post(self, request, format=None):
-        User = get_user_model()
-        query = request.POST.get('keyword')
-        print(query)
+        query = request.data.get('keyword')
+        users = User.objects.all()
+        data = []
         if query:
-            nicknames = User.objects.filter(nickname__icontains=query)
-            nicknames_serializer = UserSerializer(nicknames, many=True)
-            words = Article.objects.filter(content__icontains=query)
-            words_serializer = ArticleSerializer(words, many=True)
-            message = '검색 내용이 없습니다.'
-            
-            if not (nicknames_serializer and words_serializer):
-                return Response({'message': '검색 결과가 존재하지 않습니다.'}, status=status.HTTP_204_NO_CONTENT)
-            else:
-                return Response({
-                    'nicknames_serializer_data': nicknames_serializer.data if nicknames_serializer.data else 0,
-                    'words_serializer_data': words_serializer.data if words_serializer.data else 0,
+            for user in users:
+                if query in user.nickname:
+                    data.append({
+                        'nickname': user.nickname,
+                        'pic_name': user.pic_name,
+                        'intro': user.intro
                     })
+            if len(data) > 0:
+                return Response(data)
+            else:
+                return Response({'message': '검색 결과가 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
         else:
             return Response({'message': '검색 내용이 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
@@ -190,10 +217,6 @@ class FollowerList(APIView):
         serializer = UserSerializer(you)
         if me != you:
             # if serializer.data.followers.filter(pk=me.id).exists():
-            print('--------------------------')
-            print(serializer.data.get('followers'))
-            print(me.id)
-            print('--------------------------')
             if me.id in serializer.data.get('followers'):
                 serializer.data.get('followers').remove(me.id)
                 # serializer.data.followers.remove(me.id)
@@ -258,14 +281,32 @@ def followerlist(request):
 @api_view(['POST', ])
 def like(request):
     # 요청 보낸 유저 정보
-    username = request.data.get('username')
-    user = get_object_or_404(User, username=username)
+    print('--------------------')
+    print(request.data)
+    print('--------------------')
+    nickname = request.data.get('nickname')
+    user = get_object_or_404(User, nickname=nickname)
     # 좋아요 한 글
-    article = get_object_or_404(Article, article_id=request.data.get('article_id'))
-    serializer = ArticleSerializer(article)
-    if len(article.like_uses_set.all()) == 30000:
+    article = get_object_or_404(Article, id=request.data.get('article_id'))
+    like_users = article.like_users.all()
+    article_like_users = []
+    article_hashtags = []
+    for like_user in like_users:
+        article_like_users.append(like_user.id)
+    hashtags = article.hashtags.all()
+    for hashtag in hashtags:
+        article_hashtags.append(hashtag.id)
+    ar_data = {
+        'article': article.article,
+        'author': article.author_id,
+        'like_users': article_like_users,
+        'hashtags': article_hashtags,
+        'image': article.image
+    }
+    serializer = ArticleSerializer(article, data=ar_data)
+    if len(article.like_users.all()) == 30000:
         data = {
-            'article': article.article,
+            'h_article': article.article,
             'author': article.author,
             'hashtags': article.hashtags,
             'image': article.image
@@ -284,24 +325,29 @@ def like(request):
         if noti_serializer.is_valid():
             noti_serializer.save()
         article.delete()
-    if serializer.like_users.filter(id=user.id).exists():
-        serializer.like_users.remove(user)
-    else:
-        serializer.like_users.add(user)
-        like_users = article.like_users.all()
-        for like_user in like_users:
-            # 알림 받는 유저
-            receive_user = get_object_or_404(User, id=like_user)
-            notification = {
-                'nickname': receive_user.nickname,
-                'message': user.nickname + "님이" + receive_user.nickname + "님의 글을 좋아합니다.",
-                'send_user': user.nickname
-            }
-            json_noti = json.dumps(notification)
-            noti_serializer = NotificationSerializer(data=json_noti)
-            noti_serializer.save()
-    return Response(serializer.data)
-
+    if serializer.is_valid():
+        article = serializer.save()
+        if article.like_users.filter(id=user.id).exists():
+            # index = serializer.data.get('like_users').index(user.id)
+            article.like_users.remove(user.id)
+        else:
+            article.like_users.add(user.id)
+            like_users = article.like_users.all()
+            for like_user in like_users:
+                # 알림 받는 유저
+                user  = get_object_or_404(User, username=like_user)
+                receive_user = get_object_or_404(User, id=user.id)
+                notification = {
+                    'nickname': receive_user.nickname,
+                    'message': user.nickname + "님이" + receive_user.nickname + "님의 글을 좋아합니다.",
+                    'send_user': user.nickname
+                }
+                noti_serializer = NotificationSerializer(data=notification)
+                if noti_serializer.is_valid():
+                    notification = noti_serializer.save()
+                    notification.save()
+        article.save()
+        return Response(serializer.data)
 
 
 class CommentList(APIView):
@@ -311,7 +357,6 @@ class CommentList(APIView):
         article_id = request.data.get('article_id')
         my_nickname = request.data.get('my_nickname')
         comment = request.data.get('comment')
-        print(article_id, my_nickname, comment)
         user = get_object_or_404(User, nickname=my_nickname)
         article = get_object_or_404(Article, id=article_id)
         article_user = get_object_or_404(User, id=article.author_id)
@@ -326,42 +371,40 @@ class CommentList(APIView):
                 'message': user.nickname + "님이" + article_user.nickname + "님의 글에 댓글을 남겼습니다.",
                 'send_user': user.nickname
             }
-        print(notification)
         noti_serializer = NotificationSerializer(data=notification)
         if noti_serializer.is_valid():
             noti = noti_serializer.save()
-            print(noti_serializer.data)
             noti.save()
         if serializer.is_valid():
             comment = serializer.save()
             comment.save()
-            print(serializer.data)
             return Response(serializer.data)
         else:
             return Response({'message': '이런 나쁜 요청'}, status=status.HTTP_400_BAD_REQUEST)
     
     # 댓글 수정
-    def put(request):
+    def put(self, request):
         # request = article_id, comment_id, comment
-        article_id = request.data.get('article_id')
         comment_id = request.data.get('comment_id')
         comment = get_object_or_404(Comment, id=comment_id)
-        serializer = CommentSerializer(comment)
+        comment.comment = request.data.get('comment')
+        comment_data = {
+            'article': comment.article_id,
+            'author': comment.author_id,
+            'comment': comment.comment,
+        }
+        serializer = CommentSerializer(comment, data=comment_data)
         serializer.comment = request.data.get('comment')
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': '댓글이 성공적으로 변경되었습니다.'}, serializer.data)
-
+            return Response(serializer.data)
     # 댓글 삭제
-    def delete(request):
+    def delete(self, request, pk):
         # request = nickname, comment_id
-        nickname = request.data.get('nickname')
-        user = get_object_or_404(User, nickname=nickname)
-        comment = get_object_or_404(Comment, id=comment_id)
-        serializer = CommentSerializer(comment)
-        if user.id == comment.author:
-            serializer.delete()
-            return Response({'message': '댓글이 성공적으로 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
+        comment = get_object_or_404(Comment, id=pk)
+        print(comment)
+        comment.delete()
+        return Response({'message': '댓글이 성공적으로 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 def honor(request): 
@@ -369,6 +412,7 @@ def honor(request):
     serializer = HonorArticleSerializer(articles, many=True)
     return Response(serializer.data)
 
+@api_view(['POST', ])
 def hashtag(request):
     hashtag_pk = request.data.get('hashtag_pk')
     hashtag = get_object_or_404(Hashtag, id=hashtag_pk)
@@ -378,4 +422,3 @@ def hashtag(request):
         'hashtag': hashtag
     }
     return Response(data)
-    

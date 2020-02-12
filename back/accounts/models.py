@@ -21,7 +21,7 @@ class Waiting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class pwd_find(models.Model):
+class PwdFind(models.Model):
     username = models.EmailField(blank=False)
     secret_key = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=False)
@@ -42,3 +42,10 @@ class Notification(models.Model):
     
     class Meta:
         ordering = ('-pk',)
+
+
+class AccountCookie(models.Model):
+    username = models.EmailField(blank=False, unique=True)
+    login_at = models.DateTimeField(auto_now=True)  
+    token_1 = models.TextField()
+    token_2 = models.TextField(blank=True)

@@ -1,14 +1,16 @@
 <template>
-  <v-container class="py-12 px-3">
-    <v-card dark color="#110b22" class="py-0">
-      <v-card-actions class="px-0">
+  <v-responsive fluid>
+    <v-row class="pt-0" align="start" justify="center">
+      <v-col cols="12">
+     <v-list dark color="#110B22">
+          <v-list-item>
         <v-text-field v-model="keyword" name="search" label="키워드를 입력하세요" @keyup.enter="search"></v-text-field>
 
         <v-btn text small class="px-0">
           <v-icon @click="search()">mdi-magnify</v-icon>
         </v-btn>
-      </v-card-actions>
-    </v-card>
+          </v-list-item>
+     </v-list>
 
     <!-- 탭  메뉴 -->
     <div v-if="isSearched" class="py-2">
@@ -21,35 +23,25 @@
 
         <!--  결과 - 키워드탭 -->
         <v-tab-item id="tab-1">
-          <v-container v-if="SearchKeywordResult.length>0" centered class="my-0">
-            <v-layout row class="my-0 py-0">
-              <v-flex xs12 sm12 v-for="(items,i) in SearchKeywordResult" :key="i">
+           <v-row   v-if="SearchKeywordResult.length>0" class="pt-0" align="start" justify="center" style="background-color:#110b22">
+              <v-col cols="12" xs12 sm12 v-for="(items,i) in SearchKeywordResult" :key="i">
                 <SearchKeyword v-bind="items" />
-              </v-flex>
-            </v-layout>
-          </v-container>
-          <v-container v-else>
+              </v-col>
+            </v-row>
+          <v-row v-else  class="pt-0" align="start" justify="center" style="background-color:#110b22">
             <p class="white--text subtitle-1">검색 결과가 없어여</p>
-          </v-container>
+          </v-row>
         </v-tab-item>
         <!-- 결과 - 유저-->
         <v-tab-item id="tab-2">
-          <v-container v-if="SearchUserResult.length>0" centered class="my-0">
-            <v-layout row class="my-0 py-0">
-              <v-flex
-                xs12
-                sm12
-                v-for="(items,i) in SearchUserResult"
-                :key="i"
-                @click="gotoUserPfPage(items.nickname)"
-              >
-                <SearchUser v-bind="items" />
-              </v-flex>
-            </v-layout>
-          </v-container>
-          <v-container v-else>
+          <v-row   v-if="SearchUserResult.length>0" class="pt-0" align="start" justify="center" style="background-color:#110b22">
+              <v-col cols="12" xs12 sm12 v-for="(items,i) in SearchUserResult" :key="i" @click="gotoUserPfPage(items.nickname)">
+              <SearchUser v-bind="items" />
+              </v-col>
+            </v-row >
+          <v-row v-else  class="pt-0" align="start" justify="center" style="background-color:#110b22">
             <p class="white--text title">노 result ... </p>
-          </v-container>
+          </v-row>
         </v-tab-item>
       </v-tabs>
     </div>
@@ -79,7 +71,9 @@
         <h2 class="white--text">검색기록이 없어요.</h2>
       </div>
     </div>
-  </v-container>
+ </v-col>
+    </v-row>
+  </v-responsive>
 </template>
 
 <script>

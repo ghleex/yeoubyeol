@@ -12,10 +12,12 @@ class ArticleSerializer(serializers.ModelSerializer):
         model = Article
         fields = ('id', 'article', 'created_at', 'updated_at', 'author', 'like_users', 'hashtags', 'image')
 
+
 class CommentSerializer(serializers.ModelSerializer):
     class Meta(Comment):
         model = Comment
         fields = ('id', 'article', 'author', 'comment')
+
 
 class HonorArticleSerializer(serializers.ModelSerializer):
     class Meta(HonorArticle):
