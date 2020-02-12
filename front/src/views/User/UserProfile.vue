@@ -44,6 +44,8 @@
           </v-list-item>
           <!-- <v-list-item> -->
         </v-list>
+      <keep-alive>
+
 
         <v-tabs centered fixed dark background-color="transparent">
           <v-tabs-slider color="#71d087"></v-tabs-slider>
@@ -69,7 +71,7 @@
               style="background-color:#110b22"
             >
               <v-col cols="12" v-for="(article,i) in PostArticle" :key="i">
-                <Post v-on:userLikes="userLikes" v-bind="article" />
+                <Post v-bind="article" />
               </v-col>
             </v-row>
             <v-row
@@ -93,7 +95,7 @@
               justify="center"
               style="background-color:#110b22"
             >
-              <v-col cols="12" v-for="article in LikeArticle" :key="article.id">
+              <v-col cols="12" v-for="(article,i) in LikeArticle" :key="i">
                 <Post v-bind="article" />
               </v-col>
             </v-row>
@@ -110,6 +112,7 @@
             </v-row>
           </v-tab-item>
         </v-tabs>
+              </keep-alive>
       </v-col>
     </v-row>
   </v-responsive>
@@ -125,20 +128,7 @@ export default {
     Post
   },
   methods: {
-    userLikes(data) {
-      let key = data[1];
-      
-      // this.PostArticle[data[1]].article="SSSSSSs";
-      FeedApi.userLikesPost(data[0],res=>{
-        console.log(res);
-        this.PostArticle[key].like_users=res.data.like_users;
-        console.log(res.data.like_users);
-        this.PostArticle[key].likes = res.data.like_users.length;
-
-      },error=>{
-        console.log("에러얌 ");
-      })
-    },
+    
     clickFollowBtn() {
       if (!this.isMyAccount) {
         let { loginedNickname, shownNickname } = this;
@@ -226,7 +216,6 @@ export default {
             ".png"),
           img: dataList[i].image,
           id: dataList[i].id,
-          keyIdx:i,
           article: dataList[i].article,
           hashtags: dataList[i].hashtags,
           likes: dataList[i].like_users.length,

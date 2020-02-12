@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div  style="position:fixed">
     <div>
       <div class="js-weather weather" style="background-color:#fff">
         <h1> 어서오세요 홍주의 랩실 2 는 날씨 API 입니당</h1>

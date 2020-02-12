@@ -2,7 +2,7 @@
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
       <!-- 글 원문  -->
-      <v-col cols="12">
+      <v-col cols="12" v-if="isArticleLoaded">
         <div class="pa-2" @click="backward">
           <v-icon class="white--text">mdi-chevron-left</v-icon>
         </div>
@@ -145,19 +145,20 @@ export default {
           //article
           console.log(res);
           let articleFromServer = {
-            id: res.data.article.id,
             nickname: res.data.nickname,
+              pic_name: require("@/assets/images/profile/" +
+           res.data.pic_name +
+            ".png"),
+            id: res.data.article.id,
             article: res.data.article.article,
-            pic_name: require("@/assets/images/profile/" +
-              res.data.pic_name +
-              ".png"),
-            hashtags: res.data.article.hashtags,
+            hashtags: res.data.hashtags,
+            likes:res.data.article.like_users.length,
+            comments:res.data.comments.length,
+            created_at: res.data.article.created_at,
             like_users: res.data.article.like_users,
-            cnt_likes: res.data.article.like_users.length,
-            cnt_comments: res.data.comments.length,
-            created_at: res.data.article.created_at
           };
           this.article = articleFromServer;
+          this.isArticleLoaded=true;
           //comment
 
           this.comments = [];
@@ -178,6 +179,7 @@ export default {
         },
         error => {
           //실패 시
+          this.isArticleLoaded=false;
           console.log("로딩 실패 ㅜ" + error);
           alert("댓글과 게시물을 불러오는데 오류가 발생했어요 ..");
           // this.$router.push({ path: "/error" });
@@ -186,6 +188,7 @@ export default {
     }
   },
   data: () => ({
+    isArticleLoaded:false,
     valid: false,
     commentRules: [
       v => v.length < 200 || "조금 더 내용을 줄여보는 건 어떨까요"

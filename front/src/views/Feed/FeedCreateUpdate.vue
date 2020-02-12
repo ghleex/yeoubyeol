@@ -1,9 +1,10 @@
 <template>
   <div>
+     
     <v-card dark color="#110b22" style="border:solid 2px #888;">
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-row class="py-0 ma-2">
-           <v-col cols="6">
+          <v-col cols="6">
             <b class="white--text caption">{{weather_detail}}</b>
             <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
           </v-col>
@@ -102,7 +103,6 @@
               </template>
             </v-combobox>
           </v-col>
-         
         </v-row>
       </v-form>
     </v-card>
@@ -112,7 +112,7 @@
 <script>
 import FeedApi from "@/apis/FeedApi";
 
-const API_KEY = "241051bf13976dd3ddf8b8d9f247255e";
+const API_KEY = "927a607b0b357ff6efcbabbd85795740";
 const WEATHER_API = "https://api.openweathermap.org/data/2.5/weather?";
 
 export default {
@@ -123,6 +123,12 @@ export default {
     ).nickname;
   },
   methods: {
+    setVideo() {
+      let max = 6;
+      let min = 1;
+      var name = Math.floor(Math.random() * max) + min;
+      this.homeVideo = require("@/assets/images/example/" + name + ".mp4");
+    },
     requestHashTags() {
       let form = new FormData();
       form.append("article", this.inputPostContent);
@@ -315,4 +321,5 @@ export default {
   max-width: 50%;
   max-height: 100px;
 }
+
 </style>
