@@ -51,21 +51,15 @@
           <v-list-item-content @click="changeView('메인피드')">메인피드</v-list-item-content>
         </v-list-item>
         <v-list-item link>
-          <v-list-item-content>트렌드</v-list-item-content>
+          <v-list-item-content @click="changeView('트렌드')">트렌드</v-list-item-content>
         </v-list-item>
         <v-list-item link>
-          <v-list-item-content>큐레이션 피드</v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-content>스크랩 된 피드</v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-content>스킵 된 피드</v-list-item-content>
+          <v-list-item-content @click="changeView('명예의 전당')">명예의 전당</v-list-item-content>
         </v-list-item>
 
         <v-divider></v-divider>
         <v-list-item link>
-          <v-list-item-content>설정</v-list-item-content>
+          <v-list-item-content @click="changeView('프로필 변경')">설정</v-list-item-content>
         </v-list-item>
         <v-list-item link>
           <v-list-item-content @click="logout">로그아웃</v-list-item-content>
