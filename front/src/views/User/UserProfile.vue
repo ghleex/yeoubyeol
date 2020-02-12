@@ -134,7 +134,7 @@ export default {
         res => {
           //확인용 ..useless ...
           let sentData = JSON.stringify(res.data);
-          console.log("프로필 정보 : " + JSON.stringify(res.data));
+          console.log("프로필1111 : " + JSON.stringify(res.data));
           this.userInfo.followers = JSON.stringify(res.data.followers.length);
           this.userInfo.followings = JSON.stringify(res.data.followings.length);
           this.userInfo.id = res.data.id;
@@ -175,10 +175,10 @@ export default {
     getMyArticlesFromServer() {
       this.myArticles=[];
 
+        console.log("--->"+this.userInfo.nickname);
       FeedApi.getMyArticles(
-        this.loginedNickname,
+        this.userInfo.nickname,
         res => {
-          console.log("---------------");
           console.log(res.data);
           for (let i = 0; i < res.data.length; i++) {
             let article_prop = {
@@ -190,7 +190,7 @@ export default {
               id: res.data[i].id,
               article: res.data[i].article,
               hashtags: res.data[i].hashtags,
-              likes: JSON.stringify(res.data[i].like_users.length),
+              likes: res.data[i].like_users.length,
               comments: res.data[i].comments,
               created_at: res.data[i].created_at,
             };
@@ -219,6 +219,7 @@ export default {
 
   data: () => {
     return {
+      loginedNickname:'',
       isFollow: false,
       isMyAccount: false,
       loginUsername: "",
