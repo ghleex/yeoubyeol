@@ -23,4 +23,6 @@ urlpatterns = [
     path('honor/', views.honor, name='honor'),
     path('recommend/', views.recommend),
     path('hashtag/', views.hashtag),
+    path('keyword/', views.keyword),
+    path('trend/', views.trend),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
