@@ -18,7 +18,7 @@
 
       <v-card-actions class="pt-0">
         <v-list-item>
-          <v-row class="mr-1" align="center" justify="end">
+          <v-row class="mr-1" align="center" justify="start">
             <a href="#">
               <v-icon class="mr-1" size="x-large" v-if="!isLike">mdi-heart-outline</v-icon>
               <v-icon class="mr-1" size="x-large" color="red" v-if="isLike">mdi-heart</v-icon>
@@ -74,6 +74,27 @@ export default {
       isLike: false
     };
   },
-  methods: {}
+  methods: {
+       isLikeCheck() {
+         const LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
+         console.log(this.like_users);
+         console.log(LoginId);
+      if (this.like_users.includes(LoginId)) {
+        this.isLike = true;
+      } else {
+        this.isLike = false;
+      }
+    },
+  },
+  mounted(){
+    // this.isLikeCheck();
+  },
+  watch:{
+    like_users:{
+      deep:true,
+      immediate:true,
+      handler:'isLikeCheck'
+    }
+  }
 };
 </script>

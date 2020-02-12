@@ -1,7 +1,7 @@
 <template>
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
-      <v-col cols="12" v-for="arti in articles" :key="arti.article">
+      <v-col cols="12" v-for="arti in articles" :key="arti.id">
         <Post v-bind="arti" />
       </v-col>
     </v-row>
@@ -32,8 +32,6 @@ export default {
       FeedApi.getArticles(
         this.loginedNickname,
         res => {
-          console.log("---------------");
-          console.log(res.data);
           for (let i = 0; i < res.data.length; i++) {
             let article_prop = {
               nickname: res.data[i].nickname,
@@ -47,6 +45,7 @@ export default {
               likes: res.data[i].like_users.length,
               comments: res.data[i].comments,
               created_at: res.data[i].created_at,
+              like_users:res.data[i].like_users,
             };
 
             console.log(article_prop);
@@ -75,7 +74,8 @@ export default {
           hashtags: [],
           likes: 0,
           comment: 0,
-          time: ""
+          created_at: "",
+          like_users:[],
         }
       ],
       loginedNickname: ""

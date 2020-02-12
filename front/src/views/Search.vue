@@ -109,7 +109,7 @@ export default {
   methods: {
     search() {
       // console.log("검색쿠 :" + this.keyword);
-      if (this.keyword !== "") {
+      if (this.keyword.trim() !== "") {
         this.isSearched = true;
 
         let { keyword } = this;
@@ -120,20 +120,22 @@ export default {
           SearchApi.SearchUser(
             data,
             res => {
-              if (res.data.nicknames_serializer_data === 0) {
+              if (res.data.length === 0) {
                 this.SearchUserResult = [];
               } else {
                 this.SearchUserResult = [];
-                // console.log('검색결과 : '+res.data.nicknames_serializer_data.length)
                 for (
                   let i = 0;
-                  i < res.data.nicknames_serializer_data.length;
+                  i < res.data.length;
                   i++
                 ) {
                   // console.log(res.data.nicknames_serializer_data[i].nickname);
                   this.SearchUserResult.push({
-                    nickname: res.data.nicknames_serializer_data[i].nickname,
-                    username: res.data.nicknames_serializer_data[i].username
+                    nickname: res.data[i].nickname,
+                    pic_name:   require("@/assets/images/profile/" +
+                res.data[i].pic_name +
+                ".png"),
+                    intro : res.data[i].intro,
                   });
                 }
               }
@@ -149,6 +151,8 @@ export default {
           let searchHistory = new Array(this.keyword);
           localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
         }
+      }else{
+        alert("검색어를 입력해주세요 .");
       }
     },
     delSearchedKeyword() {
