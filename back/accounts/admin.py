@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User
+from .models import User, Notification
 
 # Register your models here.
 class CustomUserAdmin(UserAdmin):
@@ -13,3 +13,8 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'nickname', 'email', 'intro', 'pic_name', 'is_staff',)
 
 admin.site.register(User, CustomUserAdmin)
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('nickname', 'is_read', 'created_at', 'message', 'send_user',)
+
+admin.site.register(Notification, NotificationAdmin)

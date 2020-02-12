@@ -1,4 +1,6 @@
-## ![main](https://user-images.githubusercontent.com/52685206/73918007-002f0600-4904-11ea-800e-2fd950a3781e.png)
+## <img src="https://user-images.githubusercontent.com/52685206/73918007-002f0600-4904-11ea-800e-2fd950a3781e.png" alt="main"  />
+
+## 링크: https://i02b203.p.ssafy.io/
 
 ### THE AIMS OF THE PROJECT :dart:
 
@@ -43,13 +45,13 @@
 
 
 
-
+----
 
 <img src="https://user-images.githubusercontent.com/52685206/73917727-5780a680-4903-11ea-969c-c48dd3d8ff10.png" alt="system_architecture"/>
 
 
 
-
+----
 
 ### ER Diagram
 
@@ -57,7 +59,7 @@
 
 
 
-
+---
 
 <img src="https://user-images.githubusercontent.com/52685206/73899976-9269e680-48d1-11ea-8d7b-bf01a1e138ab.png" alt="git_workflow"/>
 
@@ -75,7 +77,7 @@
 
 
 
-
+----
 
 <img src="https://user-images.githubusercontent.com/52685206/73917713-4e8fd500-4903-11ea-9ccb-b70b38a15480.png" alt="differences"/>
 
@@ -91,7 +93,9 @@
 
 #### 1. Android
 
-<img src="https://user-images.githubusercontent.com/52685206/73724521-df817780-476e-11ea-8b6f-ddadb806b225.jpg" alt="Screenshot_20200204-164832_Samsung Internet" style="width:50%;" />
+<img src="https://user-images.githubusercontent.com/52685206/74123566-99b32c00-4c12-11ea-81e0-051b2bf3c01e.jpg" alt="mobile_android" style="width:50%;" />
+
+
 
 
 
@@ -99,5 +103,7 @@
 
 #### 2. IPadOS
 
-<img src="https://user-images.githubusercontent.com/52685206/73724519-df817780-476e-11ea-8677-78bcf7b553f7.PNG" alt="IMG_0074" style="width:70%;" />
+<img src="https://user-images.githubusercontent.com/52685206/74123568-9ae45900-4c12-11ea-8691-fc8274bafbf6.jpg" alt="mobile_ipad" style="width:70%;" />
+
+
 
