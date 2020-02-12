@@ -45,6 +45,7 @@ export default {
               likes: res.data[i].like_users.length,
               comments: res.data[i].comments,
               created_at: res.data[i].created_at,
+              like_users:res.data[i].like_users,
             };
 
             console.log(article_prop);
@@ -73,7 +74,8 @@ export default {
           hashtags: [],
           likes: 0,
           comment: 0,
-          time: ""
+          created_at: "",
+          like_users:[],
         }
       ],
       loginedNickname: ""

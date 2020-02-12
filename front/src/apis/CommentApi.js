@@ -1,11 +1,7 @@
 import axios from 'axios'
 import dotenv from 'dotenv';
+
 dotenv.config();
-//  ------------------ 현재 기능
-//댓글 작성
-//댓글 수정
-
-
 // 댓글 작성하기
 const PostComments = (data, callback, errorCallback) => {
     axios.post(`http://${process.env.VUE_APP_IP}/articles/comment/`, data)

@@ -143,11 +143,34 @@ export default {
                 console.log("login -> ",response.data[0]);
                   sessionStorage.setItem("AUTH_token", this.tokenFromLogin);
                   const LoginUserInfo={
+                    username: data.email,
                     nickname : response.data[0].nickname,
                     id : response.data[0].id,
                     pic_name:response.data[0].pic_name
                   }
-                  sessionStorage.setItem('LoginUserInfo',JSON.stringify(LoginUserInfo));
+                  let userData = JSON.stringify(LoginUserInfo)
+                  sessionStorage.setItem('LoginUserInfo', userData);
+                  
+                  var userInfo = new FormData();
+                  userInfo.append('username', data.email)
+                  userInfo.append('token_1', this.tokenFromLogin)
+                  console.log(data.email)
+                  console.log(this.tokenFromLogin)
+
+                  axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
+                    .then(response => {
+                      console.log('---------------------------------')
+                      console.log(response)
+                      var refresh_cookie = response.data.token_2
+                      this.$cookies.set('LoginUserInfo', userData, 60 * 60)
+                      this.$cookies.set('auth_cookie', this.tokenFromLogin, 60 * 60)
+                      this.$cookies.set('refresh_cookie', refresh_cookie, 60 * 60)
+                      this.$cookies.set('username', data.email, 60 * 60)
+                    })
+                    .catch(error => {
+                      console.log('++++++++++++++++++++++++++++++++++')
+                      console.log(error)
+                    })
                   router.push({ name: "홈" });
               }),error=>{
                 console.log("로그인 후 프로필 가져오기 문제");

@@ -29,14 +29,31 @@
 
 <script>
 import "../assets/css/home.scss";
+import UserApi from "@/apis/UserApi";
+import axios from 'axios';
+import dotenv from 'dotenv';
+
+dotenv.config();
 export default {
   created() {
     this.setVideo();
-    if (
-      sessionStorage.getItem("AUTH_token") &&
-      sessionStorage.getItem("LoginUserInfo")
-    ) {
-      this.isOk = true;
+    if (this.$cookies.isKey('refresh_cookie') && this.$cookies.isKey('auth_cookie') && this.$cookies.isKey('username')) {
+      let refresh_token = this.$cookies.get('refresh_cookie')
+      let auth_token = this.$cookies.get('auth_cookie')
+      let username = this.$cookies.get('username')
+      
+      let userInfo = new FormData();
+      userInfo.append('check', true)
+      userInfo.append('username', username)
+      userInfo.append('token_1', auth_token)
+      userInfo.append('token_2', refresh_token)
+      
+      UserApi.requestLoginCheck(userInfo, response => {
+        this.isOk = true
+      }, error => {
+        console.log('fxxk')
+      })
+
     }
   },
   data: () => {
@@ -54,11 +71,20 @@ export default {
       this.homeVideo = require("@/assets/images/example/" + name + ".mp4");
     },
     logout() {
-      sessionStorage.removeItem("AUTH_token");
-      sessionStorage.removeItem("LoginUserInfo");
-      this.$cookies.remove("auth_cookie");
-      alert("로그아웃되었습니다.");
-      this.isOk = false;
+      let user = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
+      let userInfo = new FormData();
+      userInfo.append('username', user.username)
+      console.log(userInfo)
+      axios.post(`http://${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
+        .then(response => {
+          console.log(response)
+          sessionStorage.removeItem("AUTH_token");
+          sessionStorage.removeItem("LoginUserInfo");
+          this.$cookies.remove("auth_cookie");
+          this.$cookies.remove('refresh_cookie');
+          alert("로그아웃되었습니다.");
+          this.isOk = false;  
+        })
     },
     tologin() {
       var router = this.$router;

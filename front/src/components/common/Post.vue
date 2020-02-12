@@ -14,15 +14,13 @@
       </v-list-item>
       <v-card-text class="subtitle-2 grey--text text--lighten-5 pb-0">
         <v-img :src="getImageUrl"></v-img>
-        <p class="mt-1">
-          {{article}}
-          </p>
+        <p class="mt-1">{{article}}</p>
         <v-chip v-for="(tag,i)  in hashtags" :key="i" class="ma-1">{{tag}}</v-chip>
       </v-card-text>
 
       <v-card-actions class="pt-0">
         <v-list-item>
-          <v-row class="mr-1" align="center" justify="end">
+          <v-row class="mr-1" align="center" justify="start">
             <a href="#" @click.prevent="iLoveIt">
               <v-icon class="mr-1" size="x-large" v-if="!isLike">mdi-heart-outline</v-icon>
               <v-icon class="mr-1" size="x-large" color="red" v-if="isLike">mdi-heart</v-icon>
@@ -47,7 +45,11 @@ dotenv.config();
 export default {
   name: "Post",
   props: {
+    keyIdx:{
+      type:Number
+    },
     id: {
+      type: Number,
       required: true
     },
     nickname: {
@@ -74,6 +76,9 @@ export default {
     },
     hashtags: {
       type: Array
+    },
+    like_users: {
+      type: Array
     }
   },
   data: function() {
@@ -83,46 +88,57 @@ export default {
       timedelta: ""
     };
   },
-  created() {
-    let date = new Date();
-    let maybe = new Date(this.created_at);
-    let Hours = Math.ceil((date - maybe) / 1000 / 60 / 60);
-    let Mins = Math.ceil((date - maybe) / 1000 / 60);
+  created(){
+    this.setTimeValues();
+    this.isLikeCheck();
 
-    if (Hours <= 1) {
-      this.timedelta = `${Mins}분 전`;
-    } else if (Hours < 24) {
-      this.timedelta = `${Hours}시간 전`;
-    } else {
-      this.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
-    }
+  },
+  updated() {
+    console.log("post updaated ~~~~");
+    this.setTimeValues();
+    this.isLikeCheck();
   },
   computed: {
     getImageUrl: function() {
-      console.log(this.img);
-      console.log("--------------");
       return `http://${process.env.VUE_APP_IP}${this.img}`;
     }
   },
   methods: {
+    isLikeCheck() {
+      const LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
+      if (this.like_users.includes(LoginId)) {
+        this.isLike = true;
+      } else {
+        this.isLike = false;
+      }
+    },
+    setTimeValues() {
+      let date = new Date();
+      let maybe = new Date(this.created_at);
+      let Hours = Math.ceil((date - maybe) / 1000 / 60 / 60);
+      let Mins = Math.ceil((date - maybe) / 1000 / 60);
+
+      if (Hours <= 1) {
+        this.timedelta = `${Mins}분 전`;
+      } else if (Hours < 24) {
+        this.timedelta = `${Hours}시간 전`;
+      } else {
+        this.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
+      }
+    },
     iLoveIt() {
       var userinfo = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
         .nickname;
-      console.log(userinfo);
       var form = new FormData();
       form.append("article_id", this.id);
-      form.append("username", userinfo);
-      form.append("isLike", this.isLike);
-      axios
-        .post(`http://${process.env.VUE_APP_IP}/articles/like/`, form)
-        .then(response => {
-          console.log(response);
-        });
-      this.isLike = !this.isLike;
+      form.append("nickname", userinfo);
+      this.$emit("userLikes",[form,this.keyIdx,this.isLike]);
+      
     },
     comment() {
       var router = this.$router;
-      router.push(`feed/${this.id}`);
+      // router.push(`feed/${this.id}`);
+      this.$router.push({ name: "댓글", params: { id: this.id } });
     }
   }
 };
