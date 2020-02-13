@@ -71,6 +71,7 @@ def email_auth(request):
                 email = EmailMessage(mail_subject, message, to=[user_email])
                 email.content_subtype = "html"
                 email.send()
+                
                 return Response({'message': '인증 메일이 성공적으로 발송되었습니다.'}, status=status.HTTP_200_OK)
         else:
             return Response({'message': '아직 인증을 완료하지 않은 계정입니다.'}, status=status.HTTP_202_ACCEPTED)
