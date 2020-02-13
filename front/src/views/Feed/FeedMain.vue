@@ -14,6 +14,9 @@ import Post from "@/components/common/Post";
 import FeedApi from "@/apis/FeedApi";
 import InfiniteLoading from 'vue-infinite-loading';
 import axios from 'axios'
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default {
   components: {
@@ -66,7 +69,7 @@ export default {
       let requireData = new FormData();
       requireData.append('nickname', this.loginedNickname)
       requireData.append('start', this.limit)
-      axios.post('http://192.168.31.87:8000/articles/mainfeed/', requireData) //api에 url 삽입
+      axios.post('${process.env.VUE_APP_IP}/articles/mainfeed/', requireData) //api에 url 삽입
         .then(response => {
           setTimeout(() => { //스크롤 페이징을 띄우기 위한 시간 지연(1초)
             if (response.data.length) {

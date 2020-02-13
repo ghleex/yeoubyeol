@@ -139,7 +139,7 @@ export default {
               //요청이 끝나면 버튼 활성화
               let data={'email':email};
               console.log('프로필조회 : '+data.email);
-              axios.post(`http://${process.env.VUE_APP_IP}/accounts/`, data).then((response=>{
+              axios.post(`${process.env.VUE_APP_IP}/accounts/`, data).then((response=>{
                 console.log('로그인 후 가져온 다라 '+response.data[0].nickname);
                 console.log("login -> ",response.data[0]);
                   const LoginUserInfo={
@@ -156,7 +156,7 @@ export default {
                   console.log(data.email)
                   console.log(this.tokenFromLogin)
 
-                  axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
+                  axios.post(`${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
                     .then(response => {
                       console.log('---------------------------------')
                       var refresh_cookie = response.data.token_2
