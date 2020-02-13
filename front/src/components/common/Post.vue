@@ -176,8 +176,9 @@ export default {
     getImageUrl() {
       this.imgUrl = `${process.env.VUE_APP_IP}${this.post.img}`;
     },
-    isLikeCheck() {
-      let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
+     isLikeCheck() {
+      let userInfo = this.$cookies.get('LoginUserInfo');
+      let LoginId = userInfo.id;
       if (this.post.like_users.includes(LoginId)) {
         this.post.isLike = true;
       } else {
@@ -198,11 +199,11 @@ export default {
         this.post.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
       }
     },
-    iLoveIt() {
+     iLoveIt() {
+      let userInfo = this.$cookies.get('LoginUserInfo');
       var form = new FormData();
-      let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
-      let LoginNickname = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
-        .nickname;
+      let LoginId = userInfo.id;
+      let LoginNickname = userInfo.nickname;
       form.append("article_id", this.post.id);
       form.append("nickname", LoginNickname);
       console.log(this.post.id, "--1", LoginNickname);

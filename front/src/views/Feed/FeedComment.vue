@@ -121,11 +121,10 @@ export default {
       );
     },
     getUserInformation() {
-      this.loginUserInfo.nickname = JSON.parse(
-        sessionStorage.getItem("LoginUserInfo")
-      ).nickname;
+      let userInfo = this.$cookies.get('LoginUserInfo');
+      this.loginUserInfo.nickname = userInfo.nickname;
       this.loginUserInfo.pic_name = require("@/assets/images/profile/" +
-        JSON.parse(sessionStorage.getItem("LoginUserInfo")).pic_name +
+        userInfo.pic_name +
         ".png");
     },
     AddComment() {
