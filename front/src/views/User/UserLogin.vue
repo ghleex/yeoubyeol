@@ -46,6 +46,7 @@
               color="#71d087"
               style="color:#110b22"
               @click="validate"
+              @keyup.enter="validate"
             >로그인</v-btn>
             <v-spacer></v-spacer>
           </v-col>
@@ -141,7 +142,6 @@ export default {
               axios.post(`http://${process.env.VUE_APP_IP}/accounts/`, data).then((response=>{
                 console.log('로그인 후 가져온 다라 '+response.data[0].nickname);
                 console.log("login -> ",response.data[0]);
-                  sessionStorage.setItem("AUTH_token", this.tokenFromLogin);
                   const LoginUserInfo={
                     username: data.email,
                     nickname : response.data[0].nickname,
@@ -149,7 +149,6 @@ export default {
                     pic_name:response.data[0].pic_name
                   }
                   let userData = JSON.stringify(LoginUserInfo)
-                  sessionStorage.setItem('LoginUserInfo', userData);
                   
                   var userInfo = new FormData();
                   userInfo.append('username', data.email)
@@ -160,18 +159,21 @@ export default {
                   axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
                     .then(response => {
                       console.log('---------------------------------')
-                      console.log(response)
                       var refresh_cookie = response.data.token_2
-                      this.$cookies.set('LoginUserInfo', userData, 60 * 60)
-                      this.$cookies.set('auth_cookie', this.tokenFromLogin, 60 * 60)
-                      this.$cookies.set('refresh_cookie', refresh_cookie, 60 * 60)
-                      this.$cookies.set('username', data.email, 60 * 60)
+                      sessionStorage.setItem("AUTH_token", this.tokenFromLogin);
+                      sessionStorage.setItem('LoginUserInfo', userData);
+                      this.$cookies.set('LoginUserInfo', userData, '1d')
+                      this.$cookies.set('auth_cookie', this.tokenFromLogin, '1d')
+                      this.$cookies.set('refresh_cookie', refresh_cookie, '1d')
+                      this.$cookies.set('username', data.email, '1d')
+                      alert('로그인 성공!')
+                      router.push({ name: '메인피드'})
                     })
                     .catch(error => {
                       console.log('++++++++++++++++++++++++++++++++++')
-                      console.log(error)
+                      alert('로그인 실패..')
+                      router.push({ name: "홈" });
                     })
-                  router.push({ name: "홈" });
               }),error=>{
                 console.log("로그인 후 프로필 가져오기 문제");
               })

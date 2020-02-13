@@ -12,8 +12,11 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text icon>
-        <v-icon @click="changeView('검색')" v-if="!isSearchPage">mdi-magnify</v-icon>
+      <v-btn text icon v-if="!isPostPage">
+        <v-icon @click="changeView('피드 저장')">mdi-pencil-plus-outline</v-icon>
+      </v-btn>
+      <v-btn text icon v-if="!isSearchPage">
+        <v-icon @click="changeView('검색')">mdi-magnify</v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -51,21 +54,15 @@
           <v-list-item-content @click="changeView('메인피드')">메인피드</v-list-item-content>
         </v-list-item>
         <v-list-item link>
-          <v-list-item-content>트렌드</v-list-item-content>
+          <v-list-item-content @click="changeView('트렌드')">트렌드</v-list-item-content>
         </v-list-item>
         <v-list-item link>
-          <v-list-item-content>큐레이션 피드</v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-content>스크랩 된 피드</v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-content>스킵 된 피드</v-list-item-content>
+          <v-list-item-content @click="changeView('명예의 전당')">명예의 전당</v-list-item-content>
         </v-list-item>
 
         <v-divider></v-divider>
         <v-list-item link>
-          <v-list-item-content>설정</v-list-item-content>
+          <v-list-item-content @click="changeView('프로필 변경')">설정</v-list-item-content>
         </v-list-item>
         <v-list-item link>
           <v-list-item-content @click="logout">로그아웃</v-list-item-content>
@@ -77,7 +74,7 @@
       <v-responsive style="background-color:#110b22">
        <router-view :key="$route.fullPath"></router-view>
       </v-responsive>
-    </v-sheet> -->
+    </v-sheet>-->
   </v-card>
 </template>
 
@@ -95,6 +92,7 @@ export default {
     pageTitle: "",
 
     isSearchPage: false,
+    isPostPage: false,
     currUserInfo: {
       nickname: "로그인 에러",
       username: "잠시 후에 다시 시도해주세요",
@@ -108,25 +106,32 @@ export default {
   updated() {
     if (this.$route.name === "프로필") {
       this.pageTitle = this.$route.params.email;
+    } else if (this.$route.name == "검색 결과") {
+      this.pageTitle = "검색 결과 : "+this.$route.params.keyword;
     } else {
       this.pageTitle = this.$route.name;
     }
     // this.getLoginUserProfile();
 
-     //이거 선행님이 바꾼거 밑에 넣어야해
+    //이거 선행님이 바꾼거 밑에 넣어야해
     if (this.$route.name === "검색") {
       this.isSearchPage = true;
     } else {
       this.isSearchPage = false;
     }
+    if (this.$route.name === "피드 저장") {
+      this.isPostPage = true;
+    } else {
+      this.isPostPage = false;
+    }
   },
   created() {
-   
-
     //가라천국....heaven
     // this.$vuetify.theme.dark = true
     if (this.$route.name !== "프로필") {
       this.pageTitle = this.$route.name;
+    } else if (this.$route.name == "검색 결과") {
+      this.pageTitle = "검색 결과 : "+this.$route.params.keyword;
     } else {
       //프로필 화면인 경우에는 아이디를 상단에 노출시킴
       this.pageTitle = this.profileUsername;

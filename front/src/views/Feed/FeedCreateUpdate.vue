@@ -1,118 +1,132 @@
 <template>
-  <div>
-    <v-card dark color="#110b22" style="border:solid 2px #888;">
-      <v-form ref="form" v-model="valid" lazy-validation>
-        <v-row class="py-0 ma-2">
-           <v-col cols="6">
-            <b class="white--text caption">{{weather_detail}}</b>
-            <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
-          </v-col>
-          <v-col cols="6" class="pa-1 d-flex justify-end">
-            <v-btn
-              class="mb-2"
-              color="#71d087"
-              style="color:#110b22;"
-              @click="validate"
-              :disabled="!valid"
-            >피드 발행하기</v-btn>
-          </v-col>
-          <v-col cols="12" class="pa-0">
-            <div id="preview">
-              <img v-if="url" :src="url" style="padding-bottom:5px" />
-              <br />
-            </div>
-            <v-file-input
-              accept="image/*"
-              prepend-icon="mdi-camera"
-              outlined
-              dense
-              required
-              :clearable="false"
-              label="Image"
-              @change="onFileChanged"
-            ></v-file-input>
-          </v-col>
-          <v-col cols="12" class="pa-1">
-            <v-textarea
-              dark
-              :rules="contentRules"
-              required
-              outlined
-              v-model="inputPostContent"
-              :autofocus="true"
-              :auto-grow="true"
-              clearable
-            >{{inputPostContent}}</v-textarea>
-          </v-col>
-          <v-col cols="12" class="pa-1">
-            <v-btn @click="requestHashTags" text block style="color:#71d087;" class="ma-1">해시태그 추천받기</v-btn>
-            <!-- 여기부터 시작야이             -->
-          </v-col>
+  <v-responsive fluid>
+    <v-row class="pt-0" align="start" justify="center"
+    
+    >
+      <!-- <v-col cols="12" dark style="backgroundImage:url('../../assets/images/moon_home.jpg)"> -->
+      <v-col cols="12" dark :style="bgByWeather">
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-row class="py-0 ma-2">
+            <v-col cols="6">
+              <b class="white--text caption">{{weather_detail}}</b>
+              <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
+            </v-col>
+            <v-col cols="6" class="pa-1 d-flex justify-end">
+              <v-btn
+                class="mb-2"
+                color="#71d087"
+                style="color:#110b22;"
+                @click="validate"
+                :disabled="!valid"
+              >피드 발행하기</v-btn>
+            </v-col>
+            <v-col cols="12" class="pa-0">
+              <div id="preview">
+                <img v-if="url" :src="url" style="padding-bottom:5px" />
+                <br />
+              </div>
+              <v-file-input
+                dark
+                id="fileInput"
+                accept="image/*"
+                prepend-icon="mdi-camera"
+                outlined
+                dense
+                required
+                :clearable="false"
+                label="Image"
+                @change="onFileChanged"
+              ></v-file-input>
+            </v-col>
+            <v-col cols="12" class="pa-1">
+              <v-textarea
+                dark
+                :rules="contentRules"
+                required
+                outlined
+                v-model="inputPostContent"
+                :autofocus="true"
+                :auto-grow="true"
+                clearable
+                rows="8"
+              >{{inputPostContent}}</v-textarea>
+            </v-col>
+            <v-col cols="12" class="pa-1">
+              <v-btn
+                @click="requestHashTags"
+                text
+                block
+                style="color:#71d087;"
+                class="ma-1"
+              >해시태그 추천받기</v-btn>
+              <!-- 여기부터 시작야이             -->
+            </v-col>
 
-          <v-col cols="12" class="pa-1">
-            <v-combobox
-              v-model="model"
-              :filter="filter"
-              :hide-no-data="!search"
-              :items="items"
-              :search-input.sync="search"
-              hide-selected
-              label="Search for an option"
-              multiple
-              small-chips
-              solo
-            >
-              <template v-slot:no-data>
-                <v-list-item>
-                  <span class="subheading">추가하기</span>
-                  <v-chip color="darkgrey" label small>{{ search }}</v-chip>
-                </v-list-item>
-              </template>
-              <template v-slot:selection="{ attrs, item, parent, selected }">
-                <v-chip
-                  v-if="item === Object(item)"
-                  v-bind="attrs"
-                  color="darkgrey"
-                  :input-value="selected"
-                  label
-                  small
-                >
-                  <span class="pr-2">{{ item.text }}</span>
-                  <v-icon small @click="parent.selectItem(item)">mdi-close</v-icon>
-                </v-chip>
-              </template>
-              <template v-slot:item="{ index, item }">
-                <v-text-field
-                  v-if="editing === item"
-                  v-model="editing.text"
-                  autofocus
-                  flat
-                  background-color="transparent"
-                  hide-details
-                  solo
-                  @keyup.enter="edit(index, item)"
-                ></v-text-field>
-                <v-chip v-else color="darkgrey" dark label small>{{ item.text }}</v-chip>
-                <v-spacer></v-spacer>
-                <v-list-item-action @click.stop>
-                  <v-btn icon @click.stop.prevent="edit(index, item)">
-                    <v-icon>{{ editing !== item ? 'mdi-pencil' : 'mdi-check' }}</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </template>
-            </v-combobox>
-          </v-col>
-         
-        </v-row>
-      </v-form>
-    </v-card>
-  </div>
+            <v-col cols="12" class="pa-1">
+              <v-combobox
+                v-model="model"
+                :filter="filter"
+                :hide-no-data="!search"
+                :items="items"
+                :search-input.sync="search"
+                hide-selected
+                label="Search for an option"
+                multiple
+                small-chips
+                solo
+              >
+                <template v-slot:no-data>
+                  <v-list-item>
+                    <span class="subheading">추가하기</span>
+                    <v-chip color="darkgrey" label small>{{ search }}</v-chip>
+                  </v-list-item>
+                </template>
+                <template v-slot:selection="{ attrs, item, parent, selected }">
+                  <v-chip
+                    v-if="item === Object(item)"
+                    v-bind="attrs"
+                    color="darkgrey"
+                    :input-value="selected"
+                    label
+                    small
+                  >
+                    <span class="pr-2">{{ item.text }}</span>
+                    <v-icon small @click="parent.selectItem(item)">mdi-close</v-icon>
+                  </v-chip>
+                </template>
+                <template v-slot:item="{ index, item }">
+                  <v-text-field
+                    v-if="editing === item"
+                    v-model="editing.text"
+                    autofocus
+                    flat
+                    background-color="transparent"
+                    hide-details
+                    solo
+                    @keyup.enter="edit(index, item)"
+                  ></v-text-field>
+                  <v-chip v-else color="darkgrey" dark label small>{{ item.text }}</v-chip>
+                  <v-spacer></v-spacer>
+                  <v-list-item-action @click.stop>
+                    <v-btn icon @click.stop.prevent="edit(index, item)">
+                      <v-icon>{{ editing !== item ? 'mdi-pencil' : 'mdi-check' }}</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </template>
+              </v-combobox>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-col>
+    </v-row>
+
+  </v-responsive>
 </template>
 
 <script>
 import FeedApi from "@/apis/FeedApi";
 
-const API_KEY = "241051bf13976dd3ddf8b8d9f247255e";
+const API_KEY = "927a607b0b357ff6efcbabbd85795740";
 const WEATHER_API = "https://api.openweathermap.org/data/2.5/weather?";
 
 export default {
@@ -122,7 +136,27 @@ export default {
       sessionStorage.getItem("LoginUserInfo")
     ).nickname;
   },
+  computed:{
+bgByWeather:function(){
+   let max = 7;
+      let min = 1;
+      let name = Math.floor(Math.random() * max) + min;
+      // let name =12;
+  return {
+    'background-image': 'url(' + require('@/assets/images/bg/'+name+'.gif') + ')',
+    'background-position': 'center',
+  'background-repeat': 'no-repeat',
+  'background-size': 'cover',
+    }
+}
+  },
   methods: {
+    setVideo() {
+      let max = 6;
+      let min = 1;
+      var name = Math.floor(Math.random() * max) + min;
+      this.homeVideo = require("@/assets/images/example/" + name + ".mp4");
+    },
     requestHashTags() {
       let form = new FormData();
       form.append("article", this.inputPostContent);
@@ -199,7 +233,8 @@ export default {
         res => {
           console.log(res);
           alert("글이 성공적으로 게시되었습니다.");
-          window.close();
+            this.$router.push({ name: '댓글', params: { id: res.data.id } });
+    
         },
         error => {
           console.log("error");
@@ -315,4 +350,5 @@ export default {
   max-width: 50%;
   max-height: 100px;
 }
+
 </style>

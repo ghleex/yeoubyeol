@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Waiting, Notification
+from .models import Waiting, Notification, AccountCookie
 
 User = get_user_model()
 
@@ -25,5 +25,9 @@ class WaitingSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = ('username', 'is_read', 'created_at', 'message', 'send_user')
+        fields = ('nickname', 'is_read', 'created_at', 'message', 'send_user')
         
+class AccountCookieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccountCookie
+        fields = ('username', 'login_at', 'token_1', 'token_2')

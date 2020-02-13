@@ -1,35 +1,41 @@
 <template>
   <div>
-    <v-card class="mx-2" color="#110B22" dark outlined style="border: 1px solid #71d087;">
+    <v-card class="mx-2" color="#110B22" dark outlined style="border: 1px solid #ccc;">
+      <!-- <v-card class="mx-2" color="#110B22" dark outlined style="border: 1px solid #71d087;"> -->
       <v-list-item>
         <v-list-item-avatar color="grey darken-3">
-          <v-img :src="pic_name"></v-img>
+          <v-img :src="post.pic_name"></v-img>
         </v-list-item-avatar>
 
-        <v-list-item-content>
-          <v-list-item-title>{{ nickname }}</v-list-item-title>
+        <v-list-item-content @click="viewUserPfPage(post.nickname)">
+          <v-list-item-title>{{ post.nickname }}</v-list-item-title>
         </v-list-item-content>
         <v-spacer></v-spacer>
-        <p class="overline font-weight-thin">{{timedelta}}</p>
+        <p class="overline font-weight-thin">{{post.timedelta}}</p>
       </v-list-item>
       <v-card-text class="subtitle-2 grey--text text--lighten-5 pb-0">
-        <v-img :src="getImageUrl"></v-img>
-        <p class="mt-1">{{article}}</p>
-        <v-chip v-for="(tag,i)  in hashtags" :key="i" class="ma-1">{{tag}}</v-chip>
+        <v-img :src="imgUrl"></v-img>
+        <p class="mt-1">{{post.article}}</p>
+        <v-chip v-for="(tag,i)  in post.hashtags" :key="i" class="ma-1"  @click="gotoKeywordDetailPage(tag)">{{tag}}</v-chip>
       </v-card-text>
 
       <v-card-actions class="pt-0">
         <v-list-item>
           <v-row class="mr-1" align="center" justify="start">
             <a href="#" @click.prevent="iLoveIt">
-              <v-icon class="mr-1" size="x-large" v-if="!isLike">mdi-heart-outline</v-icon>
-              <v-icon class="mr-1" size="x-large" color="red" v-if="isLike">mdi-heart</v-icon>
-              <span class="subheading mr-2 white--text">{{likes}}</span>
+              <v-icon class="mr-1" size="x-large" v-if="!post.isLike">mdi-heart-outline</v-icon>
+              <v-icon class="mr-1" size="x-large" color="red" v-if="post.isLike">mdi-heart</v-icon>
+              <span class="subheading mr-2 white--text">{{post.likes}}</span>
             </a>
             <a href="#" @click.prevent="comment">
               <v-icon class="mr-1" size="x-large">mdi-comment-outline</v-icon>
-              <span class="subheading white--text">{{comments}}</span>
+              <span class="subheading white--text">{{post.comments}}</span>
             </a>
+            <v-spacer></v-spacer>
+            <div v-show="isMyPost">
+              <v-btn x-small text style="color:#ccc;" @click="editPostBtn">수정</v-btn>
+              <v-btn x-small text style="color:#ccc;" @click="removePostBtn">삭제</v-btn>
+            </div>
           </v-row>
         </v-list-item>
       </v-card-actions>
@@ -40,12 +46,14 @@
 <script>
 import axios from "axios";
 import dotenv from "dotenv";
+import FeedApi from "@/apis/FeedApi";
 
 dotenv.config();
+
 export default {
   name: "Post",
   props: {
-    keyIdx:{
+    author:{
       type:Number
     },
     id: {
@@ -83,62 +91,111 @@ export default {
   },
   data: function() {
     return {
-      show: false,
-      isLike: false,
-      timedelta: ""
+      isMyPost: false,
+      imgUrl: "",
+      post: {
+        id: "",
+        nickname: "",
+        article: "게시글을 불러오는 중이에용",
+        img: "../../assets/images/profile/1.png",
+        pic_name: "../../assets/images/profile/1.png",
+        comments: 0,
+        likes: 0,
+        created_at: "",
+        hashtags: [],
+        like_users: [],
+        timedelta: "",
+        author:0,
+        isLike: false
+      }
     };
   },
-  created(){
+  created() {
+    this.post = {
+      id: this.id,
+      nickname: this.nickname,
+      article: this.article,
+      img: this.img,
+      pic_name: this.pic_name,
+      comments: this.comments,
+      likes: this.likes,
+      created_at: this.created_at,
+      hashtags: this.hashtags,
+      like_users: this.like_users,
+      timedelta: "",
+      isLike: false,
+      author:this.author
+    };
+    let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
+    this.isMyPost = LoginId === this.post.author ? true : false;
     this.setTimeValues();
     this.isLikeCheck();
+    this.getImageUrl();
+  },
 
-  },
-  updated() {
-    console.log("post updaated ~~~~");
-    this.setTimeValues();
-    this.isLikeCheck();
-  },
-  computed: {
-    getImageUrl: function() {
-      return `http://${process.env.VUE_APP_IP}${this.img}`;
-    }
-  },
   methods: {
+     gotoKeywordDetailPage(target) {
+       this.$router.push({ name: "검색 결과", params: { keyword: target } });
+    },
+    viewUserPfPage(usernickname){
+      this.$router.push({ name: "프로필", params: { email: usernickname} });
+    },
+    editPostBtn() {},
+    removePostBtn() {},
+    getImageUrl() {
+      this.imgUrl = `http://${process.env.VUE_APP_IP}${this.post.img}`;
+    },
     isLikeCheck() {
-      const LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
-      if (this.like_users.includes(LoginId)) {
-        this.isLike = true;
+      let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
+      if (this.post.like_users.includes(LoginId)) {
+        this.post.isLike = true;
       } else {
-        this.isLike = false;
+        this.post.isLike = false;
       }
     },
     setTimeValues() {
       let date = new Date();
-      let maybe = new Date(this.created_at);
+      let maybe = new Date(this.post.created_at);
       let Hours = Math.ceil((date - maybe) / 1000 / 60 / 60);
       let Mins = Math.ceil((date - maybe) / 1000 / 60);
 
       if (Hours <= 1) {
-        this.timedelta = `${Mins}분 전`;
+        this.post.timedelta = `${Mins}분 전`;
       } else if (Hours < 24) {
-        this.timedelta = `${Hours}시간 전`;
+        this.post.timedelta = `${Hours}시간 전`;
       } else {
-        this.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
+        this.post.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
       }
     },
     iLoveIt() {
-      var userinfo = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
-        .nickname;
       var form = new FormData();
-      form.append("article_id", this.id);
-      form.append("nickname", userinfo);
-      this.$emit("userLikes",[form,this.keyIdx,this.isLike]);
-      
+      let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
+      let LoginNickname = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
+        .nickname;
+      form.append("article_id", this.post.id);
+      form.append("nickname", LoginNickname);
+      console.log(this.post.id, "--1", LoginNickname);
+      // this.PostArticle[data[1]].article="SSSSSSs";
+      FeedApi.userLikesPost(
+        form,
+        res => {
+          if (res.data.like_users.includes(LoginId)) {
+            this.post.isLike = true;
+          } else {
+            this.post.isLike = false;
+          }
+          this.post.likes = res.data.like_users.length;
+        },
+        error => {
+          alert("게시글 좋아요에 문제가 발생했습니다.. 지송");
+        }
+      );
     },
+
     comment() {
       var router = this.$router;
       // router.push(`feed/${this.id}`);
-      this.$router.push({ name: "댓글", params: { id: this.id } });
+      this.$router.push({ name: "댓글", params: { id: this.post.id } });
     }
   }
 };
