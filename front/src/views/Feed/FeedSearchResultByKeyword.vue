@@ -2,7 +2,7 @@
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
       <v-col cols="12" v-for="arti in articles" :key="arti.id">
-        <Post v-bind="arti" />
+        <Post v-bind="arti" v-on:delPost="delPost" v-on:editPost="editPost" />
       </v-col>
     </v-row>
     <infinite-loading @infinite="infiniteHandler" spinner="spiral"></infinite-loading>
@@ -24,6 +24,19 @@ export default {
     InfiniteLoading,
   },
   methods: {
+    editPost(postId){
+       this.$router.push({name: '피드 수정', params: { 'postId': postId }});
+    },
+    delPost(postId){
+      FeedApi.deletePost(postId,res=>{
+        console.log(res);
+        let target = this.$route.params.keyword;
+         alert("게시글 삭제 완료 ~!!! 나의 감성 안뇽");
+        this.$router.push({name: '검색 결과', params: { keyword: target }});
+      },error=>{
+        alert("피드 삭제에 오류가 발생했어요 ..");
+      })
+    },
    
     infiniteHandler($state) {
       let requireData = new FormData();
@@ -41,6 +54,7 @@ export default {
                     pic_name: require("@/assets/images/profile/" + response.data[i].user.pic_name + ".png"),
                     img:response.data[i].image,
                     id: response.data[i].id,
+                    author:response.data[i].author,
                     article: response.data[i].article,
                     hashtags: response.data[i].hashtags,
                     likes: response.data[i].like_users.length,

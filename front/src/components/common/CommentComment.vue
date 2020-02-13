@@ -101,9 +101,7 @@ export default {
       var ans = confirm("댓글을 삭제할까요 ?");
       if (ans == true) {
         this.$emit("removeComment", this.comment_id);
-      } else {
-        //nothin
-      }
+      } 
     },
     editCommentBtn() {
       // this.$emit('editComment');

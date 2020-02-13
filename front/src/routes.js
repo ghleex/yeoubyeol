@@ -125,10 +125,17 @@ export default [
     },
     {
         path: '/feed/up',
-        name: '피드 저장',
+        name: '새 피드 작성',
         component: FeedCreateUpdate,
         // beforeEnter: requireAuth()
     },
+    {
+        path: '/feed/update',
+        name: '피드 수정',
+        component: FeedCreateUpdate,
+        // beforeEnter: requireAuth()
+    },
+
     {
         path: '/feed/:id',
         name: '댓글',

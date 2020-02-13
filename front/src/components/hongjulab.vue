@@ -13,7 +13,7 @@
       <v-spacer></v-spacer>
 
       <v-btn text icon v-if="!isPostPage">
-        <v-icon @click="changeView('피드 저장')">mdi-pencil-plus-outline</v-icon>
+        <v-icon @click="changeViewPost('새 피드 작성')">mdi-pencil-plus-outline</v-icon>
       </v-btn>
       <v-btn text icon v-if="!isSearchPage">
         <v-icon @click="changeView('검색')">mdi-magnify</v-icon>
@@ -119,7 +119,7 @@ export default {
     } else {
       this.isSearchPage = false;
     }
-    if (this.$route.name === "피드 저장") {
+    if (this.$route.name === "새 피드 작성" || this.$route.name ==="피드 수정") {
       this.isPostPage = true;
     } else {
       this.isPostPage = false;
@@ -170,6 +170,10 @@ export default {
         this.pageTitle = usersEmail;
         this.$router.push({ name: path, params: { email: usersEmail } });
       }
+    },
+    changeViewPost(path) {
+        this.pageTitle = path;
+        this.$router.push({ name: path, params: { postId: -1 } });
     },
     //그냥 이동일 경우
     changeView(path) {

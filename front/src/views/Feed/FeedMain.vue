@@ -2,7 +2,7 @@
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
       <v-col cols="12" v-for="arti in articles" :key="arti.id">
-        <Post v-bind="arti" />
+        <Post v-bind="arti"  />
       </v-col>
     </v-row>
     <infinite-loading @infinite="infiniteHandler" spinner="spiral"></infinite-loading>
@@ -21,6 +21,7 @@ export default {
     InfiniteLoading,
   },
   methods: {
+
     getUserInformation() {
       if (sessionStorage.getItem("LoginUserInfo")) {
         this.loginedNickname = JSON.parse(
