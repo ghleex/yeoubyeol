@@ -68,6 +68,7 @@ def mainfeed(request):
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
     serializer = UserSerializer(user)
+    start = int(request.data.get('start'))
     datas = []
     for following in serializer.data.get('followings'):
         articles = Article.objects.filter(author=following)
@@ -83,7 +84,7 @@ def mainfeed(request):
             data['nickname'] = account.nickname
             data['comments'] = len(comments)
             datas.append(data)
-    return Response(datas)
+    return Response(datas[start:start+10])
 
 
 @api_view(['POST', ])
@@ -304,27 +305,6 @@ def like(request):
         'image': article.image
     }
     serializer = ArticleSerializer(article, data=ar_data)
-    if len(article.like_users.all()) == 30000:
-        data = {
-            'h_article': article.article,
-            'author': article.author,
-            'hashtags': article.hashtags,
-            'image': article.image
-        }
-        honorserializer = HonorArticleSerializer(data=data)
-        honorserializer.save()
-        author = article.author
-        noti_user = get_object_or_404(User, id=author)
-        notification = {
-                'nickname': noti_user.nickname,
-                'message': noti_user.nickname + "님의 글이 명예의 전당에 올라갔습니다.",
-                'send_user': noti_user.nickname
-            }
-        json_noti = json.dumps(notification)
-        noti_serializer = NotificationSerializer(data=json_noti)
-        if noti_serializer.is_valid():
-            noti_serializer.save()
-        article.delete()
     if serializer.is_valid():
         article = serializer.save()
         if article.like_users.filter(id=user.id).exists():
@@ -346,8 +326,38 @@ def like(request):
                 if noti_serializer.is_valid():
                     notification = noti_serializer.save()
                     notification.save()
-        article.save()
-        return Response(serializer.data)
+    if len(article.like_users.all()) >= 3:
+        article_hashtag = []
+        print('111111111111111111111111')
+        for hashtag in article.hashtags.all():
+            article_hashtag.append(hashtag.id)
+        print('222222222222222222222222')
+        data = {
+            'article': article.article,
+            'author': article.author_id,
+            'hashtags': article_hashtag,
+            'image': article.image
+        }
+        print('333333333333333333333333')
+
+        honorserializer = HonorArticleSerializer(data=data)
+        if honorserializer.is_valid():
+            honorserializer.save()
+        print('444444444444444444444444')
+        print(honorserializer.errors)
+        author = article.author_id
+        noti_user = get_object_or_404(User, id=author)
+        notification = {
+                'nickname': noti_user.nickname,
+                'message': noti_user.nickname + "님의 글이 명예의 전당에 올라갔습니다.",
+                'send_user': noti_user.nickname
+            }
+        json_noti = json.dumps(notification)
+        noti_serializer = NotificationSerializer(data=json_noti)
+        if noti_serializer.is_valid():
+            noti_serializer.save()
+        article.delete()
+    return Response(serializer.data)
 
 
 class CommentList(APIView):
@@ -407,18 +417,75 @@ class CommentList(APIView):
         return Response({'message': '댓글이 성공적으로 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
+@api_view(['GET', ])
 def honor(request): 
     articles = HonorArticle.objects.all()
     serializer = HonorArticleSerializer(articles, many=True)
     return Response(serializer.data)
 
+
 @api_view(['POST', ])
 def hashtag(request):
-    hashtag_pk = request.data.get('hashtag_pk')
-    hashtag = get_object_or_404(Hashtag, id=hashtag_pk)
-    articles = hashtag.article_set.order_by('-pk')
-    data = {
-        'articles': articles,
-        'hashtag': hashtag
-    }
-    return Response(data)
+    hashtag = request.data.get('hashtag')
+    hashtag_id = Hashtag.objects.filter(hashtag=hashtag)
+    articles = hashtag_id[0].hashtag_articles.all()
+    datas = []
+    for article in articles:
+        like_users = []
+        for like_user in article.like_users.all():
+            like_users.append(like_user.id)
+        hashtags_id = []
+        hashtags = []
+        for hashtag in article.hashtags.all():
+            hashtags.append(hashtag.id)
+            hashtags_id.append(hashtag.hashtag)
+        a = article.image
+        serializer = ArticleSerializer(article)
+        data = serializer.data
+        data['hashtags'] = hashtags_id
+        datas.append(data)
+    return Response(datas)
+
+@api_view(['POST', ])
+def keyword(request):
+    keyword = request.data.get('keyword')
+    articles = Article.objects.all()
+    print(type(articles))
+    datas = []
+    for article in articles:
+        for hashtag in article.hashtags.all():
+            if keyword in hashtag.hashtag:
+                like_users = []
+                for like_user in article.like_users.all():
+                    like_users.append(like_user.id)
+                hashtags_id = []
+                hashtags = []
+                for hashtag in article.hashtags.all():
+                    hashtags.append(hashtag.id)
+                    hashtags_id.append(hashtag.hashtag)
+                a = article.image
+                serializer = ArticleSerializer(article)
+                data = serializer.data
+                data['hashtags'] = hashtags_id
+                datas.append(data)
+                break
+    return Response(datas)
+
+
+@api_view(['GET', ])
+def trend(request):
+    articles = Article.objects.all()
+    datas = []
+    for article in articles:
+        if article not in datas:
+            serializer = ArticleSerializer(article)
+            datas.append(serializer.data)
+        if len(datas) == 10:
+            break
+    print(datas)
+
+    # .order_by('-like_users')
+    return Response(datas)
+
+        
+

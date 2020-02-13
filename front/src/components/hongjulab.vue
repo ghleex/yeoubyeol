@@ -13,7 +13,7 @@
       <v-spacer></v-spacer>
 
       <v-btn text icon v-if="!isPostPage">
-        <v-icon @click="changeView('피드 저장')">mdi-pencil-plus-outline</v-icon>
+        <v-icon @click="changeViewPost('새 피드 작성')">mdi-pencil-plus-outline</v-icon>
       </v-btn>
       <v-btn text icon v-if="!isSearchPage">
         <v-icon @click="changeView('검색')">mdi-magnify</v-icon>
@@ -43,7 +43,7 @@
             <v-list-item-subtitle>{{currUserInfo.username}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item @click="changeViewProfile('팔로',currUserInfo.nickname)">
+        <v-list-item @click="changeViewProfile('팔로', currUserInfo.nickname)">
           <v-list-item-content class="left">{{currUserInfo.followers}} 팔로워</v-list-item-content>
           <v-spacer></v-spacer>
           <v-list-item-content>{{currUserInfo.followings}} 팔로잉</v-list-item-content>
@@ -62,7 +62,7 @@
 
         <v-divider></v-divider>
         <v-list-item link>
-          <v-list-item-content @click="changeView('프로필 변경')">설정</v-list-item-content>
+          <v-list-item-content @click="changeViewProfileSetting('프로필 변경', currUserInfo.nickname)">설정</v-list-item-content>
         </v-list-item>
         <v-list-item link>
           <v-list-item-content @click="logout">로그아웃</v-list-item-content>
@@ -81,6 +81,7 @@
       
 <script>
 import UserApi from "../apis/UserApi";
+import axios from 'axios';
 
 export default {
   props: ["pr_username"],
@@ -119,7 +120,7 @@ export default {
     } else {
       this.isSearchPage = false;
     }
-    if (this.$route.name === "피드 저장") {
+    if (this.$route.name === "새 피드 작성" || this.$route.name ==="피드 수정") {
       this.isPostPage = true;
     } else {
       this.isPostPage = false;
@@ -171,16 +172,38 @@ export default {
         this.$router.push({ name: path, params: { email: usersEmail } });
       }
     },
+    changeViewProfileSetting(path, usersEmail) {
+      if (this.pageTitle == usersEmail) {
+        this.drawer = !this.drawer;
+      } else {
+        this.pageTitle = usersEmail;
+        this.$router.push({ name: path, params: { email: usersEmail } });
+      }
+    },
+    changeViewPost(path) {
+        this.pageTitle = path;
+        this.$router.push({ name: path, params: { postId: -1 } });
+    },
     //그냥 이동일 경우
     changeView(path) {
       this.pageTitle = path;
-      this.$router.push({ name: path });
+      this.$router.push({ name: path});
     },
     logout() {
-      sessionStorage.removeItem("AUTH_token");
-      sessionStorage.removeItem("LoginUserInfo");
-      this.$cookies.remove("auth_cookie");
-      alert("로그아웃되었습니다.");
+      let user = this.$cookies.get('LoginUserInfo')
+      let userInfo = new FormData();
+      userInfo.append('username', user.username)
+      console.log(userInfo)
+      axios.post(`http://${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
+        .then(response => {
+          console.log(response)
+          sessionStorage.removeItem("refresh_token");
+          this.$cookies.remove("auth_cookie");
+          this.$cookies.remove("LoginUserInfo");
+          this.$cookies.remove("username");
+          alert("로그아웃되었습니다.");
+          this.isLogin = false;  
+        })
       this.$router.push({ name: "홈" });
     }
   }

@@ -16,7 +16,12 @@
       <v-card-text class="subtitle-2 grey--text text--lighten-5 pb-0">
         <v-img :src="imgUrl"></v-img>
         <p class="mt-1">{{post.article}}</p>
-        <v-chip v-for="(tag,i)  in post.hashtags" :key="i" class="ma-1"  @click="gotoKeywordDetailPage(tag)">{{tag}}</v-chip>
+        <v-chip
+          v-for="(tag,i)  in post.hashtags"
+          :key="i"
+          class="ma-1"
+          @click="gotoKeywordDetailPage(tag)"
+        >{{tag}}</v-chip>
       </v-card-text>
 
       <v-card-actions class="pt-0">
@@ -53,8 +58,8 @@ dotenv.config();
 export default {
   name: "Post",
   props: {
-    author:{
-      type:Number
+    author: {
+      type: Number
     },
     id: {
       type: Number,
@@ -105,7 +110,7 @@ export default {
         hashtags: [],
         like_users: [],
         timedelta: "",
-        author:0,
+        author: 0,
         isLike: false
       }
     };
@@ -124,29 +129,56 @@ export default {
       like_users: this.like_users,
       timedelta: "",
       isLike: false,
-      author:this.author
+      author: this.author
     };
     let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
-    this.isMyPost = LoginId === this.post.author ? true : false;
+    let date = new Date();
+    let currHour = date.getHours();
+    // if(LoginId=== this.post.author && (currHour>=23 && currHour< 6)){
+    if (LoginId === this.post.author && date.getMinutes() % 2 == 0) {
+      this.isMyPost = true;
+    } else {
+      this.isMyPost = false;
+    }
     this.setTimeValues();
     this.isLikeCheck();
     this.getImageUrl();
   },
 
   methods: {
-     gotoKeywordDetailPage(target) {
-       this.$router.push({ name: "검색 결과", params: { keyword: target } });
+    gotoKeywordDetailPage(target) {
+      this.$router.push({ name: "검색 결과", params: { keyword: target } });
     },
-    viewUserPfPage(usernickname){
-      this.$router.push({ name: "프로필", params: { email: usernickname} });
+    viewUserPfPage(usernickname) {
+      this.$router.push({ name: "프로필", params: { email: usernickname } });
     },
-    editPostBtn() {},
-    removePostBtn() {},
+    editPostBtn() {
+      let date = new Date();
+      console.log(date.getHours());
+      if (date.getMinutes() % 2 == 0) {
+        this.$emit("editPost", this.post.id);
+      } else {
+        alert("지금은 삭제가 가능한 시간이 아니에요 ..");
+      }
+    },
+    removePostBtn() {
+      let date = new Date();
+      console.log(date.getHours());
+      var ans = confirm("게시글을 삭제할까요 ?");
+      if (ans == true) {
+        if (date.getMinutes() % 2 == 0) {
+          this.$emit("delPost", this.post.id);
+        } else {
+          alert("지금은 삭제가 가능한 시간이 아니에요 ..");
+        }
+      }
+    },
     getImageUrl() {
-      this.imgUrl = `http://${process.env.VUE_APP_IP}${this.post.img}`;
+      this.imgUrl = `${process.env.VUE_APP_IP}${this.post.img}`;
     },
-    isLikeCheck() {
-      let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
+     isLikeCheck() {
+      let userInfo = this.$cookies.get('LoginUserInfo');
+      let LoginId = userInfo.id;
       if (this.post.like_users.includes(LoginId)) {
         this.post.isLike = true;
       } else {
@@ -167,11 +199,11 @@ export default {
         this.post.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
       }
     },
-    iLoveIt() {
+     iLoveIt() {
+      let userInfo = this.$cookies.get('LoginUserInfo');
       var form = new FormData();
-      let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
-      let LoginNickname = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
-        .nickname;
+      let LoginId = userInfo.id;
+      let LoginNickname = userInfo.nickname;
       form.append("article_id", this.post.id);
       form.append("nickname", LoginNickname);
       console.log(this.post.id, "--1", LoginNickname);

@@ -95,7 +95,7 @@ dotenv.config();
 let tokenFromLogin='';
 export default {
   created() {
-    if (sessionStorage.getItem("AUTH_token")) {
+    if (sessionStorage.getItem("refresh_token")) {
       alert("이미 로그인된 상태입니다.");
       var router = this.$router;
       router.push({ name: "홈" });
@@ -134,12 +134,12 @@ export default {
             var router = this.$router;
             this.tokenFromLogin = res.data.token;
             if (res.status === 200) {
-              alert("로그인되었습니다.");
+              alert("1단계");
               
               //요청이 끝나면 버튼 활성화
               let data={'email':email};
               console.log('프로필조회 : '+data.email);
-              axios.post(`http://${process.env.VUE_APP_IP}/accounts/`, data).then((response=>{
+              axios.post(`${process.env.VUE_APP_IP}/accounts/`, data).then((response=>{
                 console.log('로그인 후 가져온 다라 '+response.data[0].nickname);
                 console.log("login -> ",response.data[0]);
                   const LoginUserInfo={
@@ -149,6 +149,10 @@ export default {
                     pic_name:response.data[0].pic_name
                   }
                   let userData = JSON.stringify(LoginUserInfo)
+
+                  this.$cookies.set('LoginUserInfo', userData, 0)
+                  this.$cookies.set('auth_cookie', this.tokenFromLogin, 0)
+                  this.$cookies.set('username', data.email, 0)
                   
                   var userInfo = new FormData();
                   userInfo.append('username', data.email)
@@ -156,26 +160,24 @@ export default {
                   console.log(data.email)
                   console.log(this.tokenFromLogin)
 
-                  axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
+                  axios.post(`${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
                     .then(response => {
                       console.log('---------------------------------')
-                      var refresh_cookie = response.data.token_2
-                      sessionStorage.setItem("AUTH_token", this.tokenFromLogin);
-                      sessionStorage.setItem('LoginUserInfo', userData);
-                      this.$cookies.set('LoginUserInfo', userData, '1d')
-                      this.$cookies.set('auth_cookie', this.tokenFromLogin, '1d')
-                      this.$cookies.set('refresh_cookie', refresh_cookie, '1d')
-                      this.$cookies.set('username', data.email, '1d')
-                      alert('로그인 성공!')
+                      let refresh_token = response.data.token_2
+                      console.log(refresh_token)
+                      sessionStorage.setItem('refresh_token', refresh_token)
+                      alert('3단계')
                       router.push({ name: '메인피드'})
+                      alert('4단계')
                     })
                     .catch(error => {
                       console.log('++++++++++++++++++++++++++++++++++')
-                      alert('로그인 실패..')
+                      alert('로그인 실패')
                       router.push({ name: "홈" });
                     })
               }),error=>{
                 console.log("로그인 후 프로필 가져오기 문제");
+                alert('뭔가 문제가 있어')
               })
     
             } else {

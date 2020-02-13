@@ -35,24 +35,32 @@ import Search from './views/Search.vue'
 import FeedSearchResultByKeyword from './views/Feed/FeedSearchResultByKeyword.vue'
 import hongjuLab2 from './views/hongjuLab2.vue'
 
-var value1 = document.cookie.match('(^|;) ?' + 'auth_cookie' + '=([^;]*)(;|$)');
-var cookie1 = value1? value1[2] : null;
-
-var value2 = document.cookie.match('(^|;) ?' + 'refresh_cookie' + '=([^;]*)(;|$)');
-var cookie2 = value2? value2[2] : null;
 
 const requireAuth = () => (to, from, next) => {
-    if(cookie1 && cookie2){
-    // if (this.$cookies.isKey('auth_cookie')) {
+    let value1 = document.cookie.match('(^|;) ?' + 'auth_cookie' + '=([^;]*)(;|$)');
+    let cookie1 = value1? value1[2] : null;
+    let value2 = document.cookie.match('(^|;) ?' + 'LoginUserInfo' + '=([^;]*)(;|$)');
+    let cookie2 = value2? value2[2] : null;
+    let value3 = document.cookie.match('(^|;) ?' + 'username' + '=([^;]*)(;|$)');
+    let cookie3 = value3? value3[2] : null;
+
+    if(!!cookie1 && !!cookie2 && !!cookie3){
+        // if (this.$cookies.isKey('auth_cookie')) {
       return next();
     } else {
-        alert('로그인이 필요합니다.')
         next('/');
     }
   };
 
 const LoginUsersCantAccess = () => (to, from, next) => {
-    if(!cookie1 || !cookie2){
+    let value1 = document.cookie.match('(^|;) ?' + 'auth_cookie' + '=([^;]*)(;|$)');
+    let cookie1 = value1? value1[2] : null;
+    let value2 = document.cookie.match('(^|;) ?' + 'LoginUserInfo' + '=([^;]*)(;|$)');
+    let cookie2 = value2? value2[2] : null;
+    let value3 = document.cookie.match('(^|;) ?' + 'username' + '=([^;]*)(;|$)');
+    let cookie3 = value3? value3[2] : null;
+
+    if(!cookie1 || !cookie2 || !cookie3){
     // if (this.$cookies.isKey('auth_cookie')) {
       return next();
     }
@@ -111,7 +119,7 @@ export default [
         
     },
     {
-        path: '/user/:email/settings',
+        path: '/user/settings/:email',
         name: '프로필 변경',
         component: UserProfileSettings,
         // beforeEnter: requireAuth()
@@ -125,10 +133,17 @@ export default [
     },
     {
         path: '/feed/up',
-        name: '피드 저장',
+        name: '새 피드 작성',
         component: FeedCreateUpdate,
         // beforeEnter: requireAuth()
     },
+    {
+        path: '/feed/update',
+        name: '피드 수정',
+        component: FeedCreateUpdate,
+        // beforeEnter: requireAuth()
+    },
+
     {
         path: '/feed/:id',
         name: '댓글',

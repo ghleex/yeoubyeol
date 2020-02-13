@@ -2,7 +2,7 @@
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
       <v-col cols="12" v-for="arti in articles" :key="arti.id">
-        <Post v-bind="arti" />
+        <Post v-bind="arti"  />
       </v-col>
     </v-row>
     <infinite-loading @infinite="infiniteHandler" spinner="spiral"></infinite-loading>
@@ -14,6 +14,9 @@ import Post from "@/components/common/Post";
 import FeedApi from "@/apis/FeedApi";
 import InfiniteLoading from 'vue-infinite-loading';
 import axios from 'axios'
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default {
   components: {
@@ -21,11 +24,11 @@ export default {
     InfiniteLoading,
   },
   methods: {
+
     getUserInformation() {
-      if (sessionStorage.getItem("LoginUserInfo")) {
-        this.loginedNickname = JSON.parse(
-          sessionStorage.getItem("LoginUserInfo")
-        ).nickname;
+      if (this.$cookies.isKey('LoginUserInfo')) {
+        let userInfo = this.$cookies.get('LoginUserInfo');
+        this.loginedNickname = userInfo.nickname;
       } else {
         this.$router.push({ name: "Error" });
       }
@@ -65,7 +68,7 @@ export default {
       let requireData = new FormData();
       requireData.append('nickname', this.loginedNickname)
       requireData.append('start', this.limit)
-      axios.post('http://192.168.31.87:8000/articles/mainfeed/', requireData) //api에 url 삽입
+      axios.post('${process.env.VUE_APP_IP}/articles/mainfeed/', requireData) //api에 url 삽입
         .then(response => {
           setTimeout(() => { //스크롤 페이징을 띄우기 위한 시간 지연(1초)
             if (response.data.length) {

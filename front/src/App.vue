@@ -27,6 +27,11 @@
       
 <script>
 import hongjulab from "./components/hongjulab";
+import feedCreateUpdate from "@/views/Feed/FeedCreateUpdate.vue";
+import axios from 'axios';
+import dotenv from 'dotenv';
+
+dotenv.config();
 export default {
   name: "App",
   components: {
@@ -38,17 +43,14 @@ export default {
     userId: ""
   }),
   updated() {
-    if (sessionStorage.getItem("AUTH_token")) {
+    if (this.$cookies.isKey('username') && this.$cookies.isKey('auth_cookie')) {
       this.isLogin = true;
     } else {
       this.isLogin = false;
     }
 
-    if (sessionStorage.getItem("LoginUserInfo")) {
-      console.log("session test -> ", sessionStorage.getItem("LoginUserInfo"));
-      const parsedLoginUserInfo = JSON.parse(
-        sessionStorage.getItem("LoginUserInfo")
-      );
+    if (this.$cookies.isKey('LoginUserInfo')) {
+      const parsedLoginUserInfo = this.$cookies.get('LoginUserInfo')
       this.userNickname = parsedLoginUserInfo.nickname;
       this.userId = parsedLoginUserInfo.id;
     } else {
@@ -58,28 +60,34 @@ export default {
   },
   created() {
     this.$vuetify.theme.primary = "#ef51b5";
-    if (sessionStorage.getItem("AUTH_token")) {
+    if (this.$cookies.isKey('username') && this.$cookies.isKey('auth_cookie')) {
       this.isLogin = true;
     } else {
       this.isLogin = false;
     }
-    if (sessionStorage.getItem("LoginUserInfo")) {
-      const parsedLoginUserInfo = JSON.parse(
-        sessionStorage.getItem("LoginUserInfo")
-      );
+    if (this.$cookies.isKey('LoginUserInfo')) {
+      const parsedLoginUserInfo = this.$cookies.get('LoginUserInfo')
       this.userNickname = parsedLoginUserInfo.nickname;
       this.userId = parsedLoginUserInfo.id;
     } else {
       this.userNickname = "";
       this.userId = "";
     }
+    if (this.$cookies.isKey('LoginUserInfo') && !sessionStorage.getItem('refresh_token')) {
+      let auth_token = this.$cookies.get('auth_cookie');
+      let username = this.$cookies.get('username');
+
+      let form = new FormData();
+      form.append('username', username)
+      form.append('token_1', auth_token)
+      axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, form)
+        .then(response => {
+          let refresh_token = response.data.token_2;
+          sessionStorage.setItem('refresh_token', refresh_token)
+          alert('세션에 저장했어용')
+        })
+    }
     // this.$vuetify.theme.themes.dark.background="#4caf50"
   },
-  mounted() {
-    if (this.$cookies.isKey('auth_cookie')) {
-      console.log('=============cookies=============')
-      console.log(this.$cookies.get('auth_cookie'))
-    }
-  }
 };
 </script>
