@@ -16,7 +16,7 @@
                 style="color:#110b22;"
                 @click="validate"
                 :disabled="!valid"
-              >{{postId===null ? "피드 발행하기" : "수정"}}</v-btn>
+              >{{postId>0 ? "수정": "피드 발행하기"}}</v-btn>
             </v-col>
             <v-col cols="12" class="pa-0">
               <div id="preview">
@@ -134,7 +134,6 @@ export default {
     if (this.$route.params.postId > 0) {
       this.postId = this.$route.params.postId;
     }
-    console.log(this.postId, "?");
     if (this.postId > 0) {
       //게시글 수정인 ㄱㅇ우
       this.getArticleByIdBindingData(this.postId);
@@ -146,13 +145,28 @@ export default {
   },
   computed: {
     bgByWeather: function() {
-      let max = 7;
+      console.log(this.weather_id, "~~~~~~~~");
       let min = 1;
-      let name = Math.floor(Math.random() * max) + min;
-      // let name =12;
+      let calc_name = "d1.gif";
+      if (this.weather_id >= 200 && this.weather_id < 600) {
+        //비
+        let max = 4;
+        let name = Math.floor(Math.random() * max) + min;
+        calc_name = `r${name}.gif`;
+      } else if (this.weather_id >= 600 && this.weather_id < 700) {
+        //눈
+        let max = 2;
+        let name = Math.floor(Math.random() * max) + min;
+        calc_name = `s${name}.gif`;
+      } else if (this.weather_id >= 800 && this.weather_id < 900) {
+        //맑음이나 흐림 안개
+        let max = 5;
+        let name = Math.floor(Math.random() * max) + min;
+        calc_name = `m${name}.gif`;
+      }
       return {
         "background-image":
-          "url(" + require("@/assets/images/bg/" + name + ".gif") + ")",
+          "url(" + require("@/assets/images/bg/" + calc_name) + ")",
         "background-position": "center",
         "background-repeat": "no-repeat",
         "background-size": "cover"
@@ -211,12 +225,6 @@ export default {
         }
       );
     },
-    setVideo() {
-      let max = 6;
-      let min = 1;
-      var name = Math.floor(Math.random() * max) + min;
-      this.homeVideo = require("@/assets/images/example/" + name + ".mp4");
-    },
     requestHashTags() {
       let form = new FormData();
       form.append("article", this.inputPostContent);
@@ -270,7 +278,7 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         // this.snackbar = true;
-        console.log("this post Id ",this.postId);
+        console.log("this post Id ", this.postId);
         if (this.postId < 0) {
           this.newPost();
         } else {
@@ -316,6 +324,7 @@ export default {
           const temperature = json.main.temp;
           console.log(json);
           // this.data = json;
+          this.weather_id = json.weather[0].id;
           this.weather_icon = json.weather[0].icon;
           this.weather_url = `http://openweathermap.org/img/w/${this.weather_icon}.png`;
           this.weather_detail = `${Math.floor(temperature)}° @ ${name}`;
@@ -354,6 +363,7 @@ export default {
   data: () => {
     return {
       postId: -1,
+      weather_id: null,
       weather_icon: "",
       weather_detail: "",
       weather_url: "",
