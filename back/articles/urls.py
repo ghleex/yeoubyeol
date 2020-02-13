@@ -13,6 +13,7 @@ urlpatterns = [
     path('mainfeed/', views.mainfeed),
     path('<int:pk>/', views.ArticleDetail.as_view(), name='detail'),
     path('search/', views.SearchResultList.as_view(), name='search'),
+    path('update/', views.update),
     path('follower/', views.FollowerList.as_view(), name='follower'),
     path('followerlist/', views.followerlist, name='follower_list'),
     path('following/', views.followinglist, name='following'),
