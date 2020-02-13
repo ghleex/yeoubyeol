@@ -114,9 +114,9 @@ export default {
       }
     },
     isLikeCheck() {
-      let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
-      let LoginNickname = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
-        .nickname;
+      let userInfo = this.$cookies.get('LoginUserInfo');
+      let LoginId = userInfo.id;
+      let LoginNickname = userInfo.nickname;
       if (this.post.like_users.includes(LoginId)) {
         this.post.isLike = true;
       } else {
@@ -124,9 +124,9 @@ export default {
       }
     },
     iLoveIt() {
-      let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
-      let LoginNickname = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
-        .nickname;
+      let userInfo = this.$cookies.get('LoginUserInfo');
+      let LoginId = userInfo.id;
+      let LoginNickname = userInfo.nickname;
       var form = new FormData();
       form.append("article_id", this.post.id);
       form.append("nickname", LoginNickname);

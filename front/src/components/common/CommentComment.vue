@@ -113,8 +113,8 @@ export default {
   },
   created() {
     this.setTimeValues();
-    const LoginNickname = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
-      .nickname;
+    let userInfo = this.$cookies.get('LoginUserInfo');
+    const LoginNickname = userInfo.nickname;
     if (this.nickname === LoginNickname) {
       this.isMyComment = true;
     } else {

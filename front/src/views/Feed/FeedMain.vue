@@ -22,10 +22,9 @@ export default {
   },
   methods: {
     getUserInformation() {
-      if (sessionStorage.getItem("LoginUserInfo")) {
-        this.loginedNickname = JSON.parse(
-          sessionStorage.getItem("LoginUserInfo")
-        ).nickname;
+      if (this.$cookies.isKey('LoginUserInfo')) {
+        let userInfo = this.$cookies.get('LoginUserInfo');
+        this.loginedNickname = userInfo.nickname;
       } else {
         this.$router.push({ name: "Error" });
       }

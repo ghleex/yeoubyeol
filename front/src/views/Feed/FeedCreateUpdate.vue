@@ -117,10 +117,9 @@ const WEATHER_API = "https://api.openweathermap.org/data/2.5/weather?";
 
 export default {
   created() {
+    let userInfo = this.$cookies.get('LoginUserInfo');
     this.loadWeather();
-    this.loginedNickname = JSON.parse(
-      sessionStorage.getItem("LoginUserInfo")
-    ).nickname;
+    this.loginedNickname = userInfo.nickname;
   },
   methods: {
     setVideo() {
@@ -193,7 +192,7 @@ export default {
         tagLists.push(this.model[i].text);
       }
 
-      var token = sessionStorage.getItem("AUTH_token");
+      var token = this.$cookies.get('auth_cookie');
       console.log(token);
       form.append("token", token);
       form.append("nickname", this.loginedNickname);

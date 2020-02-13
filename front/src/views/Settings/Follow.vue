@@ -56,9 +56,7 @@ export default {
   },
   created() {
     this.currUserName = this.$route.params.email;
-    this.loginedNickname = JSON.parse(
-      sessionStorage.getItem("LoginUserInfo")
-    ).nickname;
+    this.loginedNickname = this.$cookies.get('LoginUserInfo').nickname;
     this.checkFollowInfo(); //현재 로그인한사람의 팔로워 팔로잉정보 받아오고
     this.getAndSetData(); //조회하는 사람의 팔로워팔로잉정보 세팅
   },

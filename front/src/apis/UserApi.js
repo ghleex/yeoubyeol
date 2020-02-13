@@ -53,7 +53,7 @@ const requestLoginCheck = (data, callback, errorcallback) => {
     axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, data)
         .then(response => {
             console.log(response)
-            callback(true)
+            callback(response.data.token_2)
         })
         .catch(error => {
             console.log(error)
