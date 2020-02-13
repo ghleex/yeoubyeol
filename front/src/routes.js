@@ -32,6 +32,7 @@ import Follow from './views/Settings/Follow.vue'
 
 //검색
 import Search from './views/Search.vue'
+import FeedSearchResultByKeyword from './views/Feed/FeedSearchResultByKeyword.vue'
 import hongjuLab2 from './views/hongjuLab2.vue'
 
 
@@ -79,63 +80,70 @@ export default [
         path: '/join',
         name: '인증메일 발송',
         component: AccountSendEmail,
-        beforeEnter: LoginUsersCantAccess()
+        // beforeEnter: LoginUsersCantAccess()
     },
     {
         path: '/join/ok',
         component: AccountSendEmailConfirm,
-        beforeEnter: LoginUsersCantAccess()
+        // beforeEnter: LoginUsersCantAccess()
     },
     {
         path: '/join/form/:key',
         name: '회원가입',
         component: AccountCreate,
-        beforeEnter: LoginUsersCantAccess()
+        // beforeEnter: LoginUsersCantAccess()
     },
     //회원 관리
     {
         path: '/user/login',
         name: '로그인',
         component: UserLogin,
-        beforeEnter: LoginUsersCantAccess()
+        // beforeEnter: LoginUsersCantAccess()
     },
     {
         path: '/user/password',
         name: '비밀번호 변경',
         component: UserPwdSendEmail,
-        beforeEnter: LoginUsersCantAccess()
+        // beforeEnter: LoginUsersCantAccess()
     },
     {
         path: '/user/password/ok',
         component: UserPwdSendEmailConfirm,
-        beforeEnter: LoginUsersCantAccess()
+        // beforeEnter: LoginUsersCantAccess()
     },
     {
         path: '/user/:email',
         name: '프로필',
         component: UserProfile,
-        beforeEnter: requireAuth()
+        // beforeEnter: requireAuth()
         
     },
     {
         path: '/user/settings/:email',
         name: '프로필 변경',
         component: UserProfileSettings,
-        beforeEnter: requireAuth()
+        // beforeEnter: requireAuth()
     },
     //피드
     {
         path: '/feed',
         name: '메인피드',
         component: FeedMain,
-        beforeEnter: requireAuth()
+        // beforeEnter: requireAuth()
     },
     {
         path: '/feed/up',
-        name: '피드 저장',
+        name: '새 피드 작성',
         component: FeedCreateUpdate,
         // beforeEnter: requireAuth()
     },
+    {
+        path: '/feed/update',
+        name: '피드 수정',
+        component: FeedCreateUpdate,
+        // beforeEnter: requireAuth()
+    },
+
     {
         path: '/feed/:id',
         name: '댓글',
@@ -159,13 +167,13 @@ export default [
         path: '/noti',
         name: '알림',
         component: Noti,
-        beforeEnter: requireAuth()
+        // beforeEnter: requireAuth()
     },
     {
         path: '/follow/:email',
         name: '팔로',
         component: Follow,
-        beforeEnter: requireAuth()
+        // beforeEnter: requireAuth()
     },
 
     //검색
@@ -173,7 +181,13 @@ export default [
         path: '/search',
         name: '검색',
         component: Search,
-        beforeEnter: requireAuth()
+        // beforeEnter: requireAuth()
+    },
+    {
+        path: '/search/:keyword',
+        name: '검색 결과',
+        component: FeedSearchResultByKeyword,
+        // beforeEnter: requireAuth()
     },
     
     {
@@ -190,12 +204,12 @@ export default [
         path: '/fame',
         name: '명예의 전당',
         component: FeedOfFame,
-        beforeEnter: requireAuth()
+        // beforeEnter: requireAuth()
     },
     {
         path: '/trend',
         name: '트렌드',
         component: FeedMain,
-        beforeEnter: requireAuth()
+        // beforeEnter: requireAuth()
     }
 ]

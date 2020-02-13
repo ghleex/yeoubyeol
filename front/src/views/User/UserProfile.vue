@@ -72,7 +72,7 @@
               style="background-color:#110b22"
             >
               <v-col cols="12" v-for="(article,i) in PostArticle" :key="i">
-                <Post v-bind="article" />
+               <Post v-bind="article" v-on:delPost="delPost" v-on:editPost="editPost" />
               </v-col>
             </v-row>
             <v-row
@@ -97,7 +97,7 @@
               style="background-color:#110b22"
             >
               <v-col cols="12" v-for="(article,i) in LikeArticle" :key="i">
-                <Post v-bind="article" />
+                <Post v-bind="article" v-on:delPost="delPost" v-on:editPost="editPost" />
               </v-col>
             </v-row>
             <v-row
@@ -132,6 +132,24 @@ export default {
     changeView(path) {
       this.pageTitle = path;
       this.$router.push({ name: path });
+    },
+    editPost(postId) {
+      console.log("수정할 아이디는 요 ",postId);
+      this.$router.push({ name: "피드 수정", params: { postId: postId } });
+    },
+    delPost(postId) {
+      FeedApi.deletePost(
+        postId,
+        res => {
+          console.log(res);
+          //뒤로 가기
+          alert("게시글 삭제 완료 ~!!! 나의 감성 안뇽");
+          this.getMyArticlesFromServer();
+        },
+        error => {
+          alert("피드 삭제에 오류가 발생했어요 ..");
+        }
+      );
     },
     clickFollowBtn() {
       if (!this.isMyAccount) {
@@ -220,6 +238,7 @@ export default {
           img: dataList[i].image,
           id: dataList[i].id,
           article: dataList[i].article,
+          author:dataList[i].author,
           hashtags: dataList[i].hashtags,
           likes: dataList[i].like_users.length,
           comments: dataList[i].comments,
@@ -228,7 +247,6 @@ export default {
         };
 
         target.push(article_prop);
-        console.log(this.target);
       }
     },
 

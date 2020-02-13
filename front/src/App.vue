@@ -3,21 +3,25 @@
     <v-content v-if="isLogin && userNickname">
       <hongjulab :pr_username="userNickname" />
        <router-view :key="$route.fullPath"></router-view>
-      <v-dialog max-width="600px">
+<!--       <v-dialog max-width="600px">
         <template v-slot:activator="{ on }">
           <v-btn fixed dark fab bottom right color="#71d087" v-on="on">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </template>
 
-      </v-dialog>
+     
+        <feedCreateUpdate />
+      </v-dialog> -->
     </v-content>
 
     <v-content v-if="!isLogin">
       <!-- Provides the application the proper gutter -->
       <router-view></router-view>
     </v-content>
+
   </v-app>
+  
 </template>
 
       
@@ -32,7 +36,6 @@ export default {
   name: "App",
   components: {
     hongjulab,
-    // feedCreateUpdate
   },
   data: () => ({
     isLogin: false,

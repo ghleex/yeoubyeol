@@ -128,6 +128,40 @@ const userLikesPost = (form, callback, errorCallback) => {
        }) 
 }
 
+// 게시글 삭제
+const deletePost = (id, callback, errorCallback) => {
+    axios.delete(`http://${process.env.VUE_APP_IP}/articles/${id}`,{
+    })
+       .then((response) => {
+           console.log('게시글 삭제 성공 :',response)
+           callback(response)
+       
+       })
+       .catch((response) => {
+           console.log(response)
+           console.log('게시글 삭제 오류'  + response)
+           errorCallback('error')
+       }) 
+}
+
+// 게시글 수정
+const editPost = (form, callback, errorCallback) => {
+    axios.post(`http://${process.env.VUE_APP_IP}/articles/update/`,form,{
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        }
+    })
+       .then((response) => {
+           console.log('게시글 수정 성공 :',response)
+           callback(response)
+       
+       })
+       .catch((response) => {
+           console.log('게시글 수정 오류'  + response)
+           errorCallback(response)
+       }) 
+}
+
 const requestFeedOfFame = (callback, errorCallback) => {
     axios.get(`http://${process.env.VUE_APP_IP}/articles/honor/`)
         .then(response => {
@@ -147,6 +181,8 @@ const FeedApi = {
     getPostLikedArticles: (data, callback, errorCallback) => getPostLikedArticles(data, callback, errorCallback),
     getArticleById: (data, callback, errorCallback) => getArticleById(data, callback, errorCallback),
     userLikesPost: (data, callback, errorCallback) => userLikesPost(data, callback, errorCallback),
+    editPost: (callback, errorCallback) => editPost(callback, errorCallback),
+    deletePost: (data, callback, errorCallback) => deletePost(data, callback, errorCallback),
     requestFeedOfFame: (callback, errorCallback) => requestFeedOfFame(callback, errorCallback),
 }
 export default FeedApi

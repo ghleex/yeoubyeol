@@ -145,9 +145,20 @@ def check(request):
     account = AccountCookie.objects.filter(username=request.data.get('username'))
     if not account:
         token_1 = request.data.get('token_1')
-        token_2 = request.data.get('token_2')
+        token_2 = secrets.token_urlsafe(50)
         username = request.data.get('username')
-        if not token_2:
+        data = {
+                'username': username,
+                'token_1': token_1,
+                'token_2': token_2,
+            }
+        serializer = AccountCookieSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+    else:
+        account = account[0]
+        if not request.data.get('token_2'):
             token_2 = secrets.token_urlsafe(50)
             data = {
                 'username': username,
@@ -159,28 +170,12 @@ def check(request):
                 serializer.save()
                 return Response(serializer.data)
         else:
-            accountcookie = AccountCookie.objects.filter(username=username)
-            if accountcookie.login_at < datetime.now() - timedelta(minutes=30):
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+            re_token_1 = request.data.get('token_1')
+            re_token_2 = request.data.get('token_2')
+            if re_token_1 == account.token_1 and re_token_2 == account.token_2:
+                    return Response(status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-    else:
-        account = account[0]
-        re_token_1 = request.data.get('token_1')
-        re_token_2 = request.data.get('token_2')
-        if re_token_1 == account.token_1 and re_token_2 == account.token_2:
-            account.token_2 = secrets.token_urlsafe(50)
-            account_data = {
-                'username': account.username,
-                'token_1': account.token_1,
-                'token_2': account.token_2,
-            }
-            serializer = AccountCookieSerializer(account, data=account_data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

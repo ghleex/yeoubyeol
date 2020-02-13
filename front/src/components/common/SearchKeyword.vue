@@ -30,12 +30,6 @@
             
 
         },
-          data: function () {
-            return {
-
-            }
-        },
-        methods:{
-        }
+    
     }
 </script>
