@@ -46,6 +46,7 @@
               color="#71d087"
               style="color:#110b22"
               @click="validate"
+              @keyup.enter="validate"
             >로그인</v-btn>
             <v-spacer></v-spacer>
           </v-col>

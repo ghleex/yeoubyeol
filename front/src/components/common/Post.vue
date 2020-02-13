@@ -7,7 +7,7 @@
           <v-img :src="post.pic_name"></v-img>
         </v-list-item-avatar>
 
-        <v-list-item-content>
+        <v-list-item-content @click="viewUserPfPage(post.nickname)">
           <v-list-item-title>{{ post.nickname }}</v-list-item-title>
         </v-list-item-content>
         <v-spacer></v-spacer>
@@ -16,7 +16,7 @@
       <v-card-text class="subtitle-2 grey--text text--lighten-5 pb-0">
         <v-img :src="imgUrl"></v-img>
         <p class="mt-1">{{post.article}}</p>
-        <v-chip v-for="(tag,i)  in post.hashtags" :key="i" class="ma-1">{{tag}}</v-chip>
+        <v-chip v-for="(tag,i)  in post.hashtags" :key="i" class="ma-1"  @click="gotoKeywordDetailPage(tag)">{{tag}}</v-chip>
       </v-card-text>
 
       <v-card-actions class="pt-0">
@@ -96,7 +96,7 @@ export default {
       post: {
         id: "",
         nickname: "",
-        article: "",
+        article: "게시글을 불러오는 중이에용",
         img: "../../assets/images/profile/1.png",
         pic_name: "../../assets/images/profile/1.png",
         comments: 0,
@@ -134,6 +134,12 @@ export default {
   },
 
   methods: {
+     gotoKeywordDetailPage(target) {
+       this.$router.push({ name: "검색 결과", params: { keyword: target } });
+    },
+    viewUserPfPage(usernickname){
+      this.$router.push({ name: "프로필", params: { email: usernickname} });
+    },
     editPostBtn() {},
     removePostBtn() {},
     getImageUrl() {
