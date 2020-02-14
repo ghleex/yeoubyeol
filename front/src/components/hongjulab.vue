@@ -12,8 +12,11 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text icon>
-        <v-icon @click="changeView('검색')" v-if="!isSearchPage">mdi-magnify</v-icon>
+      <v-btn text icon v-if="!isPostPage">
+        <v-icon @click="changeViewPost('새 피드 작성')">mdi-pencil-plus-outline</v-icon>
+      </v-btn>
+      <v-btn text icon v-if="!isSearchPage">
+        <v-icon @click="changeView('검색')">mdi-magnify</v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -40,7 +43,7 @@
             <v-list-item-subtitle>{{currUserInfo.username}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item @click="changeViewProfile('팔로',currUserInfo.nickname)">
+        <v-list-item @click="changeViewProfile('팔로', currUserInfo.nickname)">
           <v-list-item-content class="left">{{currUserInfo.followers}} 팔로워</v-list-item-content>
           <v-spacer></v-spacer>
           <v-list-item-content>{{currUserInfo.followings}} 팔로잉</v-list-item-content>
@@ -51,21 +54,15 @@
           <v-list-item-content @click="changeView('메인피드')">메인피드</v-list-item-content>
         </v-list-item>
         <v-list-item link>
-          <v-list-item-content>트렌드</v-list-item-content>
+          <v-list-item-content @click="changeView('트렌드')">트렌드</v-list-item-content>
         </v-list-item>
         <v-list-item link>
-          <v-list-item-content>큐레이션 피드</v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-content>스크랩 된 피드</v-list-item-content>
-        </v-list-item>
-        <v-list-item link>
-          <v-list-item-content>스킵 된 피드</v-list-item-content>
+          <v-list-item-content @click="changeView('명예의 전당')">명예의 전당</v-list-item-content>
         </v-list-item>
 
         <v-divider></v-divider>
         <v-list-item link>
-          <v-list-item-content>설정</v-list-item-content>
+          <v-list-item-content @click="changeViewProfileSetting('프로필 변경', currUserInfo.nickname)">설정</v-list-item-content>
         </v-list-item>
         <v-list-item link>
           <v-list-item-content @click="logout">로그아웃</v-list-item-content>
@@ -77,13 +74,14 @@
       <v-responsive style="background-color:#110b22">
        <router-view :key="$route.fullPath"></router-view>
       </v-responsive>
-    </v-sheet> -->
+    </v-sheet>-->
   </v-card>
 </template>
 
       
 <script>
 import UserApi from "../apis/UserApi";
+import axios from 'axios';
 
 export default {
   props: ["pr_username"],
@@ -95,6 +93,7 @@ export default {
     pageTitle: "",
 
     isSearchPage: false,
+    isPostPage: false,
     currUserInfo: {
       nickname: "로그인 에러",
       username: "잠시 후에 다시 시도해주세요",
@@ -108,25 +107,32 @@ export default {
   updated() {
     if (this.$route.name === "프로필") {
       this.pageTitle = this.$route.params.email;
+    } else if (this.$route.name == "검색 결과") {
+      this.pageTitle = "검색 결과 : "+this.$route.params.keyword;
     } else {
       this.pageTitle = this.$route.name;
     }
     // this.getLoginUserProfile();
 
-     //이거 선행님이 바꾼거 밑에 넣어야해
+    //이거 선행님이 바꾼거 밑에 넣어야해
     if (this.$route.name === "검색") {
       this.isSearchPage = true;
     } else {
       this.isSearchPage = false;
     }
+    if (this.$route.name === "새 피드 작성" || this.$route.name ==="피드 수정") {
+      this.isPostPage = true;
+    } else {
+      this.isPostPage = false;
+    }
   },
   created() {
-   
-
     //가라천국....heaven
     // this.$vuetify.theme.dark = true
     if (this.$route.name !== "프로필") {
       this.pageTitle = this.$route.name;
+    } else if (this.$route.name == "검색 결과") {
+      this.pageTitle = "검색 결과 : "+this.$route.params.keyword;
     } else {
       //프로필 화면인 경우에는 아이디를 상단에 노출시킴
       this.pageTitle = this.profileUsername;
@@ -166,16 +172,38 @@ export default {
         this.$router.push({ name: path, params: { email: usersEmail } });
       }
     },
+    changeViewProfileSetting(path, usersEmail) {
+      if (this.pageTitle == usersEmail) {
+        this.drawer = !this.drawer;
+      } else {
+        this.pageTitle = usersEmail;
+        this.$router.push({ name: path, params: { email: usersEmail } });
+      }
+    },
+    changeViewPost(path) {
+        this.pageTitle = path;
+        this.$router.push({ name: path, params: { postId: -1 } });
+    },
     //그냥 이동일 경우
     changeView(path) {
       this.pageTitle = path;
-      this.$router.push({ name: path });
+      this.$router.push({ name: path});
     },
     logout() {
-      sessionStorage.removeItem("AUTH_token");
-      sessionStorage.removeItem("LoginUserInfo");
-      this.$cookies.remove("auth_cookie");
-      alert("로그아웃되었습니다.");
+      let user = this.$cookies.get('LoginUserInfo')
+      let userInfo = new FormData();
+      userInfo.append('username', user.username)
+      console.log(userInfo)
+      axios.post(`http://${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
+        .then(response => {
+          console.log(response)
+          sessionStorage.removeItem("refresh_token");
+          this.$cookies.remove("auth_cookie");
+          this.$cookies.remove("LoginUserInfo");
+          this.$cookies.remove("username");
+          alert("로그아웃되었습니다.");
+          this.isLogin = false;  
+        })
       this.$router.push({ name: "홈" });
     }
   }
