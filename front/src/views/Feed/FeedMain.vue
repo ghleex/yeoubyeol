@@ -68,7 +68,7 @@ export default {
       let requireData = new FormData();
       requireData.append('nickname', this.loginedNickname)
       requireData.append('start', this.limit)
-      axios.post('${process.env.VUE_APP_IP}/articles/mainfeed/', requireData) //api에 url 삽입
+      axios.post(`${process.env.VUE_APP_IP}/articles/mainfeed/`, requireData) //api에 url 삽입
         .then(response => {
           setTimeout(() => { //스크롤 페이징을 띄우기 위한 시간 지연(1초)
             if (response.data.length) {

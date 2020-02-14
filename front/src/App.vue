@@ -2,7 +2,7 @@
   <v-app style="background-color:#110b22;">
     <v-content v-if="isLogin && userNickname">
       <hongjulab :pr_username="userNickname" />
-       <router-view :key="$route.fullPath"></router-view>
+      <router-view :key="$route.fullPath" v-on:logoutEvent="logoutEvent"></router-view>
 <!--       <v-dialog max-width="600px">
         <template v-slot:activator="{ on }">
           <v-btn fixed dark fab bottom right color="#71d087" v-on="on">
@@ -17,7 +17,7 @@
 
     <v-content v-if="!isLogin">
       <!-- Provides the application the proper gutter -->
-      <router-view></router-view>
+      <router-view :key="$route.fullPath"></router-view>
     </v-content>
 
   </v-app>
@@ -42,6 +42,11 @@ export default {
     userNickname: "",
     userId: ""
   }),
+  methods: {
+    logoutEvent() {
+      this.isLogin = false;
+    }
+  },
   updated() {
     if (this.$cookies.isKey('username') && this.$cookies.isKey('auth_cookie')) {
       this.isLogin = true;

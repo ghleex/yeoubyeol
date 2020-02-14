@@ -76,7 +76,7 @@ const requestUserProfile = (data, callback, errorCallback) => {
         })
         .catch(err => {
             console.log(err)
-            errorCallback()
+            console.log('프로필 가져오기 실패')
         })
 }
 
