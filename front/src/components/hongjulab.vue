@@ -24,10 +24,7 @@
       <v-list>
         <v-list-item>
           <v-spacer></v-spacer>
-          <v-btn text color="#71d087">통계</v-btn>
-          <!-- <router-link to="/noti"> -->
           <v-btn text color="#71d087" @click="changeView('알림')">알림</v-btn>
-          <!-- </!-->
         </v-list-item>
 
         <v-list-item>

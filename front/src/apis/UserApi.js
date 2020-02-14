@@ -3,6 +3,10 @@ import axios from 'axios'
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
 const requestSignup = (data, callback, errorCallback) => {
     console.log(data);
     //백앤드와 로그인 통신하는 부분
@@ -30,9 +34,6 @@ const requestLogin = (data, callback, errorCallback) => {
         username: data.email,
         password: data.password,
     }
-
-    axios.defaults.xsrfCookieName = 'csrftoken'
-    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 
     axios.post(`${process.env.VUE_APP_IP}/auth/`, credentials)
         .then(res => {
