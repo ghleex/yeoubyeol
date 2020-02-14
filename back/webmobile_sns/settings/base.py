@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+from decouple import config
 import os
 import datetime
 
@@ -82,7 +83,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 
 MIDDLEWARE = [
-    'djangosecure.middleware.SecurityMiddleware',
+    # 'djangosecure.middleware.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -183,6 +184,15 @@ SITE_ID = 1
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/uploads/'
 
-SECURE_SSL_REDIRECT = True
+# SECURE_SSL_REDIRECT = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# setting for sending email
+EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_HOST_USER = config('EMAIL_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_PW')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
