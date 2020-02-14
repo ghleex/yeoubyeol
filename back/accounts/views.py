@@ -31,9 +31,43 @@ class AccountList(APIView):
 
     # 유저 정보 수정
     def put(self, request, format=None):
-        username = request.data.get('username')
-        user = get_object_or_404(User, username=username)
-        serializer = UserSerializer(user, data=request.data)
+        print('------------------')
+        print(request.data)
+        print('------------------')
+        data = request.data
+        username = data.get('username')
+        user = get_object_or_404(User, id=username)
+        username = user.username    
+        nickname = data.get('nickname')
+        intro = data.get('intro')
+        followers = user.followers.all()
+        followers_list = []
+        for follower in followers:
+            followers_list.append(follower.id)
+        followings = user.followings.all()
+        followings_list = []
+        for following in followings:
+            followings_list.append(following.id)
+        if data.get('pic_name'):
+            pic_name = data.get('pic_name')
+            data = {
+                'username': username,
+                'intro': intro,
+                'nickname': nickname,
+                'pic_name': pic_name,
+                'followers': followers_list,
+                'followings': followings_list
+            }
+        else:
+            data = {
+                'username': username,
+                'intro': intro,
+                'nickname': nickname,
+                'pic_name': user.pic_name,
+                'followers': followers_list,
+                'followings': followings_list
+            }
+        serializer = UserSerializer(user, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -50,7 +84,7 @@ class AccountList(APIView):
 def email_auth(request):
     waitings = Waiting.objects.all()
     for waiting in waitings:
-        if waiting.created_at < datetime.now() - timedelta(minutes=1):
+        if waiting.created_at < datetime.now() - timedelta(minutes=10):
             waiting.delete()
     username = request.data.get('username')
     user = User.objects.filter(username=username)
@@ -139,10 +173,10 @@ def user_signup(request, secret_key):
     if waiting and waiting.created_at > datetime.now() - timedelta(minutes=30):
         serializer = UserCreationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            pic_name = random.randrange(1, 13, 1)
             user = serializer.save()
             user.set_password(request.data.get('password'))
-            pic_name = random.randrange(1, 13, 1)
-            user.pic_name = 'accounts/pic/{pic_name}.png'
+            user.pic_name = f'/accounts/pic_names/{pic_name}.jpg'
             user.save()
             waiting.delete()
             return Response({'message': '회원가입이 성공적으로 완료되었습니다.'}, status=status.HTTP_200_OK)
@@ -200,9 +234,10 @@ def logout(request):
     return Response({'message': '삭제 성공이다!!'})
 
 @api_view(['GET'])
-def user_detail(request):
-    user = get_object_or_404(User, username=username)
+def user_detail(request, id):
+    user = get_object_or_404(User, id=id)
     serializer = UserSerializer(user)
+    print(serializer.data.get('pic_name'))
     return Response(serializer.data)
 
 
@@ -231,7 +266,7 @@ def find_pwd(request):
 def change_pwd(request):
     username = request.data.get('username')
     user = get_object_or_404(User, username=username)
-    serializer = UserCreationSerializer(user)
+    serializer = UserSerializer(user)
     if serializer.password == request.data.get('old_password'):
         if serializer.is_valid():
             user = serializer.save()

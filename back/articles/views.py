@@ -1,9 +1,7 @@
-from django.core.mail import EmailMessage
 from django.http import Http404, HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.template.loader import render_to_string
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -13,10 +11,10 @@ from .models import Article, Comment, HonorArticle, Hashtag
 from accounts.models import Notification, User
 from accounts.serializers import UserSerializer, NotificationSerializer
 from string import ascii_letters
-from konlpy.tag import Okt, Kkma, Komoran, Hannanum
 from collections import Counter
 # from directmessages.apps import Inbox
 import operator
+from konlpy.tag import Hannanum
 import konlpy
 import secrets, json
 
@@ -108,7 +106,7 @@ def mainfeed(request):
             article_serializer = ArticleSerializer(article)
             account = get_object_or_404(User, id=article_serializer.data.get('author'))
             data = article_serializer.data
-            data['pic_name'] = account.pic_name
+            data['pic_name'] = f'/uploads/{account.pic_name}'
             for u in range(len(data['hashtags'])):
                 hashtag = get_object_or_404(Hashtag, id=data['hashtags'][u])
                 data['hashtags'][u] = hashtag.hashtag
@@ -121,8 +119,11 @@ def mainfeed(request):
 @api_view(['POST', ])
 def recommend(request):
     content = request.data.get('article')
+    print(content)
     okt = Hannanum()
-    keywords = okt.nouns(request.POST.get('article'))
+    print(content)
+    keywords = okt.nouns(content)
+    print(keywords)
     count = Counter(keywords)
     count = sorted(sorted(count.items(), key=operator.itemgetter(0)), key=lambda x: x[1], reverse=True) 
     data = []
@@ -138,8 +139,13 @@ def recommend(request):
 def myarticle(request):
     nickname = request.data.get('nickname')
     account = get_object_or_404(User, nickname=nickname)
+    print('1111111111111111111')
+    print(request.data)
+    print(nickname)
+    print('1111111111111111111')
     articles = Article.objects.filter(author=account.id)
     like_articles = Article.objects.all()
+    print(articles)
     datas = []
     like_datas = []
     for like_article in like_articles:
@@ -149,7 +155,7 @@ def myarticle(request):
             like_data = like_article_serializer.data
             like_article_author = like_article_serializer.data.get('author')
             like_article_user = get_object_or_404(User, id=like_article_author)
-            like_data['pic_name'] = like_article_user.pic_name
+            like_data['pic_name'] = f'/uploads/{like_article_user.pic_name}'
             for u in range(len(like_data.get('hashtags'))):
                 hashtag = get_object_or_404(Hashtag, id=like_data.get('hashtags')[u])
                 like_data.get('hashtags')[u] = hashtag.hashtag
@@ -160,7 +166,7 @@ def myarticle(request):
         comments = article.comment_set.all()
         article_serializer = ArticleSerializer(article)
         data = article_serializer.data
-        data['pic_name'] = account.pic_name
+        data['pic_name'] = f'/uploads/{account.pic_name}'
         for u in range(len(data['hashtags'])):
             hashtag = get_object_or_404(Hashtag, id=data['hashtags'][u])
             data['hashtags'][u] = hashtag.hashtag
@@ -171,6 +177,7 @@ def myarticle(request):
         'my_articles': datas,
         'like_articles': like_datas,
     }
+    print(result)
     return Response(result)
 
 # 글 상세보기
@@ -190,11 +197,11 @@ class ArticleDetail(APIView):
         for comment in comments:
             comment_serializer = CommentSerializer(comment)
             author = comment_serializer.data.get('author')
-            user = get_object_or_404(User, id=author)
-            data.append([user.nickname, user.pic_name,comment.id, comment.comment, comment.created_at])
+            c_user = get_object_or_404(User, id=author)
+            data.append([c_user.nickname, f'/uploads/{c_user.pic_name}' ,comment.id, comment.comment, comment.created_at])
         result = {
             'nickname': user.nickname,
-            'pic_name': user.pic_name,
+            'pic_name': f'/uploads/{user.pic_name}',
             'article': serializer.data,
             'hashtags': hashtag_list,
             'comments': data
@@ -251,7 +258,7 @@ class SearchResultList(APIView):
                 if query in user.nickname:
                     data.append({
                         'nickname': user.nickname,
-                        'pic_name': user.pic_name,
+                        'pic_name': f'/uploads/{user.pic_name}',
                         'intro': user.intro
                     })
             if len(data) > 0:
@@ -269,11 +276,10 @@ class FollowerList(APIView):
     def post(self, request, format=None):
         me = get_object_or_404(get_user_model(), nickname=request.data.get('my_nickname'))
         you = get_object_or_404(get_user_model(), nickname=request.data.get('your_nickname'))
-        serializer = UserSerializer(you)
         if me != you:
             # if serializer.data.followers.filter(pk=me.id).exists():
-            if me.id in serializer.data.get('followers'):
-                serializer.data.get('followers').remove(me.id)
+            if me in you.followers.all():
+                you.followers.remove(me)
                 # serializer.data.followers.remove(me.id)
             else:
                 notification = {
@@ -281,16 +287,12 @@ class FollowerList(APIView):
                     'message': me.nickname + '님이 팔로우를 신청했습니다.',
                     'send_user': me.nickname
                 }
-                json_noti = json.dumps(notification)
-                noti_serializer = NotificationSerializer(data=json_noti)
+                noti_serializer = NotificationSerializer(data=notification)
                 if noti_serializer.is_valid(): 
                     noti = noti_serializer.save()
                     noti.save()
-                serializer.data.get('followers').append(me.id)
-
-        serializer = UserSerializer(you, data=serializer.data)
-        if serializer.is_valid():
-            serializer.save()
+                you.followers.add(me)
+        serializer = UserSerializer(you)
         return Response(serializer.data)
 
     # 팔로워 목록
@@ -336,9 +338,6 @@ def followerlist(request):
 @api_view(['POST', ])
 def like(request):
     # 요청 보낸 유저 정보
-    print('--------------------')
-    print(request.data)
-    print('--------------------')
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
     # 좋아요 한 글
@@ -381,7 +380,7 @@ def like(request):
                     if noti_serializer.is_valid():
                         notification = noti_serializer.save()
                         notification.save()
-    if len(article.like_users.all()) >= 3:
+    if len(article.like_users.all()) >= 30000:
         article_hashtag = []
         for hashtag in article.hashtags.all():
             article_hashtag.append(hashtag.id)
@@ -496,7 +495,6 @@ def hashtag(request):
         data['hashtags'] = hashtags_id
         user = get_object_or_404(User, id=data['author'])
         comments = article.comment_set.all()
-        print(comments)
         comments_list = []
         for comment in comments:
             comments_list.append(comment.comment)
@@ -526,12 +524,9 @@ def trend(request):
     for article in articles:
         if article not in datas:
             serializer = ArticleSerializer(article)
-            print(serializer.data)
             datas.append(serializer.data)
         if len(datas) == 10:
             break
-    print(datas)
-
     # .order_by('-like_users')
     return Response(datas)
 

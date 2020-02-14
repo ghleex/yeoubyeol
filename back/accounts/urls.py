@@ -16,8 +16,8 @@ urlpatterns = [
     path('find_pwd/', views.find_pwd, name='find_pwd'),
     path('change_pwd/', views.change_pwd, name='change_pwd'),
     path('profile/', views.profile, name='profile'),
-    path('check/', views.check),
     path('checknickname/', views.checknickname),
+    path('check/', views.check),
     path('logout/', views.logout),
-] 
-# + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+ 
