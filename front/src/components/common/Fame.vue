@@ -35,6 +35,8 @@ export default {
     data() {
       return {
         avatar_img: require("@/assets/images/profile/" + this.author + ".png")
+        //  this.currUserInfo.picname=`${process.env.VUE_APP_IP}${res.data.pic_name}`;
+      
       }
     }
 }

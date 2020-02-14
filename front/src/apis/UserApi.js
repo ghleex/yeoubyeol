@@ -58,7 +58,7 @@ const requestLoginCheck = (data, callback, errorcallback) => {
         .catch(error => {
             console.log(error)
             errorcallback(error)
-    })
+        })
 }
 
 //회원프로필가져올래
@@ -81,7 +81,7 @@ const requestUserProfile = (data, callback, errorCallback) => {
 }
 
 //팔로워 목록 받아오기
-const requestFollowers= (data, callback, errorCallback) => {
+const requestFollowers = (data, callback, errorCallback) => {
     let nickname = {
         nickname: data,
     }
@@ -98,7 +98,7 @@ const requestFollowers= (data, callback, errorCallback) => {
         })
 }
 //팔로잉 목록 받아오기
-const requestFollowings= (data, callback, errorCallback) => {
+const requestFollowings = (data, callback, errorCallback) => {
     let nickname = {
         nickname: data,
     }
@@ -114,7 +114,35 @@ const requestFollowings= (data, callback, errorCallback) => {
             errorCallback(err)
         })
 }
+//닉네임 중복체쿠
+const checkNicknameAvaliable = (data, callback, errorCallback) => {
+    axios
+        .post(`${process.env.VUE_APP_IP}/accounts/checknickname/`, data)
+        .then(response => {
+            callback(response)
+        })
+        .catch(error => {
+            errorCallback(error);
 
+        });
+}
+
+//유저 정보 수정하기
+const editUsersProfile = (data, callback, errorCallback) => {
+    axios
+        .put(`${process.env.VUE_APP_IP}/accounts/`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        })
+        .then(response => {
+            callback(response)
+        })
+        .catch(error => {
+            errorCallback(error);
+
+        });
+}
 
 const UserApi = {
     requestSignup: (data, callback, errorCallback) => requestSignup(data, callback, errorCallback),
@@ -123,5 +151,7 @@ const UserApi = {
     requestFollowers: (data, callback, errorCallback) => requestFollowers(data, callback, errorCallback),
     requestFollowings: (data, callback, errorCallback) => requestFollowings(data, callback, errorCallback),
     requestLoginCheck: (data, callback, errorCallback) => requestLoginCheck(data, callback, errorCallback),
+    checkNicknameAvaliable: (data, callback, errorCallback) => checkNicknameAvaliable(data, callback, errorCallback),
+    editUsersProfile: (data, callback, errorCallback) => editUsersProfile(data, callback, errorCallback),
 }
 export default UserApi

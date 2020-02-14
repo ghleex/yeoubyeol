@@ -97,6 +97,7 @@ const getArticleById = (data, callback, errorCallback) => {
 const getPostLikedArticles = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('nickname', data)
+    console.log('~누구의 글이냐 ',data)
     axios.post(`${process.env.VUE_APP_IP}/articles/myarticle/`, form,{
     })
        .then((response) => {
