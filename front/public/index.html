@@ -9,76 +9,8 @@
     <title>여우별</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="832271626552-sj6lpm4cjdd7k5n1vg7lv49ore7ll2q5.apps.googleusercontent.com">
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
   <body>
-    <script>
-      function onSignIn(googleUser) {
-        var profile = googleUser.getBasicProfile();
-        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-        console.log('Name: ' + profile.getName());
-        console.log('Image URL: ' + profile.getImageUrl());
-        console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-        
-        var user_get;
-        var isFind = false
-
-        axios.get('http://192.168.31.87:8000/accounts/')
-          .then(response => {
-            console.log(response.data)
-            let ids = response.data
-            for (let person of ids) {
-              if (isFind) {
-                break;
-              }
-              if (person.username === profile.getEmail()) {
-                console.log('찾았다!')
-                user_get = {
-                  'username': profile.getEmail(),
-                  'nickname': profile.getName(),
-                  'email': profile.getEmail(),
-                  'password': profile.getEmail() + profile.getName() + profile.getId()
-                }
-                isFind = true
-              } else {
-                user_get = {
-                  'username': person.username
-                }
-                console.log('노답 ' + user_get)
-              }
-            }
-          });
-        console.log(user_get)
-        console.log(isFind)
-        if (isFind) {
-          console.log('찾은거로 로그인!')
-          let form = new FormData();
-          form.append('username', user_get.username)
-          form.appned('password', user_get.password)
-          axios.post('http://192.168.31.87:8000/auth/', form)
-            .then(response => {
-              console.log(response)
-              console.log('로그인 성공!')
-            })
-        } else {
-          console.log('못찾았으니까 가입으로')
-          console.log(user_get)
-          axios.post('http://192.168.31.87:8000/accounts/social/', {'username': user_get.username})
-            .then(response => {
-              console.log(response)
-            })
-        }
-      }
-
-      function signOut() {
-        var auth2 = gapi.auth2.getAuthInstance();
-        auth2.signOut().then(function () {
-          console.log('User signed out.');
-        });
-      }
-    </script>
     <noscript>
       <strong>We're sorry but example doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>

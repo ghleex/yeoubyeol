@@ -61,12 +61,6 @@
                </router-link>
           </v-col>
 
-          <v-col class="pt-20" cols="12">
-            <v-btn text class="g-signin2" data-onsuccess="onSignIn">
-              <v-icon>mdi-google</v-icon>구글로 로그인
-            </v-btn>
-            <a href="#" onclick="signOut();" style="border: 1px solid #EEEEEE;">Sign out</a>
-          </v-col>
         </v-row>
         <v-alert
           v-model="alert"
