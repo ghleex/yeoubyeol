@@ -2,11 +2,12 @@
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
       <!-- 글 원문  -->
-      <v-col cols="12">
-        <div class="pa-2" @click="backward">
+      <v-col cols="12" v-if="isArticleLoaded">
+        <!-- <div class="pa-2" @click="backward">
           <v-icon class="white--text">mdi-chevron-left</v-icon>
-        </div>
-        <CommentArticle v-bind="article" />
+        </div> -->
+        <!-- <CommentArticle v-bind="article" /> -->
+        <Post v-bind="article" v-on:delPost="delPost" v-on:editPost="editPost" />
       </v-col>
       <!-- 댓글 보여주기 -->
       <v-col cols="12" v-for="comm in comments" :key="comm.comment_id">
@@ -56,17 +57,35 @@
 </template>
 
 <script>
-import CommentArticle from "@/components/common/CommentArticle";
+import Post from "@/components/common/Post";
 import CommentComment from "@/components/common/CommentComment";
 import FeedApi from "@/apis/FeedApi";
 import CommentApi from "@/apis/CommentApi";
 export default {
-  components: { CommentArticle, CommentComment },
+  components: { Post, CommentComment },
   created() {
     this.getUserInformation();
     this.getArticleById(this.$route.params.id);
   },
   methods: {
+    editPost(postId) {
+      this.$router.push({ name: "피드 수정", params: { postId: postId } });
+    },
+    delPost(postId) {
+      FeedApi.deletePost(
+        postId,
+        res => {
+          console.log(res);
+          //뒤로 가기
+          alert("게시글 삭제 완료 ~!!! 나의 감성 안뇽");
+          this.$router.push({ name: "메인피드" });
+        },
+        error => {
+          alert("피드 삭제에 오류가 발생했어요 ..");
+        }
+      );
+    },
+
     backward() {
       var router = this.$router;
       router.go(-1);
@@ -102,11 +121,10 @@ export default {
       );
     },
     getUserInformation() {
-      this.loginUserInfo.nickname = JSON.parse(
-        sessionStorage.getItem("LoginUserInfo")
-      ).nickname;
+      let userInfo = this.$cookies.get('LoginUserInfo');
+      this.loginUserInfo.nickname = userInfo.nickname;
       this.loginUserInfo.pic_name = require("@/assets/images/profile/" +
-        JSON.parse(sessionStorage.getItem("LoginUserInfo")).pic_name +
+        userInfo.pic_name +
         ".png");
     },
     AddComment() {
@@ -145,19 +163,22 @@ export default {
           //article
           console.log(res);
           let articleFromServer = {
-            id: res.data.article.id,
             nickname: res.data.nickname,
-            article: res.data.article.article,
             pic_name: require("@/assets/images/profile/" +
               res.data.pic_name +
               ".png"),
-            hashtags: res.data.article.hashtags,
-            like_users: res.data.article.like_users,
-            cnt_likes: res.data.article.like_users.length,
-            cnt_comments: res.data.comments.length,
-            created_at: res.data.article.created_at
+            img: res.data.article.image,
+            id: res.data.article.id,
+            article: res.data.article.article,
+            author: res.data.article.author,
+            hashtags: res.data.hashtags,
+            likes: res.data.article.like_users.length,
+            comments: res.data.comments.length,
+            created_at: res.data.article.created_at,
+            like_users: res.data.article.like_users
           };
           this.article = articleFromServer;
+          this.isArticleLoaded = true;
           //comment
 
           this.comments = [];
@@ -178,6 +199,7 @@ export default {
         },
         error => {
           //실패 시
+          this.isArticleLoaded = false;
           console.log("로딩 실패 ㅜ" + error);
           alert("댓글과 게시물을 불러오는데 오류가 발생했어요 ..");
           // this.$router.push({ path: "/error" });
@@ -186,6 +208,7 @@ export default {
     }
   },
   data: () => ({
+    isArticleLoaded: false,
     valid: false,
     commentRules: [
       v => v.length < 200 || "조금 더 내용을 줄여보는 건 어떨까요"

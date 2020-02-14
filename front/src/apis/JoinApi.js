@@ -9,7 +9,7 @@ const JoinsendEmail = (data, callback, errorCallback) => {
         form.append("username", data);
 
     // console.log(nickname)
-    axios.post(`http://${process.env.VUE_APP_IP}/accounts/email/`, form)
+    axios.post(`${process.env.VUE_APP_IP}/accounts/email/`, form)
         .then(res => {
             console.log('메일보내깅 신청 성공')
             callback(res)
@@ -27,7 +27,7 @@ const sendEmailPW = (data, callback, errorCallback) => {
         form.append("username", data);
 
     // console.log(nickname)
-    axios.post(`http://${process.env.VUE_APP_IP}/accounts/find_pwd/`, form)
+    axios.post(`${process.env.VUE_APP_IP}/accounts/find_pwd/`, form)
         .then(res => {
             console.log('비번찾기 메일보내깅 신청 성공')
             callback(res)

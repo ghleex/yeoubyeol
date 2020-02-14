@@ -101,9 +101,7 @@ export default {
       var ans = confirm("댓글을 삭제할까요 ?");
       if (ans == true) {
         this.$emit("removeComment", this.comment_id);
-      } else {
-        //nothin
-      }
+      } 
     },
     editCommentBtn() {
       // this.$emit('editComment');
@@ -113,8 +111,8 @@ export default {
   },
   created() {
     this.setTimeValues();
-    const LoginNickname = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
-      .nickname;
+    let userInfo = this.$cookies.get('LoginUserInfo');
+    const LoginNickname = userInfo.nickname;
     if (this.nickname === LoginNickname) {
       this.isMyComment = true;
     } else {

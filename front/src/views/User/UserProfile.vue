@@ -8,16 +8,17 @@
               <v-img :src="userInfo.picname"></v-img>
             </v-avatar>
             <v-spacer></v-spacer>
-            <v-list-item-content>
+            <v-list-item-content class="d-flex justify-center text-center">
               <h3>{{userInfo.likes}}</h3>
-              <v-spacer></v-spacer>좋아요
+              <v-spacer></v-spacer>
+              좋아요
             </v-list-item-content>
-            <v-list-item-content @click="viewFollows()">
+            <v-list-item-content @click="viewFollows()" class="d-flex justify-center text-center">
               <h3>{{userInfo.followers}}</h3>
               <v-spacer></v-spacer>팔로워
             </v-list-item-content>
 
-            <v-list-item-content @click="viewFollows()">
+            <v-list-item-content @click="viewFollows()" class="d-flex justify-center text-center">
               <h3>{{userInfo.followings}}</h3>
               <v-spacer></v-spacer>팔로잉
             </v-list-item-content>
@@ -33,7 +34,7 @@
               @click="clickFollowBtn"
               :outlined="isFollow"
             >{{isFollow? "unFollow" : "Follow"}}</v-btn>
-            <v-btn v-else min-width="190" small color="#71d087" outlined>setting profile</v-btn>
+            <v-btn v-else min-width="190" small color="#71d087" outlined @click="changeView('프로필 변경')">setting profile</v-btn>
           </v-list-item>
           <v-list-item>
             <v-list-item-content>
@@ -44,6 +45,8 @@
           </v-list-item>
           <!-- <v-list-item> -->
         </v-list>
+      <keep-alive>
+
 
         <v-tabs centered fixed dark background-color="transparent">
           <v-tabs-slider color="#71d087"></v-tabs-slider>
@@ -69,7 +72,7 @@
               style="background-color:#110b22"
             >
               <v-col cols="12" v-for="(article,i) in PostArticle" :key="i">
-                <Post v-on:userLikes="userLikes" v-bind="article" />
+               <Post v-bind="article" v-on:delPost="delPost" v-on:editPost="editPost" />
               </v-col>
             </v-row>
             <v-row
@@ -93,8 +96,8 @@
               justify="center"
               style="background-color:#110b22"
             >
-              <v-col cols="12" v-for="article in LikeArticle" :key="article.id">
-                <Post v-bind="article" />
+              <v-col cols="12" v-for="(article,i) in LikeArticle" :key="i">
+                <Post v-bind="article" v-on:delPost="delPost" v-on:editPost="editPost" />
               </v-col>
             </v-row>
             <v-row
@@ -110,6 +113,7 @@
             </v-row>
           </v-tab-item>
         </v-tabs>
+              </keep-alive>
       </v-col>
     </v-row>
   </v-responsive>
@@ -125,19 +129,27 @@ export default {
     Post
   },
   methods: {
-    userLikes(data) {
-      let key = data[1];
-      
-      // this.PostArticle[data[1]].article="SSSSSSs";
-      FeedApi.userLikesPost(data[0],res=>{
-        console.log(res);
-        this.PostArticle[key].like_users=res.data.like_users;
-        console.log(res.data.like_users);
-        this.PostArticle[key].likes = res.data.like_users.length;
-
-      },error=>{
-        console.log("에러얌 ");
-      })
+    changeView(path) {
+      this.pageTitle = path;
+      this.$router.push({ name: path });
+    },
+    editPost(postId) {
+      console.log("수정할 아이디는 요 ",postId);
+      this.$router.push({ name: "피드 수정", params: { postId: postId } });
+    },
+    delPost(postId) {
+      FeedApi.deletePost(
+        postId,
+        res => {
+          console.log(res);
+          //뒤로 가기
+          alert("게시글 삭제 완료 ~!!! 나의 감성 안뇽");
+          this.getMyArticlesFromServer();
+        },
+        error => {
+          alert("피드 삭제에 오류가 발생했어요 ..");
+        }
+      );
     },
     clickFollowBtn() {
       if (!this.isMyAccount) {
@@ -163,10 +175,9 @@ export default {
       this.$router.push({ name: "팔로", params: this.nickname });
     },
     getLoginUserInformation() {
-      if (sessionStorage.getItem("LoginUserInfo")) {
-        this.loginedNickname = JSON.parse(
-          sessionStorage.getItem("LoginUserInfo")
-        ).nickname;
+      if (this.$cookies.isKey('LoginUserInfo')) {
+        let userInfo= this.$cookies.get('LoginUserInfo');
+        this.loginedNickname = userInfo.nickname;
       } else {
         this.$router.push({ name: "Error" });
       }
@@ -195,9 +206,9 @@ export default {
             //만약에 지금보는 정보랑 내 로그인 정보가 같으먄
             this.isMyAccount = true;
           } else {
+            let userInfo = this.$cookies.get('LoginUserInfo');
             const followerList = res.data.followers;
-            const LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo"))
-              .id;
+            const LoginId = userInfo.id;
             // console.log("Login id -> ",LoginId," followerList is -> ",followerList)
             if (followerList.includes(LoginId)) {
               console.log("팔로우한 사람이자너 ~!!");
@@ -226,8 +237,8 @@ export default {
             ".png"),
           img: dataList[i].image,
           id: dataList[i].id,
-          keyIdx:i,
           article: dataList[i].article,
+          author:dataList[i].author,
           hashtags: dataList[i].hashtags,
           likes: dataList[i].like_users.length,
           comments: dataList[i].comments,
@@ -236,7 +247,6 @@ export default {
         };
 
         target.push(article_prop);
-        console.log(this.target);
       }
     },
 
