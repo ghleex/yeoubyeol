@@ -6,7 +6,6 @@
         <!-- <div class="pa-2" @click="backward">
           <v-icon class="white--text">mdi-chevron-left</v-icon>
         </div> -->
-        <!-- <CommentArticle v-bind="article" /> -->
         <Post v-bind="article" v-on:delPost="delPost" v-on:editPost="editPost" />
       </v-col>
       <!-- 댓글 보여주기 -->
@@ -61,6 +60,9 @@ import Post from "@/components/common/Post";
 import CommentComment from "@/components/common/CommentComment";
 import FeedApi from "@/apis/FeedApi";
 import CommentApi from "@/apis/CommentApi";
+import dotenv from "dotenv";
+
+dotenv.config();
 export default {
   components: { Post, CommentComment },
   created() {
@@ -122,10 +124,10 @@ export default {
     },
     getUserInformation() {
       let userInfo = this.$cookies.get('LoginUserInfo');
+      console.log(userInfo);
       this.loginUserInfo.nickname = userInfo.nickname;
-      this.loginUserInfo.pic_name = require("@/assets/images/profile/" +
-        userInfo.pic_name +
-        ".png");
+        this.loginUserInfo.pic_name =`${process.env.VUE_APP_IP}${userInfo.pic_name}`;
+      
     },
     AddComment() {
       console.log(this.loginUserInfo.content);
@@ -162,12 +164,14 @@ export default {
           //성공시
           //article
           console.log(res);
+        /*     pic_name: require("@/assets/images/profile/" +
+              res.data.pic_name +
+              ".png"), */
           let articleFromServer = {
             nickname: res.data.nickname,
-            pic_name: require("@/assets/images/profile/" +
-              res.data.pic_name +
-              ".png"),
             img: res.data.article.image,
+            pic_name: `${process.env.VUE_APP_IP}${res.data.pic_name}`,
+      
             id: res.data.article.id,
             article: res.data.article.article,
             author: res.data.article.author,
@@ -183,12 +187,14 @@ export default {
 
           this.comments = [];
 
+            /*      pic_name: require("@/assets/images/profile/" +
+                   res.data.comments[c][1] +
+                   ".png"), */
           for (let c = 0; c < res.data.comments.length; c++) {
             let comment = {
               nickname: res.data.comments[c][0],
-              pic_name: require("@/assets/images/profile/" +
-                res.data.comments[c][1] +
-                ".png"),
+              pic_name : `${process.env.VUE_APP_IP}${res.data.comments[c][1]}`,
+      
               comment_id: res.data.comments[c][2],
               content: res.data.comments[c][3],
               created_at: res.data.comments[c][4]

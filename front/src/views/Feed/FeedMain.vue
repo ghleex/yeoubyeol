@@ -68,14 +68,14 @@ export default {
       let requireData = new FormData();
       requireData.append('nickname', this.loginedNickname)
       requireData.append('start', this.limit)
-      axios.post('${process.env.VUE_APP_IP}/articles/mainfeed/', requireData) //api에 url 삽입
+      axios.post(`${process.env.VUE_APP_IP}/articles/mainfeed/`, requireData) //api에 url 삽입
         .then(response => {
           setTimeout(() => { //스크롤 페이징을 띄우기 위한 시간 지연(1초)
             if (response.data.length) {
               for (let i = 0; i < response.data.length; i++) {
                   let article_prop = {
                     nickname: response.data[i].nickname,
-                    pic_name: require("@/assets/images/profile/" + response.data[i].pic_name + ".png"),
+                      pic_name:`${process.env.VUE_APP_IP}${response.data[i].pic_name}`,
                     img:response.data[i].image,
                     id: response.data[i].id,
                     article: response.data[i].article,

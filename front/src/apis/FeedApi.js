@@ -3,6 +3,10 @@ import axios from 'axios'
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
 const requestFollow = (data, callback, errorCallback) => {
     console.log(data);
     let form = new FormData()
@@ -97,6 +101,7 @@ const getArticleById = (data, callback, errorCallback) => {
 const getPostLikedArticles = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('nickname', data)
+    console.log('~누구의 글이냐 ',data)
     axios.post(`${process.env.VUE_APP_IP}/articles/myarticle/`, form,{
     })
        .then((response) => {
