@@ -9,7 +9,8 @@
               새벽이 되면
               <br />다르게 보일거에요.
             </h1>
-            <img src="../../assets/images/여우별(밤).png" alt width="100px" />
+            <!-- <img src="../../assets/images/여우별(밤).png" alt width="100px" /> -->
+            <br>
           </v-col>
           <v-col cols="12">
             <v-text-field
@@ -51,7 +52,7 @@
             <v-spacer></v-spacer>
           </v-col>
 
-          <v-col cols="12">
+          <v-col cols="12" class="d-flex justify-space-around px-12">
             <router-link v-bind:to="{name:'비밀번호 변경'}">
             <v-btn  text min-width="100" class="px-0 my-3">비밀번호 찾기</v-btn>
               </router-link>
@@ -197,13 +198,15 @@ export default {
     email: "",
     emailRules: [
       v => !!v || "이메일 형식이 아닙니다.",
-      v => /.+@.+\..+/.test(v) || "이메일 형식이 아닙니다."
+      v => !/\s/.test(v) || '공백없이 입력해주세요.',
+      v => /.+@.+\..+/.test(v) || "이메일 형식이 아닙니다.",
     ],
     password: "",
     passwordRules: [
       v =>
         !!v ||
         "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 20자리 이하입니다",
+      v => !/\s/.test(v) || '공백없이 입력해주세요.',
       v =>
         /^.*(?=^.{8,20}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[`~!@#$%^&+=;',.?]).*$/.test(v) || "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 20자리 이하입니다",
     ],

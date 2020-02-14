@@ -1,5 +1,6 @@
 <template>
   <v-container>
+      <!-- 가장 많이 사용된 태그, 좋아요가 많은 글 -->
       <Post />
   </v-container>
 </template>
