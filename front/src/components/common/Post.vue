@@ -174,7 +174,7 @@ export default {
       }
     },
     getImageUrl() {
-      this.imgUrl = `http://${process.env.VUE_APP_IP}${this.post.img}`;
+      this.imgUrl = `${process.env.VUE_APP_IP}${this.post.img}`;
     },
      isLikeCheck() {
       let userInfo = this.$cookies.get('LoginUserInfo');

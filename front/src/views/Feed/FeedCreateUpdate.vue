@@ -210,7 +210,7 @@ export default {
           //성공시
           //article
           console.log(res);
-          this.url = `http://${process.env.VUE_APP_IP}${res.data.article.image}`;
+          this.url = `${process.env.VUE_APP_IP}${res.data.article.image}`;
           this.inputPostContent = res.data.article.article;
           this.model = [];
           for (let i = 0; i < res.data.hashtags.length; i++) {

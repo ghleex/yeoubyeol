@@ -42,7 +42,7 @@ export default {
       let requireData = new FormData();
       requireData.append('hashtag', this.hashtag)
       requireData.append('start', this.limit)
-      axios.post(`http://${process.env.VUE_APP_IP}/articles/hashtag/`, requireData) //api에 url 삽입
+      axios.post(`${process.env.VUE_APP_IP}/articles/hashtag/`, requireData) //api에 url 삽입
       
         .then(response => {
           console.log(response);

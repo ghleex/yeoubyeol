@@ -8,7 +8,7 @@ const requestFollow = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('my_nickname', data.loginedNickname)
     form.append('your_nickname', data.shownNickname)
-    axios.post(`http://${process.env.VUE_APP_IP}/articles/follower/`, form)
+    axios.post(`${process.env.VUE_APP_IP}/articles/follower/`, form)
         .then((response) => {
             console.log(response)
             callback(response)
@@ -23,7 +23,7 @@ const requestFollow = (data, callback, errorCallback) => {
 
 //새 글 작성하기
 const newPost = (form, callback, errorCallback) => {
-     axios.post(`http://${process.env.VUE_APP_IP}/articles/`, form,{
+     axios.post(`${process.env.VUE_APP_IP}/articles/`, form,{
         headers: {
             'Content-Type': 'multipart/form-data',
         }
@@ -44,7 +44,7 @@ const newPost = (form, callback, errorCallback) => {
 const requestHashTags = (form, callback, errorCallback) => {
     
 
-     axios.post(`http://${process.env.VUE_APP_IP}/articles/recommend/`, form,{
+     axios.post(`${process.env.VUE_APP_IP}/articles/recommend/`, form,{
      })
         .then((response) => {
             console.log('해시태그 받기 성공 :',response)
@@ -62,7 +62,7 @@ const requestHashTags = (form, callback, errorCallback) => {
 const getArticles = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('nickname', data)
-    axios.post(`http://${process.env.VUE_APP_IP}/articles/mainfeed/`, form,{
+    axios.post(`${process.env.VUE_APP_IP}/articles/mainfeed/`, form,{
     })
        .then((response) => {
            console.log('게시글 받기 성공 :',response)
@@ -79,7 +79,7 @@ const getArticles = (data, callback, errorCallback) => {
     
 //게시글 가져오기 : 아이디로 조회하기
 const getArticleById = (data, callback, errorCallback) => {
-    axios.get(`http://${process.env.VUE_APP_IP}/articles/${data}/`,{
+    axios.get(`${process.env.VUE_APP_IP}/articles/${data}/`,{
     })
        .then((response) => {
            console.log('게시글 받기 성공 :',response)
@@ -97,7 +97,7 @@ const getArticleById = (data, callback, errorCallback) => {
 const getPostLikedArticles = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('nickname', data)
-    axios.post(`http://${process.env.VUE_APP_IP}/articles/myarticle/`, form,{
+    axios.post(`${process.env.VUE_APP_IP}/articles/myarticle/`, form,{
     })
        .then((response) => {
            console.log('내 게시글 받기 성공 :',response)
@@ -114,7 +114,7 @@ const getPostLikedArticles = (data, callback, errorCallback) => {
 
 // 게시글에 좋아요 누르기 
 const userLikesPost = (form, callback, errorCallback) => {
-    axios.post(`http://${process.env.VUE_APP_IP}/articles/like/`, form,{
+    axios.post(`${process.env.VUE_APP_IP}/articles/like/`, form,{
     })
        .then((response) => {
            console.log('게시글 좋아요 성공 :',response)
@@ -130,7 +130,7 @@ const userLikesPost = (form, callback, errorCallback) => {
 
 // 게시글 삭제
 const deletePost = (id, callback, errorCallback) => {
-    axios.delete(`http://${process.env.VUE_APP_IP}/articles/${id}`,{
+    axios.delete(`${process.env.VUE_APP_IP}/articles/${id}`,{
     })
        .then((response) => {
            console.log('게시글 삭제 성공 :',response)
@@ -146,7 +146,7 @@ const deletePost = (id, callback, errorCallback) => {
 
 // 게시글 수정
 const editPost = (form, callback, errorCallback) => {
-    axios.post(`http://${process.env.VUE_APP_IP}/articles/update/`,form,{
+    axios.post(`${process.env.VUE_APP_IP}/articles/update/`,form,{
         headers: {
             'Content-Type': 'multipart/form-data',
         }
@@ -163,7 +163,7 @@ const editPost = (form, callback, errorCallback) => {
 }
 
 const requestFeedOfFame = (callback, errorCallback) => {
-    axios.get(`http://${process.env.VUE_APP_IP}/articles/honor/`)
+    axios.get(`${process.env.VUE_APP_IP}/articles/honor/`)
         .then(response => {
             callback(response)
         })

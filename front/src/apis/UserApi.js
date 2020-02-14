@@ -10,7 +10,7 @@ const requestSignup = (data, callback, errorCallback) => {
     form.append('nickname', data.nickname)
     form.append('username', data.email)
     form.append('password', data.password)
-    axios.post(`http://${process.env.VUE_APP_IP}/accounts/signup/${data.key}/`, form)
+    axios.post(`${process.env.VUE_APP_IP}/accounts/signup/${data.key}/`, form)
         .then((response) => {
             console.log(response)
             callback(response)
@@ -34,7 +34,7 @@ const requestLogin = (data, callback, errorCallback) => {
     axios.defaults.xsrfCookieName = 'csrftoken'
     axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 
-    axios.post(`http://${process.env.VUE_APP_IP}/auth/`, credentials)
+    axios.post(`${process.env.VUE_APP_IP}/auth/`, credentials)
         .then(res => {
             // console.log(res)
             // this.$store.dispatch('login', res.data.token)
@@ -50,7 +50,7 @@ const requestLogin = (data, callback, errorCallback) => {
 // 로그인 체크 data = token
 const requestLoginCheck = (data, callback, errorcallback) => {
 
-    axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, data)
+    axios.post(`${process.env.VUE_APP_IP}/accounts/check/`, data)
         .then(response => {
             console.log(response)
             callback(response.data.token_2)
@@ -67,7 +67,7 @@ const requestUserProfile = (data, callback, errorCallback) => {
         nickname: data,
     }
     // console.log(nickname)
-    axios.post(`http://${process.env.VUE_APP_IP}/accounts/profile/`, nickname)
+    axios.post(`${process.env.VUE_APP_IP}/accounts/profile/`, nickname)
         .then(res => {
             // console.log(res)
             // this.$store.dispatch('login', res.data.token)
@@ -86,7 +86,7 @@ const requestFollowers= (data, callback, errorCallback) => {
         nickname: data,
     }
     // console.log(nickname)
-    axios.post(`http://${process.env.VUE_APP_IP}/articles/followerlist/`, nickname)
+    axios.post(`${process.env.VUE_APP_IP}/articles/followerlist/`, nickname)
         .then(res => {
             console.log('팔로워리스트 가져오기 성공')
             callback(res)
@@ -103,7 +103,7 @@ const requestFollowings= (data, callback, errorCallback) => {
         nickname: data,
     }
     // console.log(nickname)
-    axios.post(`http://${process.env.VUE_APP_IP}/articles/following/`, nickname)
+    axios.post(`${process.env.VUE_APP_IP}/articles/following/`, nickname)
         .then(res => {
             console.log('팔로잉리스트 가져오기 성공')
             callback(res)
