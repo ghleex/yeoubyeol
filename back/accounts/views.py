@@ -14,12 +14,10 @@ from .models import User, Waiting, AccountCookie
 from .forms import WaitingForm, CustomUserCreationForm
 from datetime import datetime, timedelta
 from string import punctuation, ascii_letters, digits
-
 import random
 import secrets
 
 User = get_user_model()
-
 # Create your views here.
 class AccountList(APIView):
     # 유저 리스트 조회(영자님 전용)
@@ -59,20 +57,19 @@ def email_auth(request):
     email = Waiting.objects.filter(username=username)
     if not user:
         if not email:
-            serializer = WaitingSerializer(
-                data={
-                    'username': request.data.get('username'),
-                    'secret_key': secrets.token_urlsafe(50)
-                }
-            )
+            data={
+                'username': username,
+                'secret_key': secrets.token_urlsafe(50)
+            }
+            serializer = WaitingSerializer(data=data)
             if serializer.is_valid(raise_exception=True):
                 user = serializer.save()
                 user_email = user.username
+                print(user_email)
                 mail_subject = '[SOT] 회원가입 인증 메일입니다.'
                 message = render_to_string('accounts/mail_template.html', {'user': user})
-
                 email = EmailMessage(mail_subject, message, to=[user_email])
-                email.content_subtype = 'html'
+                email.content_subtype = "html"
                 email.send()
                 
                 return Response({'message': '인증 메일이 성공적으로 발송되었습니다.'}, status=status.HTTP_200_OK)
@@ -123,6 +120,17 @@ def social_auth(request):
     return Response('hi')
 
 
+@api_view(['POST',])
+def checknickname(request):
+    nickname = request.data.get('nickname')
+    print(nickname)
+    user = User.objects.filter(nickname=nickname)
+    print(user)
+    if user:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
@@ -133,6 +141,8 @@ def user_signup(request, secret_key):
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
             user.set_password(request.data.get('password'))
+            pic_name = random.randrange(1, 13, 1)
+            user.pic_name = 'accounts/pic/{pic_name}.png'
             user.save()
             waiting.delete()
             return Response({'message': '회원가입이 성공적으로 완료되었습니다.'}, status=status.HTTP_200_OK)
@@ -143,10 +153,10 @@ def user_signup(request, secret_key):
 @api_view(['POST', ])
 def check(request):
     account = AccountCookie.objects.filter(username=request.data.get('username'))
+    username = request.data.get('username')
+    token_1 = request.data.get('token_1')
     if not account:
-        token_1 = request.data.get('token_1')
         token_2 = secrets.token_urlsafe(50)
-        username = request.data.get('username')
         data = {
                 'username': username,
                 'token_1': token_1,
@@ -159,13 +169,17 @@ def check(request):
     else:
         account = account[0]
         if not request.data.get('token_2'):
-            token_2 = secrets.token_urlsafe(50)
+            print(account.token_1)
+            account.token_1 = request.data.get('token_1')
+            print(account.token_1)
             data = {
-                'username': username,
-                'token_1': token_1,
-                'token_2': token_2,
+                'username': account.username,
+                'token_1': account.token_1,
+                'token_2': account.token_2
             }
-            serializer = AccountCookieSerializer(data=data)
+            serializer = AccountCookieSerializer(account, data=data)
+            token_2 = secrets.token_urlsafe(50)
+            serializer.token_2 = token_2
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -181,7 +195,6 @@ def check(request):
 @api_view(['POST'])
 def logout(request):
     username = request.data.get('username')
-    print(username)
     account = get_object_or_404(AccountCookie, username=username)
     account.delete()
     return Response({'message': '삭제 성공이다!!'})
@@ -208,7 +221,7 @@ def find_pwd(request):
     user_email = user.username
     message = render_to_string('accounts/find_pwd.html', { 'new_pwd': new_pwd })
     email = EmailMessage(mail_subject, message, to=[user_email])
-    email.content_subtype = 'html'
+    email.content_subtype = "html"
     email.send()
     
     return Response({'message': '메일을 전송했습니다.'})

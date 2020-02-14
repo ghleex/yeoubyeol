@@ -36,6 +36,6 @@ EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'yeoubyeol.sns@gmail.com'
 EMAIL_HOST_PASSWORD = 'dudnquf@102',
-EMAIL_PORT = '465'
+EMAIL_PORT = 465
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
