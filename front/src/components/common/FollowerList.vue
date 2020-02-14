@@ -24,6 +24,9 @@
 
 <script>
 import FeedApi from "@/apis/FeedApi";
+import dotenv from "dotenv";
+
+dotenv.config();
 export default {
   props: {
     intro: {
@@ -49,7 +52,7 @@ export default {
   },
   data: function() {
     return {
-      getPic: "",
+      getPic: `${process.env.VUE_APP_IP}/uploads/accounts/pic_names/1.jpg`,
       loginedNickname: ""
     };
   },
@@ -76,10 +79,11 @@ export default {
     }
   },
   created() {
-    this.loginedNickname = JSON.parse(
-      sessionStorage.getItem("LoginUserInfo")
-    ).nickname;
-    this.getPic = require("@/assets/images/profile/" + this.picName + ".png");
+    let userInfo = this.$cookies.get('LoginUserInfo')
+    this.loginedNickname = userInfo.nickname;
+    // this.getPic = require("@/assets/images/profile/" + this.picName + ".png");
+     this.getPic=`${process.env.VUE_APP_IP}${this.picName}`;
+      
   }
 };
 </script>

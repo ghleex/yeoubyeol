@@ -1,6 +1,6 @@
 <template>
   <v-card dark color="#110b22">
-    <v-form ref="form" v-model="valid" lazy-validation>
+    <v-form ref="form" v-model="valid" lazy-validation v-on:submit.prevent="sendEmail">
       <v-container fluid class="py-3">
         <v-row no-gutters justify="space-between" align="center">
           <v-col cols="12" class="pt-2">
@@ -68,7 +68,7 @@ export default {
   methods: {
     sendEmail() {
       var router = this.$router;
-      //   console.log(this.email);
+        console.log(this.email);
       JoinApi.JoinsendEmail(
         this.email,
         res => {

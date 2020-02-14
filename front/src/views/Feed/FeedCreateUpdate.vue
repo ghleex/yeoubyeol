@@ -1,128 +1,229 @@
 <template>
-  <div>
-    <v-card dark color="#110b22" style="border:solid 2px #888;">
-      <v-form ref="form" v-model="valid" lazy-validation>
-        <v-row class="py-0 ma-2">
-           <v-col cols="6">
-            <b class="white--text caption">{{weather_detail}}</b>
-            <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
-          </v-col>
-          <v-col cols="6" class="pa-1 d-flex justify-end">
-            <v-btn
-              class="mb-2"
-              color="#71d087"
-              style="color:#110b22;"
-              @click="validate"
-              :disabled="!valid"
-            >피드 발행하기</v-btn>
-          </v-col>
-          <v-col cols="12" class="pa-0">
-            <div id="preview">
-              <img v-if="url" :src="url" style="padding-bottom:5px" />
-              <br />
-            </div>
-            <v-file-input
-              accept="image/*"
-              prepend-icon="mdi-camera"
-              outlined
-              dense
-              required
-              :clearable="false"
-              label="Image"
-              @change="onFileChanged"
-            ></v-file-input>
-          </v-col>
-          <v-col cols="12" class="pa-1">
-            <v-textarea
-              dark
-              :rules="contentRules"
-              required
-              outlined
-              v-model="inputPostContent"
-              :autofocus="true"
-              :auto-grow="true"
-              clearable
-            >{{inputPostContent}}</v-textarea>
-          </v-col>
-          <v-col cols="12" class="pa-1">
-            <v-btn @click="requestHashTags" text block style="color:#71d087;" class="ma-1">해시태그 추천받기</v-btn>
-            <!-- 여기부터 시작야이             -->
-          </v-col>
+  <v-responsive fluid>
+    <v-row class="pt-0" align="start" justify="center">
+      <!-- <v-col cols="12" dark style="backgroundImage:url('../../assets/images/moon_home.jpg)"> -->
+      <v-col cols="12" dark :style="bgByWeather">
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-row class="py-0 ma-2">
+            <v-col cols="6">
+              <b class="white--text caption">{{weather_detail}}</b>
+              <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
+            </v-col>
+            <v-col cols="6" class="pa-1 d-flex justify-end">
+              <v-btn
+                class="mb-2"
+                color="#71d087"
+                style="color:#110b22;"
+                @click="validate"
+                :disabled="!valid"
+              >{{postId>0 ? "수정": "피드 발행하기"}}</v-btn>
+            </v-col>
+            <v-col cols="12" class="pa-0">
+              <div id="preview">
+                <img v-if="url" :src="url" style="padding-bottom:5px" />
+                <br />
+              </div>
+              <v-file-input
+                dark
+                id="fileInput"
+                accept="image/*"
+                prepend-icon="mdi-camera"
+                outlined
+                dense
+                required
+                :clearable="false"
+                label="Image"
+                @change="onFileChanged"
+              ></v-file-input>
+            </v-col>
+            <v-col cols="12" class="pa-1">
+              <v-textarea
+                dark
+                :rules="contentRules"
+                required
+                outlined
+                v-model="inputPostContent"
+                :autofocus="true"
+                :auto-grow="true"
+                clearable
+                rows="8"
+              >{{inputPostContent}}</v-textarea>
+            </v-col>
+            <v-col cols="12" class="pa-1">
+              <v-btn
+                @click="requestHashTags"
+                text
+                block
+                style="color:#71d087;"
+                class="ma-1"
+              >해시태그 추천받기</v-btn>
+              <!-- 여기부터 시작야이             -->
+            </v-col>
 
-          <v-col cols="12" class="pa-1">
-            <v-combobox
-              v-model="model"
-              :filter="filter"
-              :hide-no-data="!search"
-              :items="items"
-              :search-input.sync="search"
-              hide-selected
-              label="Search for an option"
-              multiple
-              small-chips
-              solo
-            >
-              <template v-slot:no-data>
-                <v-list-item>
-                  <span class="subheading">추가하기</span>
-                  <v-chip color="darkgrey" label small>{{ search }}</v-chip>
-                </v-list-item>
-              </template>
-              <template v-slot:selection="{ attrs, item, parent, selected }">
-                <v-chip
-                  v-if="item === Object(item)"
-                  v-bind="attrs"
-                  color="darkgrey"
-                  :input-value="selected"
-                  label
-                  small
-                >
-                  <span class="pr-2">{{ item.text }}</span>
-                  <v-icon small @click="parent.selectItem(item)">mdi-close</v-icon>
-                </v-chip>
-              </template>
-              <template v-slot:item="{ index, item }">
-                <v-text-field
-                  v-if="editing === item"
-                  v-model="editing.text"
-                  autofocus
-                  flat
-                  background-color="transparent"
-                  hide-details
-                  solo
-                  @keyup.enter="edit(index, item)"
-                ></v-text-field>
-                <v-chip v-else color="darkgrey" dark label small>{{ item.text }}</v-chip>
-                <v-spacer></v-spacer>
-                <v-list-item-action @click.stop>
-                  <v-btn icon @click.stop.prevent="edit(index, item)">
-                    <v-icon>{{ editing !== item ? 'mdi-pencil' : 'mdi-check' }}</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </template>
-            </v-combobox>
-          </v-col>
-         
-        </v-row>
-      </v-form>
-    </v-card>
-  </div>
+            <v-col cols="12" class="pa-1">
+              <v-combobox
+                v-model="model"
+                :filter="filter"
+                :hide-no-data="!search"
+                :items="items"
+                :search-input.sync="search"
+                hide-selected
+                label="Search for an option"
+                multiple
+                small-chips
+                solo
+              >
+                <template v-slot:no-data>
+                  <v-list-item>
+                    <span class="subheading">추가하기</span>
+                    <v-chip color="darkgrey" label small>{{ search }}</v-chip>
+                  </v-list-item>
+                </template>
+                <template v-slot:selection="{ attrs, item, parent, selected }">
+                  <v-chip
+                    v-if="item === Object(item)"
+                    v-bind="attrs"
+                    color="darkgrey"
+                    :input-value="selected"
+                    label
+                    small
+                  >
+                    <span class="pr-2">{{ item.text }}</span>
+                    <v-icon small @click="parent.selectItem(item)">mdi-close</v-icon>
+                  </v-chip>
+                </template>
+                <template v-slot:item="{ index, item }">
+                  <v-text-field
+                    v-if="editing === item"
+                    v-model="editing.text"
+                    autofocus
+                    flat
+                    background-color="transparent"
+                    hide-details
+                    solo
+                    @keyup.enter="edit(index, item)"
+                  ></v-text-field>
+                  <v-chip v-else color="darkgrey" dark label small>{{ item.text }}</v-chip>
+                  <v-spacer></v-spacer>
+                  <v-list-item-action @click.stop>
+                    <v-btn icon @click.stop.prevent="edit(index, item)">
+                      <v-icon>{{ editing !== item ? 'mdi-pencil' : 'mdi-check' }}</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </template>
+              </v-combobox>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-col>
+    </v-row>
+  </v-responsive>
 </template>
 
 <script>
 import FeedApi from "@/apis/FeedApi";
+import dotenv from "dotenv";
 
-const API_KEY = "241051bf13976dd3ddf8b8d9f247255e";
+dotenv.config();
+
+const API_KEY = "927a607b0b357ff6efcbabbd85795740";
 const WEATHER_API = "https://api.openweathermap.org/data/2.5/weather?";
 
 export default {
   created() {
+    let userInfo = this.$cookies.get('LoginUserInfo');
+    if (this.$route.params.postId > 0) {
+      this.postId = this.$route.params.postId;
+    }
+    if (this.postId > 0) {
+      //게시글 수정인 ㄱㅇ우
+      this.getArticleByIdBindingData(this.postId);
+    }
     this.loadWeather();
-    this.loginedNickname = JSON.parse(
-      sessionStorage.getItem("LoginUserInfo")
-    ).nickname;
+    this.loginedNickname = userInfo.nickname;
+  },
+  computed: {
+    bgByWeather: function() {
+      console.log(this.weather_id, "~~~~~~~~");
+      let min = 1;
+      let calc_name = "d1.gif";
+      if (this.weather_id >= 200 && this.weather_id < 600) {
+        //비
+        let max = 4;
+        let name = Math.floor(Math.random() * max) + min;
+        calc_name = `r${name}.gif`;
+      } else if (this.weather_id >= 600 && this.weather_id < 700) {
+        //눈
+        let max = 2;
+        let name = Math.floor(Math.random() * max) + min;
+        calc_name = `s${name}.gif`;
+      } else if (this.weather_id >= 700 && this.weather_id < 900) {
+        //맑음이나 흐림 안개
+        let max = 5;
+        let name = Math.floor(Math.random() * max) + min;
+        calc_name = `m${name}.gif`;
+      }
+      return {
+        "background-image":
+          "url(" + require("@/assets/images/bg/" + calc_name) + ")",
+        "background-position": "center",
+        "background-repeat": "no-repeat",
+        "background-size": "cover"
+      };
+    }
   },
   methods: {
+    editPostDone() {
+      let date = new Date();
+      let currHour = date.getHours();
+      // if(currHour >=23 && currHour<6){
+      if (date.getMinutes() % 2 == 0) {
+        var form = new FormData();
+        let tagLists = [];
+        for (let i = 0; i < this.model.length; i++) {
+          tagLists.push(this.model[i].text);
+        }
+        form.append("id", this.postId);
+        form.append("article", this.inputPostContent);
+        form.append("image", this.selectedFile);
+        form.append("hashtags", tagLists);
+
+        FeedApi.editPost(
+          form,
+          res => {
+            console.log("res after edit", res);
+            alert("수정 완료 ! ");
+            this.$router.push({ name: "댓글", params: { id: this.postId } });
+          },
+          error => {
+            alert("수정에 에러가 발생했어요 ");
+          }
+        );
+      } else {
+        alert("지금은 글 수정이 가능한 시간이 아니에요 ..");
+      }
+    },
+    getArticleByIdBindingData(id) {
+      FeedApi.getArticleById(
+        id,
+        res => {
+          //성공시
+          //article
+          console.log(res);
+          this.url = `${process.env.VUE_APP_IP}${res.data.article.image}`;
+          this.inputPostContent = res.data.article.article;
+          this.model = [];
+          for (let i = 0; i < res.data.hashtags.length; i++) {
+            this.model.push({ text: res.data.hashtags[i] });
+          }
+          // res.data.hashtags,
+        },
+        error => {
+          alert("게시글을 불러오는데 실패했어요 ..");
+          this.$router.push({ name: "댓글", params: { id: this.postId } });
+        }
+      );
+    },
     requestHashTags() {
       let form = new FormData();
       form.append("article", this.inputPostContent);
@@ -176,10 +277,19 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         // this.snackbar = true;
-        this.newPost();
+        console.log("this post Id ", this.postId);
+        if (this.postId < 0) {
+          this.newPost();
+        } else {
+          this.editPostDone();
+        }
       }
     },
     newPost() {
+      if(this.selectedFile==''){
+        alert("사진을 등록해 주세요!");
+        return;
+      }
       console.log(this.hash_check);
       let form = new FormData();
       let tagLists = [];
@@ -187,7 +297,7 @@ export default {
         tagLists.push(this.model[i].text);
       }
 
-      var token = sessionStorage.getItem("AUTH_token");
+      var token = this.$cookies.get('auth_cookie');
       console.log(token);
       form.append("token", token);
       form.append("nickname", this.loginedNickname);
@@ -199,11 +309,11 @@ export default {
         res => {
           console.log(res);
           alert("글이 성공적으로 게시되었습니다.");
-          window.close();
+          console.log(res.data.id ,'로 조회 외 않데 ?');
+          this.$router.push({ name: "댓글", params: { id: res.data.id } });
         },
         error => {
           console.log("error");
-          window.close();
         }
       );
     },
@@ -218,6 +328,7 @@ export default {
           const temperature = json.main.temp;
           console.log(json);
           // this.data = json;
+          this.weather_id = json.weather[0].id;
           this.weather_icon = json.weather[0].icon;
           this.weather_url = `http://openweathermap.org/img/w/${this.weather_icon}.png`;
           this.weather_detail = `${Math.floor(temperature)}° @ ${name}`;
@@ -255,6 +366,8 @@ export default {
   },
   data: () => {
     return {
+      postId: -1,
+      weather_id: null,
       weather_icon: "",
       weather_detail: "",
       weather_url: "",

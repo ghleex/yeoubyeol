@@ -2,9 +2,13 @@ import axios from 'axios'
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
 // 댓글 작성하기
 const PostComments = (data, callback, errorCallback) => {
-    axios.post(`http://${process.env.VUE_APP_IP}/articles/comment/`, data)
+    axios.post(`${process.env.VUE_APP_IP}/articles/comment/`, data)
         .then((response) => {
             console.log(response)
             callback(response)
@@ -19,7 +23,7 @@ const PostComments = (data, callback, errorCallback) => {
 
 // 댓글 수정하기
 const EditComments = (data, callback, errorCallback) => {
-    axios.put(`http://${process.env.VUE_APP_IP}/articles/comment/`, data)
+    axios.put(`${process.env.VUE_APP_IP}/articles/comment/`, data)
         .then((response) => {
             console.log(response)
             callback(response)
@@ -34,7 +38,7 @@ const EditComments = (data, callback, errorCallback) => {
 
 // 댓글 삭제하기
 const DeleteComments = (data, callback, errorCallback) => {
-    axios.delete(`http://${process.env.VUE_APP_IP}/articles/comment/${data}`)
+    axios.delete(`${process.env.VUE_APP_IP}/articles/comment/${data}`)
         .then((response) => {
             console.log(response)
             callback(response)

@@ -9,7 +9,8 @@
               새벽이 되면
               <br />다르게 보일거에요.
             </h1>
-            <img src="../../assets/images/여우별(밤).png" alt width="100px" />
+            <!-- <img src="../../assets/images/여우별(밤).png" alt width="100px" /> -->
+            <br>
           </v-col>
           <v-col cols="12">
             <v-text-field
@@ -46,11 +47,12 @@
               color="#71d087"
               style="color:#110b22"
               @click="validate"
+              @keyup.enter="validate"
             >로그인</v-btn>
             <v-spacer></v-spacer>
           </v-col>
 
-          <v-col cols="12">
+          <v-col cols="12" class="d-flex justify-space-around px-12">
             <router-link v-bind:to="{name:'비밀번호 변경'}">
             <v-btn  text min-width="100" class="px-0 my-3">비밀번호 찾기</v-btn>
               </router-link>
@@ -60,12 +62,6 @@
                </router-link>
           </v-col>
 
-          <v-col class="pt-20" cols="12">
-            <v-btn text class="g-signin2" data-onsuccess="onSignIn">
-              <v-icon>mdi-google</v-icon>구글로 로그인
-            </v-btn>
-            <a href="#" onclick="signOut();" style="border: 1px solid #EEEEEE;">Sign out</a>
-          </v-col>
         </v-row>
         <v-alert
           v-model="alert"
@@ -94,7 +90,7 @@ dotenv.config();
 let tokenFromLogin='';
 export default {
   created() {
-    if (sessionStorage.getItem("AUTH_token")) {
+    if (sessionStorage.getItem("refresh_token")) {
       alert("이미 로그인된 상태입니다.");
       var router = this.$router;
       router.push({ name: "홈" });
@@ -133,15 +129,14 @@ export default {
             var router = this.$router;
             this.tokenFromLogin = res.data.token;
             if (res.status === 200) {
-              alert("로그인되었습니다.");
+              alert("1단계");
               
               //요청이 끝나면 버튼 활성화
               let data={'email':email};
               console.log('프로필조회 : '+data.email);
-              axios.post(`http://${process.env.VUE_APP_IP}/accounts/`, data).then((response=>{
+              axios.post(`${process.env.VUE_APP_IP}/accounts/`, data).then((response=>{
                 console.log('로그인 후 가져온 다라 '+response.data[0].nickname);
                 console.log("login -> ",response.data[0]);
-                  sessionStorage.setItem("AUTH_token", this.tokenFromLogin);
                   const LoginUserInfo={
                     username: data.email,
                     nickname : response.data[0].nickname,
@@ -149,7 +144,10 @@ export default {
                     pic_name:response.data[0].pic_name
                   }
                   let userData = JSON.stringify(LoginUserInfo)
-                  sessionStorage.setItem('LoginUserInfo', userData);
+
+                  this.$cookies.set('LoginUserInfo', userData, 0)
+                  this.$cookies.set('auth_cookie', this.tokenFromLogin, 0)
+                  this.$cookies.set('username', data.email, 0)
                   
                   var userInfo = new FormData();
                   userInfo.append('username', data.email)
@@ -157,23 +155,24 @@ export default {
                   console.log(data.email)
                   console.log(this.tokenFromLogin)
 
-                  axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
+                  axios.post(`${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
                     .then(response => {
                       console.log('---------------------------------')
-                      console.log(response)
-                      var refresh_cookie = response.data.token_2
-                      this.$cookies.set('LoginUserInfo', userData, 60 * 60)
-                      this.$cookies.set('auth_cookie', this.tokenFromLogin, 60 * 60)
-                      this.$cookies.set('refresh_cookie', refresh_cookie, 60 * 60)
-                      this.$cookies.set('username', data.email, 60 * 60)
+                      let refresh_token = response.data.token_2
+                      console.log(refresh_token)
+                      sessionStorage.setItem('refresh_token', refresh_token)
+                      alert('3단계')
+                      router.push({ name: '메인피드'})
+                      alert('4단계')
                     })
                     .catch(error => {
                       console.log('++++++++++++++++++++++++++++++++++')
-                      console.log(error)
+                      alert('로그인 실패')
+                      router.push({ name: "홈" });
                     })
-                  router.push({ name: "홈" });
               }),error=>{
                 console.log("로그인 후 프로필 가져오기 문제");
+                alert('뭔가 문제가 있어')
               })
     
             } else {
@@ -199,13 +198,15 @@ export default {
     email: "",
     emailRules: [
       v => !!v || "이메일 형식이 아닙니다.",
-      v => /.+@.+\..+/.test(v) || "이메일 형식이 아닙니다."
+      v => !/\s/.test(v) || '공백없이 입력해주세요.',
+      v => /.+@.+\..+/.test(v) || "이메일 형식이 아닙니다.",
     ],
     password: "",
     passwordRules: [
       v =>
         !!v ||
         "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 20자리 이하입니다",
+      v => !/\s/.test(v) || '공백없이 입력해주세요.',
       v =>
         /^.*(?=^.{8,20}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[`~!@#$%^&+=;',.?]).*$/.test(v) || "비밀번호는 영문,숫자,특수문자포함 8자리 이상, 20자리 이하입니다",
     ],
