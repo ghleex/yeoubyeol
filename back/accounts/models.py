@@ -13,7 +13,7 @@ class User(AbstractUser):
     intro = models.CharField(max_length=50, default="ㄴr는 ㄱr끔 눈물을 흘린ㄷr....★")
     nickname = models.CharField(max_length=20, blank=False, unique=True)
     followers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='followings', blank=True)
-    pic_name = models.CharField(max_length=50)
+    pic_name = models.CharField(max_length=50, blank=True)
     # ProcessedImageField(
     #     processors=[ResizeToFit(300, 300)],
     #     format='JPEG',

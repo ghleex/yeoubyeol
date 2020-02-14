@@ -50,7 +50,7 @@ class AccountList(APIView):
 def email_auth(request):
     waitings = Waiting.objects.all()
     for waiting in waitings:
-        if waiting.created_at < datetime.now() - timedelta(minutes=1):
+        if waiting.created_at < datetime.now() - timedelta(minutes=10):
             waiting.delete()
     username = request.data.get('username')
     user = User.objects.filter(username=username)
@@ -136,7 +136,7 @@ def checknickname(request):
 @permission_classes((AllowAny, ))
 def user_signup(request, secret_key):
     waiting = get_object_or_404(Waiting, secret_key=secret_key)
-    if waiting and waiting.created_at > datetime.now() - timedelta(minutes=30):
+    if waiting and waiting.created_at > datetime.now() - timedelta(minutes=10):
         serializer = UserCreationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
