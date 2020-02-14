@@ -2,6 +2,10 @@ import axios from 'axios'
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
 // 댓글 작성하기
 const PostComments = (data, callback, errorCallback) => {
     axios.post(`${process.env.VUE_APP_IP}/articles/comment/`, data)

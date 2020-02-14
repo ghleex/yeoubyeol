@@ -17,7 +17,7 @@
 
     <v-content v-if="!isLogin">
       <!-- Provides the application the proper gutter -->
-      <router-view></router-view>
+      <router-view :key="$route.fullPath"></router-view>
     </v-content>
 
   </v-app>
@@ -42,6 +42,11 @@ export default {
     userNickname: "",
     userId: ""
   }),
+  methods: {
+    logoutEvent() {
+      this.isLogin = false;
+    }
+  },
   updated() {
     if (this.$cookies.isKey('username') && this.$cookies.isKey('auth_cookie')) {
       this.isLogin = true;

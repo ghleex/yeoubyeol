@@ -24,9 +24,7 @@
       <v-list>
         <v-list-item>
           <v-spacer></v-spacer>
-          <!-- <router-link to="/noti"> -->
           <v-btn text color="#71d087" @click="changeView('알림')">알림</v-btn>
-          <!-- </!-->
         </v-list-item>
 
         <v-list-item>
@@ -159,10 +157,7 @@ export default {
         let sentData = JSON.stringify(res.data);
         console.log("프로필 정보 : " + JSON.stringify(res.data));
         this.currUserInfo.followers = JSON.stringify(res.data.followers.length);
-        this.currUserInfo.followings = JSON.stringify(
-          res.data.followings.length
-        );
-
+        this.currUserInfo.followings = JSON.stringify(res.data.followings.length);
         this.currUserInfo.intro = res.data.intro;
         this.currUserInfo.nickname = res.data.nickname;
         this.currUserInfo.username = res.data.username;
@@ -171,10 +166,10 @@ export default {
           res.data.pic_name +
           ".png"); */
         this.currUserInfo.picname = `${process.env.VUE_APP_IP}${res.data.pic_name}`;
-      }),
+      },
         err => {
-          this.$router.push({ path: "/404" });
-        };
+          this.$router.push({ path: "/error" });
+        })
     },
     changeViewProfile(path, usersEmail) {
       if (this.pageTitle == usersEmail) {
@@ -215,9 +210,11 @@ export default {
           this.$cookies.remove("LoginUserInfo");
           this.$cookies.remove("username");
           alert("로그아웃되었습니다.");
-          this.isLogin = false;
-        });
-      this.$router.push({ name: "홈" });
+          this.isLogin = false;  
+        })
+      this.$emit('logoutEvent')
+      this.$router.push({ name: "홈", params: {key: 'nav'} });
+
     }
   }
 };

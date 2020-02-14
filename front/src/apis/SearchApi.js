@@ -2,6 +2,10 @@ import axios from 'axios'
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
 const SearchUser = (data, callback, errorCallback) => {
     let searchKeyword = new FormData()
     searchKeyword.append('keyword', data.keyword)
