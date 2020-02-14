@@ -170,7 +170,7 @@ def checknickname(request):
 @permission_classes((AllowAny, ))
 def user_signup(request, secret_key):
     waiting = get_object_or_404(Waiting, secret_key=secret_key)
-    if waiting and waiting.created_at > datetime.now() - timedelta(minutes=30):
+    if waiting and waiting.created_at > datetime.now() - timedelta(minutes=10):
         serializer = UserCreationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             pic_name = random.randrange(1, 13, 1)

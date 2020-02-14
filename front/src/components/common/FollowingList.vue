@@ -72,9 +72,8 @@ export default {
     }
   },
   created() {
-    this.loginedNickname = JSON.parse(
-      sessionStorage.getItem("LoginUserInfo")
-    ).nickname;
+    let userInfo = this.$cookies.get('LoginUserInfo')
+    this.loginedNickname = userInfo.nickname;
     this.getPic = require("@/assets/images/profile/" + this.picName + ".png");
   }
 };
