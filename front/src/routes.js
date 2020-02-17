@@ -21,6 +21,7 @@ import FeedComment from '@/views/Feed/FeedComment.vue'
 
 //명예의 전당
 import FeedOfFame from '@/views/Feed/FeedOfFame.vue'
+import FeedOfTrend from '@/views/Feed/FeedOfTrend.vue'
 
 //에러
 import EPageNotFound from './views/Error/EPageNotFound.vue'
@@ -29,11 +30,13 @@ import EError from './views/Error/EError.vue'
 //settings
 import Noti from './views/Settings/Notification.vue'
 import Follow from './views/Settings/Follow.vue'
+import Password from './views/Settings/Password.vue'
 
 //검색
 import Search from './views/Search.vue'
 import FeedSearchResultByKeyword from './views/Feed/FeedSearchResultByKeyword.vue'
 import hongjuLab2 from './views/hongjuLab2.vue'
+import hongjuLab3 from './views/hongjuLab3.vue'
 
 
 const requireAuth = () => (to, from, next) => {
@@ -175,6 +178,12 @@ export default [
         component: Follow,
         // beforeEnter: requireAuth()
     },
+    {
+        path: '/password',
+        name: '비밀번호변경',
+        component: Password,
+        // beforeEnter: requireAuth()
+    },
 
     //검색
     {
@@ -201,6 +210,11 @@ export default [
         component: hongjuLab2
     },
     {
+        path: '/lab3',
+        name: '홍주랩실3',
+        component: hongjuLab3
+    },
+    {
         path: '/fame',
         name: '명예의 전당',
         component: FeedOfFame,
@@ -209,7 +223,7 @@ export default [
     {
         path: '/trend',
         name: '트렌드',
-        component: FeedMain,
+        component: FeedOfTrend,
         // beforeEnter: requireAuth()
     }
 ]

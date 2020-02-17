@@ -180,7 +180,7 @@ export default {
       }
     },
     changeViewProfileSetting(path, usersEmail) {
-      if (this.pageTitle == usersEmail) {
+      if (this.pageTitle == "프로필 변경") {
         this.drawer = !this.drawer;
       } else {
         this.pageTitle = usersEmail;
@@ -197,9 +197,9 @@ export default {
       this.$router.push({ name: path });
     },
     logout() {
-      let user = this.$cookies.get("LoginUserInfo");
+      let user = this.$cookies.get("username");
       let userInfo = new FormData();
-      userInfo.append("username", user.username);
+      userInfo.append("username", user);
       console.log(userInfo);
       axios
         .post(`${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)

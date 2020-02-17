@@ -64,7 +64,7 @@ export default {
   },
   data: () => {
     return {
-      isLogin: '',
+      isLogin: false,
       homeVideo: ""
     };
   },
@@ -77,9 +77,9 @@ export default {
       this.homeVideo = require("@/assets/images/example/" + name + ".mp4");
     },
     logout() {
-      let user = this.$cookies.get('LoginUserInfo')
+      let user = this.$cookies.get('username')
       let userInfo = new FormData();
-      userInfo.append('username', user.username)
+      userInfo.append('username', user)
       console.log(userInfo)
       axios.post(`${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
         .then(response => {
