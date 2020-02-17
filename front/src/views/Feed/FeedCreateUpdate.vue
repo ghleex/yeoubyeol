@@ -157,7 +157,7 @@ export default {
         let max = 2;
         let name = Math.floor(Math.random() * max) + min;
         calc_name = `s${name}.gif`;
-      } else if (this.weather_id >= 800 && this.weather_id < 900) {
+      } else if (this.weather_id >= 700 && this.weather_id < 900) {
         //맑음이나 흐림 안개
         let max = 5;
         let name = Math.floor(Math.random() * max) + min;
@@ -286,6 +286,10 @@ export default {
       }
     },
     newPost() {
+      if(this.selectedFile==''){
+        alert("사진을 등록해 주세요!");
+        return;
+      }
       console.log(this.hash_check);
       let form = new FormData();
       let tagLists = [];
@@ -305,7 +309,8 @@ export default {
         res => {
           console.log(res);
           alert("글이 성공적으로 게시되었습니다.");
-          // this.$router.push({ name: "댓글", params: { id: res.data.id } });
+          console.log(res.data.id ,'로 조회 외 않데 ?');
+          this.$router.push({ name: "댓글", params: { id: res.data.id } });
         },
         error => {
           console.log("error");
