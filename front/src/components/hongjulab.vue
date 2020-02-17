@@ -213,7 +213,6 @@ export default {
           this.isLogin = false;  
         })
       this.$emit('logoutEvent')
-      this.$router.push({ name: "홈", params: {key: 'nav'} });
 
     }
   }
