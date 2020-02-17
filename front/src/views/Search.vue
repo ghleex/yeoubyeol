@@ -120,6 +120,9 @@ import SearchUser from "../components/common/SearchUser";
 import SearchKeyword from "../components/common/SearchKeyword";
 
 import SearchApi from "../apis/SearchApi";
+import dotenv from "dotenv";
+
+dotenv.config();
 export default {
   components: {
     SearchUser,
@@ -169,13 +172,14 @@ export default {
               this.SearchUserResult = [];
             } else {
               this.SearchUserResult = [];
+                /*      pic_name: require("@/assets/images/profile/" +
+                       res.data[i].pic_name +
+                       ".png"), */
               for (let i = 0; i < res.data.length; i++) {
                 // console.log(res.data.nicknames_serializer_data[i].nickname);
                 this.SearchUserResult.push({
                   nickname: res.data[i].nickname,
-                  pic_name: require("@/assets/images/profile/" +
-                    res.data[i].pic_name +
-                    ".png"),
+                  pic_name :`${process.env.VUE_APP_IP}${res.data[i].pic_name}`,
                   intro: res.data[i].intro
                 });
               }

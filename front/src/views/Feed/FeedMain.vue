@@ -75,7 +75,7 @@ export default {
               for (let i = 0; i < response.data.length; i++) {
                   let article_prop = {
                     nickname: response.data[i].nickname,
-                    pic_name: require("@/assets/images/profile/" + response.data[i].pic_name + ".png"),
+                      pic_name:`${process.env.VUE_APP_IP}${response.data[i].pic_name}`,
                     img:response.data[i].image,
                     id: response.data[i].id,
                     article: response.data[i].article,

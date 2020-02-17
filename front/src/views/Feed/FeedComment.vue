@@ -6,7 +6,6 @@
         <!-- <div class="pa-2" @click="backward">
           <v-icon class="white--text">mdi-chevron-left</v-icon>
         </div> -->
-        <!-- <CommentArticle v-bind="article" /> -->
         <Post v-bind="article" v-on:delPost="delPost" v-on:editPost="editPost" />
       </v-col>
       <!-- 댓글 보여주기 -->
@@ -20,7 +19,7 @@
       <!-- 댓글 작성 -->
       <v-col cols="12">
         <v-card class="mx-2" fixed color="#110B22" dark outlined style="border: 1px solid #71d087;">
-          <v-form ref="form" v-model="valid" lazy-validation>
+          <v-form ref="form" v-model="valid" lazy-validation  @submit.prevent="validate">
             <v-list-item>
               <v-list-item-avatar color="grey darken-3">
                 <v-img :src="loginUserInfo.pic_name"></v-img>
@@ -32,7 +31,6 @@
               <v-btn
                 text
                 style="background-color:#71d087;color:#110b22;"
-                @keyup.enter="validate"
                 @click="validate"
                 :disabled="!valid"
               >작성</v-btn>
@@ -61,6 +59,9 @@ import Post from "@/components/common/Post";
 import CommentComment from "@/components/common/CommentComment";
 import FeedApi from "@/apis/FeedApi";
 import CommentApi from "@/apis/CommentApi";
+import dotenv from "dotenv";
+
+dotenv.config();
 export default {
   components: { Post, CommentComment },
   created() {
@@ -122,10 +123,10 @@ export default {
     },
     getUserInformation() {
       let userInfo = this.$cookies.get('LoginUserInfo');
+      console.log(userInfo);
       this.loginUserInfo.nickname = userInfo.nickname;
-      this.loginUserInfo.pic_name = require("@/assets/images/profile/" +
-        userInfo.pic_name +
-        ".png");
+        this.loginUserInfo.pic_name =`${process.env.VUE_APP_IP}${userInfo.pic_name}`;
+      
     },
     AddComment() {
       console.log(this.loginUserInfo.content);
@@ -156,18 +157,21 @@ export default {
       );
     },
     getArticleById(id) {
+      this.isArticleLoaded=false;
       FeedApi.getArticleById(
         id,
         res => {
           //성공시
           //article
           console.log(res);
+        /*     pic_name: require("@/assets/images/profile/" +
+              res.data.pic_name +
+              ".png"), */
           let articleFromServer = {
             nickname: res.data.nickname,
-            pic_name: require("@/assets/images/profile/" +
-              res.data.pic_name +
-              ".png"),
             img: res.data.article.image,
+            pic_name: `${process.env.VUE_APP_IP}${res.data.pic_name}`,
+      
             id: res.data.article.id,
             article: res.data.article.article,
             author: res.data.article.author,
@@ -183,12 +187,14 @@ export default {
 
           this.comments = [];
 
+            /*      pic_name: require("@/assets/images/profile/" +
+                   res.data.comments[c][1] +
+                   ".png"), */
           for (let c = 0; c < res.data.comments.length; c++) {
             let comment = {
               nickname: res.data.comments[c][0],
-              pic_name: require("@/assets/images/profile/" +
-                res.data.comments[c][1] +
-                ".png"),
+              pic_name : `${process.env.VUE_APP_IP}${res.data.comments[c][1]}`,
+      
               comment_id: res.data.comments[c][2],
               content: res.data.comments[c][3],
               created_at: res.data.comments[c][4]

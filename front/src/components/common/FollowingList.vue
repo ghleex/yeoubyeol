@@ -24,6 +24,9 @@
 
 <script>
 import FeedApi from "@/apis/FeedApi";
+import dotenv from "dotenv";
+
+dotenv.config();
 export default {
   props: {
     intro: {
@@ -74,7 +77,9 @@ export default {
   created() {
     let userInfo = this.$cookies.get('LoginUserInfo')
     this.loginedNickname = userInfo.nickname;
-    this.getPic = require("@/assets/images/profile/" + this.picName + ".png");
+    // this.getPic = require("@/assets/images/profile/" + this.picName + ".png");
+     this.getPic=`${process.env.VUE_APP_IP}${this.picName}`;
+      
   }
 };
 </script>

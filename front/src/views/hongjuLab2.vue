@@ -16,7 +16,8 @@ export default {
       curr: "",
       target: "",
       timer: "",
-      lastTime: ""
+      lastTime: "",
+      isOver:false,
     };
   },
 
@@ -24,11 +25,13 @@ export default {
     let today = new Date();
     this.target = new Date();
     // if (today.getHours() <= 5 && today.getHours() > -1) {
+    // if (today.getHours() <= 5 && today.getHours() > -1) {
     if (today.getMinutes() <= 5 && today.getMinutes() > -1) {
       this.target = today;
       this.target.setHours(5);
       this.target.setMinutes(0);
       this.target.setSeconds(0);
+      // } else if (today.getHours() >= 23) {
       // } else if (today.getHours() >= 23) {
     } else if (today.getMinutes() >= 23) {
       this.target = today;
@@ -39,9 +42,9 @@ export default {
     }
 
     this.getTime();
-    setInterval(() => {
+ /*    setInterval(() => {
       this.getTime();
-    }, 1000);
+    }, 1000); */
   },
   methods: {
     updateTransition(time) {

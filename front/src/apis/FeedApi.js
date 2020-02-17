@@ -16,7 +16,7 @@ const requestFollow = (data, callback, errorCallback) => {
         .then((response) => {
             console.log(response)
             callback(response)
-        
+
         })
         .catch((response) => {
             console.log(response)
@@ -27,154 +27,141 @@ const requestFollow = (data, callback, errorCallback) => {
 
 //새 글 작성하기
 const newPost = (form, callback, errorCallback) => {
-     axios.post(`${process.env.VUE_APP_IP}/articles/`, form,{
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        }
-     })
+    axios.post(`${process.env.VUE_APP_IP}/articles/`, form, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        })
         .then((response) => {
-            console.log('글작성 :',response)
+            console.log('글작성 :', response)
             callback(response)
-        
+
         })
         .catch((response) => {
             console.log(response)
-            console.log('글작성 오류'  + response)
+            console.log('글작성 오류' + response)
             errorCallback('error')
-        }) 
+        })
 }
 
 //해시태그 추천받기
 const requestHashTags = (form, callback, errorCallback) => {
-    
 
-     axios.post(`${process.env.VUE_APP_IP}/articles/recommend/`, form,{
-     })
+
+    axios.post(`${process.env.VUE_APP_IP}/articles/recommend/`, form, {})
         .then((response) => {
-            console.log('해시태그 받기 성공 :',response)
+            console.log('해시태그 받기 성공 :', response)
             callback(response)
-        
+
         })
         .catch((response) => {
             console.log(response)
-            console.log('해시태그 받기 오류'  + response)
+            console.log('해시태그 받기 오류' + response)
             errorCallback('error')
-        }) 
+        })
 }
 
 //게시글 가져오기
 const getArticles = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('nickname', data)
-    axios.post(`${process.env.VUE_APP_IP}/articles/mainfeed/`, form,{
-    })
-       .then((response) => {
-           console.log('게시글 받기 성공 :',response)
-           callback(response)
-       
-       })
-       .catch((response) => {
-           console.log(response)
-           console.log('게시글 받기 오류'  + response)
-           errorCallback('error')
-       }) 
+    axios.post(`${process.env.VUE_APP_IP}/articles/mainfeed/`, form, {})
+        .then((response) => {
+            console.log('게시글 받기 성공 :', response)
+            callback(response)
+
+        })
+        .catch((response) => {
+            console.log(response)
+            console.log('게시글 받기 오류' + response)
+            errorCallback('error')
+        })
 }
 
-    
+
 //게시글 가져오기 : 아이디로 조회하기
 const getArticleById = (data, callback, errorCallback) => {
-    axios.get(`${process.env.VUE_APP_IP}/articles/${data}/`,{
-    })
-       .then((response) => {
-           console.log('게시글 받기 성공 :',response)
-           callback(response)
-       
-       })
-       .catch((response) => {
-           console.log(response)
-           console.log('게시글 받기 오류'  + response)
-           errorCallback('error')
-       }) 
+    axios.get(`${process.env.VUE_APP_IP}/articles/${data}/`, {})
+        .then((response) => {
+            console.log('게시글 받기 성공 :', response)
+            callback(response)
+
+        })
+        .catch((response) => {
+            console.log(response)
+            console.log('게시글 받기 오류' + response)
+            errorCallback('error')
+        })
 }
 
 // 사용자 프로필에서 게시피드와 좋아한 피드 받아오기
 const getPostLikedArticles = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('nickname', data)
-    axios.post(`${process.env.VUE_APP_IP}/articles/myarticle/`, form,{
-    })
-       .then((response) => {
-           console.log('내 게시글 받기 성공 :',response)
-           callback(response)
-       
-       })
-       .catch((response) => {
-           console.log(response)
-           console.log('내 게시글 받기 오류'  + response)
-           errorCallback('error')
-       }) 
+    console.log('~누구의 글이냐 ', data)
+    axios.post(`${process.env.VUE_APP_IP}/articles/myarticle/`, form, {})
+        .then((response) => {
+            console.log('내 게시글 받기 성공 :', response)
+            callback(response)
+
+        })
+        .catch((response) => {
+            console.log(response)
+            console.log('내 게시글 받기 오류' + response)
+            errorCallback('error')
+        })
 }
 
 
 // 게시글에 좋아요 누르기 
 const userLikesPost = (form, callback, errorCallback) => {
-    axios.post(`${process.env.VUE_APP_IP}/articles/like/`, form,{
-    })
-       .then((response) => {
-           console.log('게시글 좋아요 성공 :',response)
-           callback(response)
-       
-       })
-       .catch((response) => {
-           console.log(response)
-           console.log('게시글 좋아요 오류'  + response)
-           errorCallback('error')
-       }) 
+    axios.post(`${process.env.VUE_APP_IP}/articles/like/`, form, {})
+        .then((response) => {
+            console.log('게시글 좋아요 성공 :', response)
+            callback(response)
+
+        })
+        .catch((response) => {
+            console.log(response)
+            console.log('게시글 좋아요 오류' + response)
+            errorCallback('error')
+        })
 }
 
 // 게시글 삭제
 const deletePost = (id, callback, errorCallback) => {
-    axios.delete(`${process.env.VUE_APP_IP}/articles/${id}`,{
-    })
-       .then((response) => {
-           console.log('게시글 삭제 성공 :',response)
-           callback(response)
-       
-       })
-       .catch((response) => {
-           console.log(response)
-           console.log('게시글 삭제 오류'  + response)
-           errorCallback('error')
-       }) 
+    axios.delete(`${process.env.VUE_APP_IP}/articles/${id}`, {})
+        .then((response) => {
+            console.log('게시글 삭제 성공 :', response)
+            callback(response)
+
+        })
+        .catch((response) => {
+            console.log(response)
+            console.log('게시글 삭제 오류' + response)
+            errorCallback('error')
+        })
 }
 
 // 게시글 수정
 const editPost = (form, callback, errorCallback) => {
-    axios.post(`${process.env.VUE_APP_IP}/articles/update/`,form,{
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        }
-    })
-       .then((response) => {
-           console.log('게시글 수정 성공 :',response)
-           callback(response)
-       
-       })
-       .catch((response) => {
-           console.log('게시글 수정 오류'  + response)
-           errorCallback(response)
-       }) 
+    axios.post(`${process.env.VUE_APP_IP}/articles/update/`, form, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        })
+        .then((response) => {
+            console.log('게시글 수정 성공 :', response)
+            callback(response)
+
+        })
+        .catch((response) => {
+            console.log('게시글 수정 오류' + response)
+            errorCallback(response)
+        })
 }
 
-const requestFeedOfFame = (callback, errorCallback) => {
-    axios.get(`${process.env.VUE_APP_IP}/articles/honor/`)
-        .then(response => {
-            callback(response)
-        })
-        .catch(error => {
-            errorCallback(error)
-        })
-}
+
 
 
 const FeedApi = {
@@ -187,6 +174,5 @@ const FeedApi = {
     userLikesPost: (data, callback, errorCallback) => userLikesPost(data, callback, errorCallback),
     editPost: (callback, errorCallback) => editPost(callback, errorCallback),
     deletePost: (data, callback, errorCallback) => deletePost(data, callback, errorCallback),
-    requestFeedOfFame: (callback, errorCallback) => requestFeedOfFame(callback, errorCallback),
 }
 export default FeedApi

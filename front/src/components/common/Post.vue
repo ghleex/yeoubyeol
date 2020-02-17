@@ -63,7 +63,6 @@ export default {
     },
     id: {
       type: Number,
-      required: true
     },
     nickname: {
       type: String
@@ -99,10 +98,10 @@ export default {
       isMyPost: false,
       imgUrl: "",
       post: {
-        id: "",
-        nickname: "",
+        id: -1,
+        nickname: "loading",
         article: "게시글을 불러오는 중이에용",
-        img: "../../assets/images/profile/1.png",
+        img: "/uploads/articles/images/default.jpg",
         pic_name: "../../assets/images/profile/1.png",
         comments: 0,
         likes: 0,
@@ -131,16 +130,23 @@ export default {
       isLike: false,
       author: this.author
     };
-    let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
-    let date = new Date();
-    let currHour = date.getHours();
+   let user = this.$cookies.get('LoginUserInfo');
+    // let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
+    let LoginId = user.id;
+    
     // if(LoginId=== this.post.author && (currHour>=23 && currHour< 6)){
-    if (LoginId === this.post.author && date.getMinutes() % 2 == 0) {
-      this.isMyPost = true;
-    } else {
-      this.isMyPost = false;
-    }
-    this.setTimeValues();
+      this.setTimeValues();
+    setInterval(()=>{
+      
+      let date = new Date();
+      let currHour = date.getHours();
+        if (LoginId === this.post.author && date.getMinutes() % 2 == 0) {
+          this.isMyPost = true;
+        } else {
+          this.isMyPost = false;
+        }
+
+    },1000);
     this.isLikeCheck();
     this.getImageUrl();
   },

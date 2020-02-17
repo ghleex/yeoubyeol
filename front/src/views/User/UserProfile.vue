@@ -123,6 +123,9 @@
 import Post from "../../components/common/Post";
 import UserApi from "../../apis/UserApi";
 import FeedApi from "../../apis/FeedApi";
+import dotenv from "dotenv";
+
+dotenv.config();
 export default {
   name: "components",
   components: {
@@ -195,9 +198,11 @@ export default {
           this.userInfo.intro = res.data.intro;
           this.userInfo.nickname = res.data.nickname;
           this.userInfo.username = res.data.username;
-          this.userInfo.picname = require("@/assets/images/profile/" +
+          /* this.userInfo.picname = require("@/assets/images/profile/" +
             res.data.pic_name +
-            ".png");
+            ".png"); */
+             this.userInfo.picname=`${process.env.VUE_APP_IP}${res.data.pic_name}`;
+      
           this.userInfo.likes = res.data.like_nums;
           // this.userInfo.likes = 0;
           this.shownNickname = res.data.nickname;
@@ -228,13 +233,15 @@ export default {
         }
       );
     },
+      /*    pic_name: require("@/assets/images/profile/" +
+           dataList[i].pic_name +
+           ".png"), */
     getDataFromResponse(dataList, target) {
       for (let i = 0; i < dataList.length; i++) {
         let article_prop = {
           nickname: dataList[i].nickname,
-          pic_name: require("@/assets/images/profile/" +
-            dataList[i].pic_name +
-            ".png"),
+            pic_name:`${process.env.VUE_APP_IP}${dataList[i].pic_name}`,
+      
           img: dataList[i].image,
           id: dataList[i].id,
           article: dataList[i].article,
@@ -256,7 +263,7 @@ export default {
 
       // console.log("--->"+this.loginedNickname);
       FeedApi.getPostLikedArticles(
-        this.loginedNickname,
+        this.$route.params.email,
         res => {
           // console.log(res.data);
           //게시피드
