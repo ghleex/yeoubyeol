@@ -13,13 +13,19 @@ from accounts.serializers import UserSerializer, NotificationSerializer
 from string import ascii_letters
 from collections import Counter
 # from directmessages.apps import Inbox
-import operator
 from konlpy.tag import Hannanum
 import konlpy
+import operator
 import secrets, json
 
 # Create your views here.
 class ArticleList(APIView):
+    # 아래는 삭제 금지
+    """
+        글을 새롭게 생성할 때 사용할 API
+
+        ---
+    """
     # 글 생성 request = 'username', 
     def post(self, request, format=None):
         print(request.data)
@@ -49,8 +55,7 @@ class ArticleList(APIView):
         if serializer.is_valid():
             article = serializer.save()
             for word in hashtags:
-                hashtag, created = Hashtag.objects.get_or_create(
-                    hashtag=word)
+                hashtag, created = Hashtag.objects.get_or_create(hashtag=word)
                 hash_serializer = HashtagSerializer(data=hashtag)
                 if hash_serializer.is_valid():
                     hash_serializer.save()
@@ -58,9 +63,63 @@ class ArticleList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(data, status=status.HTTP_204_NO_CONTENT)
 
-# 글 수정
-@api_view(['POST',])
+
+class ArticleDetail(APIView):
+    # 아래는 삭제 금지
+    """
+        작성한 글 내용을 받고, 삭제할 때 사용할 API
+
+        ---
+    """
+    def get_object(self, article_pk):
+        article = get_object_or_404(Article, pk=article_pk)
+        return article
+
+    # 글 상세보기
+    def get(self, request, pk):
+        article = self.get_object(pk)
+        serializer = ArticleSerializer(article)
+        user = get_object_or_404(User, id=serializer.data.get('author'))
+        comments = article.comment_set.all()
+        data = []
+        hashtags = serializer.data.get('hashtags')
+        hashtag_list = []
+        # 해시태그
+        for hashtag in range(len(hashtags)):
+            hashs = get_object_or_404(Hashtag, id=hashtags[hashtag])
+            hashtag_list.append(hashs.hashtag)
+        
+        # 댓글
+        for comment in comments:
+            comment_serializer = CommentSerializer(comment)
+            author = comment_serializer.data.get('author')
+            c_user = get_object_or_404(User, id=author)
+            data.append([c_user.nickname, f'/uploads/{c_user.pic_name}' ,comment.id, comment.comment, comment.created_at])
+        
+        # 최종적으로 보낼 것
+        result = {
+            'nickname': user.nickname,
+            'pic_name': f'/uploads/{user.pic_name}',
+            'article': serializer.data,
+            'hashtags': hashtag_list,
+            'comments': data
+        }
+        return Response(result)
+
+    # 글 삭제
+    def delete(self, request, pk, format=None):
+        article = self.get_object(pk)
+        article.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 def update(request):
+    # 아래는 삭제 금지
+    """
+        글 수정할 때 사용할 API
+
+        ---
+    """
     pk = request.data.get('id')
     article = get_object_or_404(Article, id=pk)
     article.article = request.data.get('article')
@@ -71,10 +130,9 @@ def update(request):
         article.image = request.data.get('image')
     hashtags = request.data.get('hashtags')
     hashtags = hashtags.split(',')
-    like_users = article.like_users.all()
+    # like_users = article.like_users.all()
     for word in hashtags:
-        hashtag, created = Hashtag.objects.get_or_create(
-            hashtag=word)
+        hashtag, created = Hashtag.objects.get_or_create(hashtag=word)
         hash_serializer = HashtagSerializer(data=hashtag)
         if hash_serializer.is_valid():
             hash_serializer.save()
@@ -92,8 +150,14 @@ def update(request):
     return Response(article.id)
     # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST',])
+
+@api_view(['POST', ])
 def mainfeed(request):
+    """
+        내가 팔로우하고 있는 사용자 글을 볼 때 사용할 API
+
+        ---
+    """    
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
     serializer = UserSerializer(user)
@@ -117,7 +181,12 @@ def mainfeed(request):
 
 
 @api_view(['POST', ])
-def recommend(request):
+def rec_hashtag(request):
+    """
+        해시태그 추천 시 사용할 API
+
+        ---
+    """
     content = request.data.get('article')
     print(content)
     okt = Hannanum()
@@ -137,6 +206,11 @@ def recommend(request):
 # 나의 글 보기
 @api_view(['POST', ])
 def myarticle(request):
+    """
+        프로필에서 내가 작성한 모든 글을 볼 때 사용할 API
+
+        ---
+    """
     nickname = request.data.get('nickname')
     account = get_object_or_404(User, nickname=nickname)
     print('1111111111111111111')
@@ -180,75 +254,15 @@ def myarticle(request):
     print(result)
     return Response(result)
 
-# 글 상세보기
-class ArticleDetail(APIView):
-    # 글 상세보기
-    def get(self, request, pk):
-        article = get_object_or_404(Article, id=pk)
-        serializer = ArticleSerializer(article)
-        user = get_object_or_404(User, id=serializer.data.get('author'))
-        comments = article.comment_set.all()
-        data = []
-        hashtags = serializer.data.get('hashtags')
-        hashtag_list = []
-        for hashtag in range(len(hashtags)):
-            hashs = get_object_or_404(Hashtag, id=hashtags[hashtag])
-            hashtag_list.append(hashs.hashtag)
-        for comment in comments:
-            comment_serializer = CommentSerializer(comment)
-            author = comment_serializer.data.get('author')
-            c_user = get_object_or_404(User, id=author)
-            data.append([c_user.nickname, f'/uploads/{c_user.pic_name}' ,comment.id, comment.comment, comment.created_at])
-        result = {
-            'nickname': user.nickname,
-            'pic_name': f'/uploads/{user.pic_name}',
-            'article': serializer.data,
-            'hashtags': hashtag_list,
-            'comments': data
-        }
-        return Response(result)
-
-    # 글 수정
-    def put(self, request, pk, format=None):
-        article = get_object_or_404(Article, id=pk)
-        article.article = request.data.get('article')
-        article_hashtags = article.hashtags.all()
-        for article_hashtag in article_hashtags:
-            article.hashtags.remove(article_hashtag.id)
-        if request.data.get('image'):
-            article.image = request.data.get('image')
-        hashtags = request.data.get('hashtags')
-        hashtags = hashtags.split(',')
-        like_users = article.like_users.all()
-        for word in hashtags:
-            hashtag, created = Hashtag.objects.get_or_create(
-                hashtag=word)
-            hash_serializer = HashtagSerializer(data=hashtag)
-            if hash_serializer.is_valid():
-                hash_serializer.save()
-            article.hashtags.add(hashtag)
-        # for hashtag in hashtags: 
-
-        data = {
-            'article': article.article,
-            'author': article.author_id,
-            'image': article.image,
-        }
-        serializer = ArticleSerializer(article, data=data)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(article.id)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # 글 삭제
-    def delete(self, request, pk, format=None):
-        article = get_object_or_404(Article, id=pk)
-        article.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
  
 
 # 유저 검색
 class SearchResultList(APIView):
+    """
+        유저 검색 시 사용할 API
+
+        ---
+    """
     def post(self, request, format=None):
         query = request.data.get('keyword')
         users = User.objects.all()
@@ -271,6 +285,12 @@ class SearchResultList(APIView):
 
 # Following(Front와 연결하여 확인 필요)
 class FollowerList(APIView):
+    """
+        팔로우 신청할 때 사용할 API
+
+        ---
+    """
+            
     # 팔로우 신청
     # @login_required
     def post(self, request, format=None):
@@ -295,19 +315,16 @@ class FollowerList(APIView):
         serializer = UserSerializer(you)
         return Response(serializer.data)
 
-    # 팔로워 목록
-    def get(self, request, format=None):        
-        person = get_object_or_404(get_user_model(), id=request.data.get('user_id'))
-        serializer = UserSerializer(person, many=True)
-        if serializer:
-            return Response(serializer.data.get('followers'))
-        else:
-            return Response({'message': '팔로워를 찾을 수 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 # 팔로잉 목록
 @api_view(['POST', ])
 def followinglist(request):
+    """
+        다른 유저의 팔로잉하는 사람 목록 보기
+
+        ---
+    """
     person = get_object_or_404(get_user_model(), nickname=request.data.get('nickname'))
     serializer = UserSerializer(person)
     users = []
@@ -322,6 +339,12 @@ def followinglist(request):
 
 @api_view(['POST', ])
 def followerlist(request):
+    """
+        다른 유저의 팔로워 목록 보기
+
+        ---
+    """
+
     person = get_object_or_404(get_user_model(), nickname=request.data.get('nickname'))
     serializer = UserSerializer(person)
     users = []
@@ -337,6 +360,12 @@ def followerlist(request):
 
 @api_view(['POST', ])
 def like(request):
+    """
+        좋아요 신청/취소 시 사용할 API
+
+        ---
+    """
+
     # 요청 보낸 유저 정보
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
@@ -373,7 +402,7 @@ def like(request):
                 if user != receive_user:
                     notification = {
                         'nickname': receive_user.nickname,
-                        'message': user.nickname + "님이" + receive_user.nickname + "님의 글을 좋아합니다.",
+                        'message': user.nickname + '님이' + receive_user.nickname + '님의 글을 좋아합니다.',
                         'send_user': user.nickname
                     }
                     noti_serializer = NotificationSerializer(data=notification)
@@ -397,7 +426,7 @@ def like(request):
         noti_user = get_object_or_404(User, id=author)
         notification = {
                 'nickname': noti_user.nickname,
-                'message': noti_user.nickname + "님의 글이 명예의 전당에 올라갔습니다.",
+                'message': noti_user.nickname + '님의 글이 명예의 전당에 올라갔습니다.',
                 'send_user': noti_user.nickname
             }
         json_noti = json.dumps(notification)
@@ -409,14 +438,25 @@ def like(request):
 
 
 class CommentList(APIView):
-    # 댓글 작성
-    def post(self, request):
+    # 아래는 삭제 금지
+    """
+        댓글 새로 작성할 때 사용할 API
+
+        ---
+    """
+
+    # article 가져오기
+    def get_object(self, article_id):
+        article = get_object_or_404(Article, id=article_id)
+        return article    
+
+    # 가져온 article 에 댓글 작성
+    def post(self, request, format=None):
         # request = my_nickname, article_author, comment
-        article_id = request.data.get('article_id')
+        article = self.get_object(request.data.get('article_id'))
         my_nickname = request.data.get('my_nickname')
         comment = request.data.get('comment')
         user = get_object_or_404(User, nickname=my_nickname)
-        article = get_object_or_404(Article, id=article_id)
         article_user = get_object_or_404(User, id=article.author_id)
         comment_data = {
             'article': article_id,
@@ -427,7 +467,7 @@ class CommentList(APIView):
         if article_user != user:
             notification = {
                     'nickname': article_user.nickname,
-                    'message': user.nickname + "님이" + article_user.nickname + "님의 글에 댓글을 남겼습니다.",
+                    'message': user.nickname + '님이' + article_user.nickname + '님의 글에 댓글을 남겼습니다.',
                     'send_user': user.nickname
                 }
             noti_serializer = NotificationSerializer(data=notification)
@@ -440,12 +480,25 @@ class CommentList(APIView):
             return Response(serializer.data)
         else:
             return Response({'message': '이런 나쁜 요청'}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
+class CommentDetail(APIView):
+    # 아래는 삭제 금지
+    """
+        작성한 댓글을 수정하거나 삭제할 때 사용할 API
+
+        ---
+    """
+
+    # 수정/삭제할 댓글 가져오기
+    def get_object(self, comment_id):
+        comment = get_object_or_404(Comment, id=comment_id)
+        return comment
+
     # 댓글 수정
     def put(self, request):
         # request = article_id, comment_id, comment
-        comment_id = request.data.get('comment_id')
-        comment = get_object_or_404(Comment, id=comment_id)
+        comment = self.get_object(request.data.get('comment_id'))
         comment.comment = request.data.get('comment')
         comment_data = {
             'article': comment.article_id,
@@ -457,17 +510,24 @@ class CommentList(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+
     # 댓글 삭제
     def delete(self, request, pk):
         # request = nickname, comment_id
-        comment = get_object_or_404(Comment, id=pk)
+        comment = self.get_object(pk)
         print(comment)
         comment.delete()
         return Response({'message': '댓글이 성공적으로 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET', ])
-def honor(request): 
+def honor(request):
+    """
+        명예의 전당에 올라있는 글 목록 노출 시 사용할 API
+
+        ---
+    """
+
     articles = HonorArticle.objects.all()
     serializer = HonorArticleSerializer(articles, many=True)
     return Response(serializer.data)
@@ -475,6 +535,12 @@ def honor(request):
 
 @api_view(['POST', ])
 def hashtag(request):
+    """
+        게시글의 해시태그 클릭 시 해당 해시태그가 달려있는 글 가져올 때 쓸 API
+
+        ---
+    """
+
     hashtag = request.data.get('hashtag')
     hashtag_id = Hashtag.objects.filter(hashtag=hashtag)
     start = int(request.data.get('start'))
@@ -507,6 +573,12 @@ def hashtag(request):
 
 @api_view(['POST', ])
 def keyword(request):
+    """
+        키워드 검색 시 해당 키워드와 일치하는 해시태그 가져올 때 사용하는 API
+
+        ---
+    """
+
     keyword = request.data.get('keyword')
     hashtags = Hashtag.objects.all()
     datas = []
@@ -518,6 +590,11 @@ def keyword(request):
 
 @api_view(['GET', ])
 def trend(request):
+    """
+        이전 한 달 간 인기글 가져올 때 사용할 API
+
+        ---
+    """
     articles = Article.objects.all()
     print(articles)
     datas = []
