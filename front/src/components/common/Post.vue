@@ -99,9 +99,9 @@ export default {
       imgUrl: "",
       post: {
         id: -1,
-        nickname: "",
+        nickname: "loading",
         article: "게시글을 불러오는 중이에용",
-        img: "../../assets/images/profile/1.png",
+        img: "/uploads/articles/images/default.jpg",
         pic_name: "../../assets/images/profile/1.png",
         comments: 0,
         likes: 0,

@@ -62,6 +62,7 @@
 
             <v-col cols="12" class="pa-1">
               <v-combobox
+                dark
                 v-model="model"
                 :filter="filter"
                 :hide-no-data="!search"
@@ -131,7 +132,7 @@ const WEATHER_API = "https://api.openweathermap.org/data/2.5/weather?";
 
 export default {
   created() {
-    let userInfo = this.$cookies.get('LoginUserInfo');
+    let userInfo = this.$cookies.get("LoginUserInfo");
     if (this.$route.params.postId > 0) {
       this.postId = this.$route.params.postId;
     }
@@ -234,11 +235,19 @@ export default {
           this.items.push({
             header: "아래 중 하나를 입력하거나, 새로 입력해보세요!"
           });
+          let temp = [];
+          for (let i = 0; i < this.model.length; i++) {
+            temp.push(this.model[i].text);
+          }
+          console.log(temp, "~~!!");
           for (let i = 0; i < res.data.length; i++) {
             console.log("넣을 키워드는 :", res.data[i]);
-            this.items.push({
-              text: res.data[i]
-            });
+            if (!temp.includes(res.data[i])) {
+              this.model.push({
+                text: res.data[i]
+              });
+              this.items.push({ text: res.data[i] });
+            }
           }
         },
         error => {
@@ -286,7 +295,7 @@ export default {
       }
     },
     newPost() {
-      if(this.selectedFile==''){
+      if (this.selectedFile == "") {
         alert("사진을 등록해 주세요!");
         return;
       }
@@ -297,7 +306,7 @@ export default {
         tagLists.push(this.model[i].text);
       }
 
-      var token = this.$cookies.get('auth_cookie');
+      var token = this.$cookies.get("auth_cookie");
       console.log(token);
       form.append("token", token);
       form.append("nickname", this.loginedNickname);
@@ -309,7 +318,7 @@ export default {
         res => {
           console.log(res);
           alert("글이 성공적으로 게시되었습니다.");
-          console.log(res.data.id ,'로 조회 외 않데 ?');
+          console.log(res.data.id, "로 조회 외 않데 ?");
           this.$router.push({ name: "댓글", params: { id: res.data.id } });
         },
         error => {

@@ -19,7 +19,7 @@
       <!-- 댓글 작성 -->
       <v-col cols="12">
         <v-card class="mx-2" fixed color="#110B22" dark outlined style="border: 1px solid #71d087;">
-          <v-form ref="form" v-model="valid" lazy-validation>
+          <v-form ref="form" v-model="valid" lazy-validation  @submit.prevent="validate">
             <v-list-item>
               <v-list-item-avatar color="grey darken-3">
                 <v-img :src="loginUserInfo.pic_name"></v-img>
@@ -31,7 +31,6 @@
               <v-btn
                 text
                 style="background-color:#71d087;color:#110b22;"
-                @keyup.enter="validate"
                 @click="validate"
                 :disabled="!valid"
               >작성</v-btn>
@@ -158,6 +157,7 @@ export default {
       );
     },
     getArticleById(id) {
+      this.isArticleLoaded=false;
       FeedApi.getArticleById(
         id,
         res => {
