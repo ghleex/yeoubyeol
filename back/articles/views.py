@@ -120,9 +120,9 @@ def mainfeed(request):
 def recommend(request):
     content = request.data.get('article')
     print(content)
-    okt = Hannanum()
+    hannanum = Hannanum()
     print(content)
-    keywords = okt.nouns(content)
+    keywords = hannanum.nouns(content)
     print(keywords)
     count = Counter(keywords)
     count = sorted(sorted(count.items(), key=operator.itemgetter(0)), key=lambda x: x[1], reverse=True) 
@@ -208,38 +208,6 @@ class ArticleDetail(APIView):
         }
         return Response(result)
 
-    # 글 수정
-    def put(self, request, pk, format=None):
-        article = get_object_or_404(Article, id=pk)
-        article.article = request.data.get('article')
-        article_hashtags = article.hashtags.all()
-        for article_hashtag in article_hashtags:
-            article.hashtags.remove(article_hashtag.id)
-        if request.data.get('image'):
-            article.image = request.data.get('image')
-        hashtags = request.data.get('hashtags')
-        hashtags = hashtags.split(',')
-        like_users = article.like_users.all()
-        for word in hashtags:
-            hashtag, created = Hashtag.objects.get_or_create(
-                hashtag=word)
-            hash_serializer = HashtagSerializer(data=hashtag)
-            if hash_serializer.is_valid():
-                hash_serializer.save()
-            article.hashtags.add(hashtag)
-        # for hashtag in hashtags: 
-
-        data = {
-            'article': article.article,
-            'author': article.author_id,
-            'image': article.image,
-        }
-        serializer = ArticleSerializer(article, data=data)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(article.id)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     # 글 삭제
     def delete(self, request, pk, format=None):
         article = get_object_or_404(Article, id=pk)
@@ -294,15 +262,6 @@ class FollowerList(APIView):
                 you.followers.add(me)
         serializer = UserSerializer(you)
         return Response(serializer.data)
-
-    # 팔로워 목록
-    def get(self, request, format=None):        
-        person = get_object_or_404(get_user_model(), id=request.data.get('user_id'))
-        serializer = UserSerializer(person, many=True)
-        if serializer:
-            return Response(serializer.data.get('followers'))
-        else:
-            return Response({'message': '팔로워를 찾을 수 없습니다.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 # 팔로잉 목록
@@ -363,8 +322,10 @@ def like(request):
         if article.like_users.filter(id=user.id).exists():
             # index = serializer.data.get('like_users').index(user.id)
             article.like_users.remove(user.id)
+            article.popular_post -= 1
         else:
             article.like_users.add(user.id)
+            article.popular_post += 1
             like_users = article.like_users.all()
             for like_user in like_users:
                 # 알림 받는 유저
@@ -380,7 +341,8 @@ def like(request):
                     if noti_serializer.is_valid():
                         notification = noti_serializer.save()
                         notification.save()
-    if len(article.like_users.all()) >= 30000:
+        article.save()
+    if len(article.like_users.all()) >= 5:
         article_hashtag = []
         for hashtag in article.hashtags.all():
             article_hashtag.append(hashtag.id)
@@ -469,8 +431,15 @@ class CommentList(APIView):
 @api_view(['GET', ])
 def honor(request): 
     articles = HonorArticle.objects.all()
-    serializer = HonorArticleSerializer(articles, many=True)
-    return Response(serializer.data)
+    datas = []
+    for article in articles:
+        article_serializer = HonorArticleSerializer(article)
+        data = article_serializer.data
+        for u in range(len(data['hashtags'])):
+            hashtag = get_object_or_404(Hashtag, id=data['hashtags'][u])
+            data['hashtags'][u] = hashtag.hashtag
+        datas.append(data)
+    return Response(datas)
 
 
 @api_view(['POST', ])
@@ -518,17 +487,27 @@ def keyword(request):
 
 @api_view(['GET', ])
 def trend(request):
-    articles = Article.objects.all()
-    print(articles)
+    hashtags = Hashtag.objects.all()
     datas = []
-    for article in articles:
-        if article not in datas:
-            serializer = ArticleSerializer(article)
-            datas.append(serializer.data)
-        if len(datas) == 10:
-            break
-    # .order_by('-like_users')
+    for hashtag in hashtags:
+        datas.append([len(hashtag.hashtag_articles.all()), hashtag.hashtag])
     return Response(datas)
-
         
 
+@api_view(['GET', ])
+def monthlytrend(request):
+    articles = Article.objects.order_by('-popular_post', '-id')
+    datas = []
+    for article in articles[0:10]:
+        comments = article.comment_set.all()
+        article_serializer = ArticleSerializer(article)
+        account = get_object_or_404(User, id=article_serializer.data.get('author'))
+        data = article_serializer.data
+        data['pic_name'] = f'/uploads/{account.pic_name}'
+        for u in range(len(data['hashtags'])):
+            hashtag = get_object_or_404(Hashtag, id=data['hashtags'][u])
+            data['hashtags'][u] = hashtag.hashtag
+        data['nickname'] = account.nickname
+        data['comments'] = len(comments)
+        datas.append(data)
+    return Response(datas)
