@@ -3,6 +3,10 @@ import axios from 'axios'
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+
 //회원프로필가져올래
 const JoinsendEmail = (data, callback, errorCallback) => {
     let form = new FormData();

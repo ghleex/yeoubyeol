@@ -24,10 +24,7 @@
       <v-list>
         <v-list-item>
           <v-spacer></v-spacer>
-          <v-btn text color="#71d087">통계</v-btn>
-          <!-- <router-link to="/noti"> -->
           <v-btn text color="#71d087" @click="changeView('알림')">알림</v-btn>
-          <!-- </!-->
         </v-list-item>
 
         <v-list-item>
@@ -81,17 +78,17 @@
       
 <script>
 import UserApi from "../apis/UserApi";
-import axios from 'axios';
+import axios from "axios";
+import dotenv from "dotenv";
 
+dotenv.config();
 export default {
-  props: ["pr_username"],
-
   data: () => ({
     profileUsername: "",
     drawer: null,
     item: 0,
     pageTitle: "",
-
+    loginedNickname: "",
     isSearchPage: false,
     isPostPage: false,
     currUserInfo: {
@@ -105,10 +102,12 @@ export default {
     }
   }),
   updated() {
+    this.getLoginUserProfile();
+
     if (this.$route.name === "프로필") {
       this.pageTitle = this.$route.params.email;
     } else if (this.$route.name == "검색 결과") {
-      this.pageTitle = "검색 결과 : "+this.$route.params.keyword;
+      this.pageTitle = "검색 결과 : " + this.$route.params.keyword;
     } else {
       this.pageTitle = this.$route.name;
     }
@@ -120,7 +119,10 @@ export default {
     } else {
       this.isSearchPage = false;
     }
-    if (this.$route.name === "새 피드 작성" || this.$route.name ==="피드 수정") {
+    if (
+      this.$route.name === "새 피드 작성" ||
+      this.$route.name === "피드 수정"
+    ) {
       this.isPostPage = true;
     } else {
       this.isPostPage = false;
@@ -132,7 +134,7 @@ export default {
     if (this.$route.name !== "프로필") {
       this.pageTitle = this.$route.name;
     } else if (this.$route.name == "검색 결과") {
-      this.pageTitle = "검색 결과 : "+this.$route.params.keyword;
+      this.pageTitle = "검색 결과 : " + this.$route.params.keyword;
     } else {
       //프로필 화면인 경우에는 아이디를 상단에 노출시킴
       this.pageTitle = this.profileUsername;
@@ -143,26 +145,31 @@ export default {
     //path와 닉넴을받으면 프로필로 기기
     getLoginUserProfile() {
       //프로필 정보를 불러올거에여~~!
-      UserApi.requestUserProfile(this.pr_username, res => {
+      if (this.$cookies.isKey("LoginUserInfo")) {
+        let userInfo = this.$cookies.get("LoginUserInfo");
+        this.loginedNickname = userInfo.nickname;
+      } else {
+        this.$router.push({ name: "Error" });
+      }
+
+      UserApi.requestUserProfile(this.loginedNickname, res => {
         //확인용 ..useless ...
         let sentData = JSON.stringify(res.data);
         console.log("프로필 정보 : " + JSON.stringify(res.data));
         this.currUserInfo.followers = JSON.stringify(res.data.followers.length);
-        this.currUserInfo.followings = JSON.stringify(
-          res.data.followings.length
-        );
-
+        this.currUserInfo.followings = JSON.stringify(res.data.followings.length);
         this.currUserInfo.intro = res.data.intro;
         this.currUserInfo.nickname = res.data.nickname;
         this.currUserInfo.username = res.data.username;
         // console.log('pic name is ',res.data.pic_name);
-        this.currUserInfo.picname = require("@/assets/images/profile/" +
+        /* this.currUserInfo.picname = require("@/assets/images/profile/" +
           res.data.pic_name +
-          ".png");
-      }),
+          ".png"); */
+        this.currUserInfo.picname = `${process.env.VUE_APP_IP}${res.data.pic_name}`;
+      },
         err => {
-          this.$router.push({ path: "/404" });
-        };
+          this.$router.push({ path: "/error" });
+        })
     },
     changeViewProfile(path, usersEmail) {
       if (this.pageTitle == usersEmail) {
@@ -181,22 +188,23 @@ export default {
       }
     },
     changeViewPost(path) {
-        this.pageTitle = path;
-        this.$router.push({ name: path, params: { postId: -1 } });
+      this.pageTitle = path;
+      this.$router.push({ name: path, params: { postId: -1 } });
     },
     //그냥 이동일 경우
     changeView(path) {
       this.pageTitle = path;
-      this.$router.push({ name: path});
+      this.$router.push({ name: path });
     },
     logout() {
-      let user = this.$cookies.get('LoginUserInfo')
+      let user = this.$cookies.get("LoginUserInfo");
       let userInfo = new FormData();
-      userInfo.append('username', user.username)
-      console.log(userInfo)
-      axios.post(`http://${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
+      userInfo.append("username", user.username);
+      console.log(userInfo);
+      axios
+        .post(`${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
         .then(response => {
-          console.log(response)
+          console.log(response);
           sessionStorage.removeItem("refresh_token");
           this.$cookies.remove("auth_cookie");
           this.$cookies.remove("LoginUserInfo");
@@ -204,7 +212,9 @@ export default {
           alert("로그아웃되었습니다.");
           this.isLogin = false;  
         })
-      this.$router.push({ name: "홈" });
+      this.$emit('logoutEvent')
+      this.$router.push({ name: "홈", params: {key: 'nav'} });
+
     }
   }
 };
