@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>인증메일</title>
+<style>
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  width: 40%;
+}
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+.container {
+
+  padding: 2px 16px;
+}
+.btn {
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 15px;
+  text-decoration: none;
+  margin: 15px 2px;
+  color: #fff;
+  position: relative;
+  display: inline-block;
+}
+
+.btn:active {
+  transform: translate(0px, 5px);
+  -webkit-transform: translate(0px, 5px);
+  box-shadow: 0px 1px 0px 0px;
+}
+
+
+.green {
+  background-color: #2ecc71;
+  box-shadow: 0px 5px 0px 0px #15B358;
+}
+
+.green:hover {
+  background-color: #48E68B;
+}
+.buttons{
+  align:center;
+   padding: 2px 16px;
+   margin:auto;
+   
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <img src="https://ojsfile.ohmynews.com/STD_IMG_FILE/2017/0926/IE002223822_STD.jpg"  alt="Avatar" style="width:100%; height:auto;">
+  <div class="container">
+ <h4 class="card-content">초대합니다.<br>여우별과 함께 <br>하시겠습니까?</h4>
+    </div>
+          <div class="buttons">
+
+           <a href="http://192.168.31.64:8080/join/form/{{ user.secret_key }}+{{ user.username }}" target:'_blank' class="btn green">따라가기</a>
+</div>
+  </div>
+
+</body>
+</html> 

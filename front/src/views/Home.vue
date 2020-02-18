@@ -94,15 +94,15 @@ export default {
         })
     },
     tologin() {
-      var router = this.$router;
+      let router = this.$router;
       router.push({ name: "로그인" });
     },
     toConfirmEmail() {
-      var router = this.$router;
+      let router = this.$router;
       router.push({ name: "인증메일 발송" });
     },
     goHome() {
-      var router = this.$router;
+      let router = this.$router;
       router.push({ name: "메인피드" });
     }
   }

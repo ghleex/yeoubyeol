@@ -67,7 +67,6 @@
                   sm12
                   v-for="(items,i) in SearchUserResult"
                   :key="i"
-                  @click="gotoUserPfPage(items.nickname)"
                 >
                   <SearchUser v-bind="items" />
                 </v-col>
@@ -119,7 +118,8 @@
 import SearchUser from "../components/common/SearchUser";
 import SearchKeyword from "../components/common/SearchKeyword";
 
-import SearchApi from "../apis/SearchApi";
+import SearchApi from "@/apis/SearchApi";
+import UserApi from "@/apis/UserApi";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -130,17 +130,31 @@ export default {
   },
 
   data: () => ({
+    myId: -1,
     keyword: "",
     isSearched: false,
     searchedHistory: {},
-    //code
-    // 1:댓글 2:좋아요 3: (나에게)팔로잉신청 4 (나의)팔로잉거절 5 팔로잉수락
+    LU_followings: [],
     SearchKeywordResult: [{ keyword: "" }],
     SearchUserResult: []
   }),
   methods: {
+    checkFollowInfo() {
+      let loginedNickname = this.$cookies.get("LoginUserInfo").nickname;
+      UserApi.requestUserProfile(
+        loginedNickname,
+        res => {
+          this.myId = res.data.id;
+          this.LU_followings = res.data.followings;
+        },
+        err => {
+          console.log("또잉");
+          this.$router.push({ path: "/404" });
+        }
+      );
+    },
     gotoKeywordDetailPage(target) {
-       this.$router.push({ name: "검색 결과", params: { keyword: target } });
+      this.$router.push({ name: "검색 결과", params: { keyword: target } });
     },
     SearchByKeyword() {
       let { keyword } = this;
@@ -172,15 +186,14 @@ export default {
               this.SearchUserResult = [];
             } else {
               this.SearchUserResult = [];
-                /*      pic_name: require("@/assets/images/profile/" +
-                       res.data[i].pic_name +
-                       ".png"), */
               for (let i = 0; i < res.data.length; i++) {
-                // console.log(res.data.nicknames_serializer_data[i].nickname);
                 this.SearchUserResult.push({
+                  id: res.data[i].pk,
                   nickname: res.data[i].nickname,
-                  pic_name :`${process.env.VUE_APP_IP}${res.data[i].pic_name}`,
-                  intro: res.data[i].intro
+                  pic_name: `${process.env.VUE_APP_IP}${res.data[i].pic_name}`,
+                  intro: res.data[i].intro,
+                  isFollowing: this.LU_followings.includes(res.data[i].pk),
+                  isMyAccount: res.data[i].pk === this.myId
                 });
               }
             }
@@ -211,10 +224,7 @@ export default {
       localStorage.clear();
       this.searchedHistory = {};
     },
-    gotoUserPfPage(id) {
-      //페이지 이동을 어떠카지...
-      this.$router.push({ name: "프로필", params: { email: id } });
-    }
+
   },
   watch: {
     keyword: function(v) {
@@ -228,7 +238,7 @@ export default {
   },
   created() {
     // this.searchedHistory = this.$store.getters.getsearchHistory;
-    console.log(this.searchedHistory);
+    this.checkFollowInfo();
   }
 };
 </script>

@@ -67,7 +67,7 @@ export default {
   }),
   methods: {
     sendEmail() {
-      var router = this.$router;
+      let router = this.$router;
         console.log(this.email);
       JoinApi.JoinsendEmail(
         this.email,

@@ -170,6 +170,19 @@ const editUserPassword = (data, callback, errorCallback) => {
 
         });
 }
+//유저 알림 받아오기
+const loadNotifications = (data, callback, errorCallback) => {
+    axios
+        .get(`${process.env.VUE_APP_IP}/accounts/noti/${data}/`, {
+        })
+        .then(response => {
+            callback(response)
+        })
+        .catch(error => {
+            errorCallback(error);
+
+        });
+}
 
 const UserApi = {
     requestSignup: (data, callback, errorCallback) => requestSignup(data, callback, errorCallback),
@@ -182,5 +195,6 @@ const UserApi = {
     editUsersProfile: (data, callback, errorCallback) => editUsersProfile(data, callback, errorCallback),
     confirmPassword: (data, callback, errorCallback) => confirmPassword(data, callback, errorCallback),
     editUserPassword: (data, callback, errorCallback) => editUserPassword(data, callback, errorCallback),
+    loadNotifications: (data, callback, errorCallback) => loadNotifications(data, callback, errorCallback),
 }
 export default UserApi

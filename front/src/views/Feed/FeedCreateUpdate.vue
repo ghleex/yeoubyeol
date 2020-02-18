@@ -5,18 +5,23 @@
       <v-col cols="12" dark :style="bgByWeather">
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-row class="py-0 ma-2">
-            <v-col cols="6">
-              <b class="white--text caption">{{weather_detail}}</b>
-              <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
+            <v-col cols="4" class="px-0">
+              <v-btn dark text>
+                취소
+              </v-btn>
             </v-col>
-            <v-col cols="6" class="pa-1 d-flex justify-end">
+            <v-col cols="4" dark class="timer px-0 white--text text-center d-flex justify-center">
+              <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
+              {{ lastTime }}
+            </v-col>
+            <v-col cols="4" class="pl-0 pr-1 d-flex justify-end">
               <v-btn
                 class="mb-2"
                 color="#71d087"
                 style="color:#110b22;"
                 @click="validate"
                 :disabled="!valid"
-              >{{postId>0 ? "수정": "피드 발행하기"}}</v-btn>
+              >{{postId>0 ? "수정": "작성"}}</v-btn>
             </v-col>
             <v-col cols="12" class="pa-0">
               <div id="preview">
@@ -142,6 +147,10 @@ export default {
     }
     this.loadWeather();
     this.loginedNickname = userInfo.nickname;
+
+    setInterval(() => {
+      this.getTime();
+    }, 1000);
   },
   computed: {
     bgByWeather: function() {
@@ -179,16 +188,13 @@ export default {
       let currHour = date.getHours();
       // if(currHour >=23 && currHour<6){
       if (date.getMinutes() % 2 == 0) {
-        var form = new FormData();
         let tagLists = [];
         for (let i = 0; i < this.model.length; i++) {
           tagLists.push(this.model[i].text);
         }
-        form.append("id", this.postId);
-        form.append("article", this.inputPostContent);
-        form.append("image", this.selectedFile);
-        form.append("hashtags", tagLists);
-
+      let form = {'id':this.postId,'article':this.inputPostContent,
+      'image':this.selectedFile,
+      'hashtags':tagLists}
         FeedApi.editPost(
           form,
           res => {
@@ -306,7 +312,7 @@ export default {
         tagLists.push(this.model[i].text);
       }
 
-      var token = this.$cookies.get("auth_cookie");
+      let token = this.$cookies.get("auth_cookie");
       console.log(token);
       form.append("token", token);
       form.append("nickname", this.loginedNickname);
@@ -371,6 +377,58 @@ export default {
           this.handleGeoFailure
         );
       }
+    },
+    getTime() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      const baseTime = new Date();
+      let newDate = baseTime.getDate() + 1
+      if (hours >= 16 ) {
+        baseTime.setDate(newDate)
+      }
+      baseTime.setHours(16)
+      baseTime.setMinutes(0)
+      baseTime.setSeconds(0)
+
+      const diffTime = (baseTime - now) / 1000;
+      let lastHours = diffTime / 3600;
+      if (0 <= lastHours && lastHours < 10) {
+        lastHours = `0${Math.floor(lastHours)}`;
+      } else if (lastHours < 0 || isNaN(lastHours)) {
+        lastHours = '00';
+      } else {
+        lastHours = Math.floor(lastHours);
+      }
+      
+      let lastMinutes = diffTime % 3600 / 60;
+      if (0 <= lastMinutes && lastMinutes < 10) {
+        lastMinutes = `0${Math.floor(lastMinutes)}`;
+      } else if (lastMinutes < 0 || isNaN(lastMinutes)) {
+        lastMinutes = '00';
+      } else {
+        lastMinutes = Math.floor(lastMinutes);
+      }
+
+      let lastSeconds = diffTime % 3600 % 60;
+      if (0 <= lastSeconds && lastSeconds < 10) {
+        lastSeconds = `0${Math.floor(lastSeconds)}`;
+      } else if (lastSeconds < 0 || isNaN(lastSeconds)) {
+        lastSeconds = '00';
+      } else {
+        lastSeconds = Math.floor(lastSeconds);
+      }
+
+      const Time = `${lastHours}:${lastMinutes}:${lastSeconds}`
+      this.lastTime = Time
+
+      if (this.lastTime === '24:00:00') {
+        alert('이제 잠에서 깰 시간이에요.')
+        var router = this.$router
+        router.push({'name': '홈'})
+      }
     }
   },
   data: () => {
@@ -402,7 +460,8 @@ export default {
       inputPostContent: "",
       hash_check: false,
       valid: false,
-      contentRules: [v => !!v || "내용을 입력해주세요.."]
+      contentRules: [v => !!v || "내용을 입력해주세요.."],
+      lastTime: '',
     };
   },
   watch: {
@@ -436,5 +495,10 @@ export default {
 #preview img {
   max-width: 50%;
   max-height: 100px;
+}
+
+.timer {
+  font-family: 'ZCOOL QingKe HuangYou', cursive;
+  font-size: 24px;
 }
 </style>
