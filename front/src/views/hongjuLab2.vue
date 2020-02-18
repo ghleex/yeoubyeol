@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     updateTransition(time) {
-      var el = document.querySelector("#lastTime");
+      let el = document.querySelector("#lastTime");
       
       if (time === 11) {
         el.className = "last_time1";

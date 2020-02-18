@@ -144,8 +144,15 @@ const deletePost = (id, callback, errorCallback) => {
 }
 
 // 게시글 수정
-const editPost = (form, callback, errorCallback) => {
-    axios.post(`${process.env.VUE_APP_IP}/articles/update/`, form, {
+const editPost = (data, callback, errorCallback) => {
+    let form = new FormData();
+
+    form.append("id", data.id);
+    form.append("article", data.article);
+    form.append("image", data.image);
+    form.append("hashtags", data.hashtags);
+    
+    axios.put(`${process.env.VUE_APP_IP}/articles/${data.id}/`, form, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             }
@@ -157,7 +164,7 @@ const editPost = (form, callback, errorCallback) => {
         })
         .catch((response) => {
             console.log('게시글 수정 오류' + response)
-            errorCallback(response)
+            errorCallback()
         })
 }
 

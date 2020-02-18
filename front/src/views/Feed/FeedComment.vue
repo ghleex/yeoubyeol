@@ -88,7 +88,7 @@ export default {
     },
 
     backward() {
-      var router = this.$router;
+      let router = this.$router;
       router.go(-1);
     },
     validate() {

@@ -37,11 +37,11 @@ export default {
   },
   methods: {
     backward() {
-      var router = this.$router;
+      let router = this.$router;
       router.push({ name: "인증메일 발송" });
     },
     toLogin() {
-      var router = this.$router;
+      let router = this.$router;
       router.push({ name: "로그인" });
     }
   }

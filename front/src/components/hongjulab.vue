@@ -22,13 +22,19 @@
 
     <v-navigation-drawer v-model="drawer" app clipped color="#110B22" dark>
       <v-list>
-        <v-list-item>
+        <v-list-item  v-if="hasNewNoti">
           <v-spacer></v-spacer>
-          <v-btn text color="#71d087" @click="changeView('알림')">알림</v-btn>
+          <v-badge offset-x="13" offset-y="13" color="pink" dot>
+            <v-btn text color="#71d087" @click="changeView('알림')">알림</v-btn>
+          </v-badge>
+        </v-list-item>
+        <v-list-item  v-else>
+          <v-spacer></v-spacer>
+            <v-btn text color="#71d087" @click="changeView('알림')">알림</v-btn>
         </v-list-item>
 
         <v-list-item>
-          <v-list-item-avatar size="62" color="grey darken-3">
+          <v-list-item-avatar size="62" color="#110b22">
             <v-img :src="currUserInfo.picname"></v-img>
           </v-list-item-avatar>
 
@@ -91,6 +97,7 @@ export default {
     loginedNickname: "",
     isSearchPage: false,
     isPostPage: false,
+    hasNewNoti:false,
     currUserInfo: {
       nickname: "로그인 에러",
       username: "잠시 후에 다시 시도해주세요",
@@ -152,24 +159,31 @@ export default {
         this.$router.push({ name: "Error" });
       }
 
-      UserApi.requestUserProfile(this.loginedNickname, res => {
-        //확인용 ..useless ...
-        let sentData = JSON.stringify(res.data);
-        console.log("프로필 정보 : " + JSON.stringify(res.data));
-        this.currUserInfo.followers = JSON.stringify(res.data.followers.length);
-        this.currUserInfo.followings = JSON.stringify(res.data.followings.length);
-        this.currUserInfo.intro = res.data.intro;
-        this.currUserInfo.nickname = res.data.nickname;
-        this.currUserInfo.username = res.data.username;
-        // console.log('pic name is ',res.data.pic_name);
-        /* this.currUserInfo.picname = require("@/assets/images/profile/" +
+      UserApi.requestUserProfile(
+        this.loginedNickname,
+        res => {
+          //확인용 ..useless ...
+          let sentData = JSON.stringify(res.data);
+          console.log("프로필 정보 : " + JSON.stringify(res.data));
+          this.currUserInfo.followers = JSON.stringify(
+            res.data.followers.length
+          );
+          this.currUserInfo.followings = JSON.stringify(
+            res.data.followings.length
+          );
+          this.currUserInfo.intro = res.data.intro;
+          this.currUserInfo.nickname = res.data.nickname;
+          this.currUserInfo.username = res.data.username;
+          // console.log('pic name is ',res.data.pic_name);
+          /* this.currUserInfo.picname = require("@/assets/images/profile/" +
           res.data.pic_name +
           ".png"); */
-        this.currUserInfo.picname = `${process.env.VUE_APP_IP}${res.data.pic_name}`;
-      },
+          this.currUserInfo.picname = `${process.env.VUE_APP_IP}${res.data.pic_name}`;
+        },
         err => {
           this.$router.push({ path: "/error" });
-        })
+        }
+      );
     },
     changeViewProfile(path, usersEmail) {
       if (this.pageTitle == usersEmail) {
@@ -208,10 +222,11 @@ export default {
           this.$cookies.remove("LoginUserInfo");
           this.$cookies.remove("username");
           alert("로그아웃되었습니다.");
-          this.isLogin = false;  
-        })
-      this.$emit('logoutEvent')
-
+          this.isLogin = false;
+        });
+      this.$emit("logoutEvent");
+      console.log("```hongjulan");
+      this.changeView("홈");
     }
   }
 };

@@ -66,7 +66,7 @@ export default {
   }),
   methods: {
     sendEmailPW() {
-      var router = this.$router;
+      let router = this.$router;
       //   console.log(this.email);
       JoinApi.sendEmailPW(
         this.email,
