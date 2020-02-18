@@ -179,16 +179,13 @@ export default {
       let currHour = date.getHours();
       // if(currHour >=23 && currHour<6){
       if (date.getMinutes() % 2 == 0) {
-        var form = new FormData();
         let tagLists = [];
         for (let i = 0; i < this.model.length; i++) {
           tagLists.push(this.model[i].text);
         }
-        form.append("id", this.postId);
-        form.append("article", this.inputPostContent);
-        form.append("image", this.selectedFile);
-        form.append("hashtags", tagLists);
-
+      let form = {'id':this.postId,'article':this.inputPostContent,
+      'image':this.selectedFile,
+      'hashtags':tagLists}
         FeedApi.editPost(
           form,
           res => {
@@ -306,7 +303,7 @@ export default {
         tagLists.push(this.model[i].text);
       }
 
-      var token = this.$cookies.get("auth_cookie");
+      let token = this.$cookies.get("auth_cookie");
       console.log(token);
       form.append("token", token);
       form.append("nickname", this.loginedNickname);

@@ -25,7 +25,6 @@
 <script>
 import FeedApi from "@/apis/FeedApi";
 import dotenv from "dotenv";
-
 dotenv.config();
 export default {
   props: {

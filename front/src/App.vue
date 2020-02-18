@@ -85,7 +85,7 @@ export default {
       let form = new FormData();
       form.append('username', username)
       form.append('token_1', auth_token)
-      axios.post(`http://${process.env.VUE_APP_IP}/accounts/check/`, form)
+      axios.post(`${process.env.VUE_APP_IP}/accounts/check/`, form)
         .then(response => {
           let refresh_token = response.data.token_2;
           sessionStorage.setItem('refresh_token', refresh_token)

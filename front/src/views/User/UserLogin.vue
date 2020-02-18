@@ -97,7 +97,7 @@ export default {
   created() {
     if (sessionStorage.getItem("refresh_token")) {
       alert("이미 로그인된 상태입니다.");
-      var router = this.$router;
+      let router = this.$router;
       router.push({ name: "홈" });
     }
 
@@ -131,7 +131,7 @@ export default {
             //통신을 통해 전달받은 값 콘솔에 출력
             // console.log("Success");
             // console.log(res);
-            var router = this.$router;
+            let router = this.$router;
             this.tokenFromLogin = res.data.token;
             if (res.status === 200) {
               alert("1단계");
@@ -154,7 +154,7 @@ export default {
                   this.$cookies.set('auth_cookie', this.tokenFromLogin, 0)
                   this.$cookies.set('username', data.email, 0)
                   
-                  var userInfo = new FormData();
+                  let userInfo = new FormData();
                   userInfo.append('username', data.email)
                   userInfo.append('token_1', this.tokenFromLogin)
                   console.log(data.email)

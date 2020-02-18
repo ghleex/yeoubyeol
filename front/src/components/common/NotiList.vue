@@ -1,74 +1,65 @@
-<template> <v-card dark color="#110b22">
-      <v-card-actions class='px-0'>
+<template>
+  <v-card dark color="#1e192b">
+    <v-card-actions class="px-0">
       <v-list-item class="grow px-2 py-0">
         <v-list-item-avatar color="grey darken-3">
-          <v-img
-            class="elevation-6"
-            src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
-          ></v-img>
+          <v-img class="elevation-6" :src="noti.pic_name"></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title style="color:#71d087">{{uid}}</v-list-item-title>
-        {{setContent}}
-
+          <v-list-item-title style="color:#71d087">{{noti.nickname}}</v-list-item-title>
+          {{noti.message}}
         </v-list-item-content>
 
-        <v-row
-          align="center"
-          justify="end"
-        >
-         
-          <span class="subheading grey--text px-2" >{{time}}</span>
+        <v-row align="center" justify="end">
+          <span class="subheading grey--text px-2">{{noti.created_at}}</span>
         </v-row>
       </v-list-item>
     </v-card-actions>
-              </v-card>
+  </v-card>
 </template>
 
 <script>
-    export default {
-        // props : ['text', 'image','isLiked','picname'],
-        props:{
-            uid:{
-                type:String,
-                default:' ',
-            },
-            picName:{
-                type:String,
-                default:'default',
-            },
-            code:{
-                type:String,
-                required:true
-            },
-            time:{
-                type:String,
-                required:true
-            },
+import dotenv from "dotenv";
 
-        },
-          data: function () {
-            return {
-
-            }
-        },
-    computed:{
-        setContent: function(){
-            if(this.code==='1'){
-                return "내 피드에 댓글"
-            }else if(this.code==='2'){
-                return "내 피드에 좋아요"
-            }
-            else if(this.code==='3'){
-                return "나에게 팔로잉 신청"
-            }else if(this.code==='4'){
-                return "나의 팔로잉 거절"
-            }else if(this.code==='5'){
-                return "나의 팔로잉 수락"
-            }
-            return this.code
-        }
+dotenv.config();
+export default {
+  // props : ['text', 'image','isLiked','picname'],
+  props: {
+    is_read: {
+      type: Boolean
+    },
+    created_at: {
+      type: String
+    },
+    message: {
+      type: String
+    },
+    nickname: {
+      type: String
+    },
+    pic_name: {
+      type: String,
     }
-    }
+  },
+  data: function() {
+    return {
+      noti: {
+        is_read: false,
+        created_at: "",
+        message: "",
+        nickname: "",
+        pic_name: require("@/assets/images/profile_default.png")
+      }
+    };
+  },
+  created() {
+    this.noti.is_read = this.is_read;
+    this.noti.created_at = this.created_at;
+    this.noti.message = this.message;
+    this.noti.nickname = this.nickname;
+    this.noti.pic_name = `${process.env.VUE_APP_IP}${this.pic_name}`;
+  },
+  
+};
 </script>
