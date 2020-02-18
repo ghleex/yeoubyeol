@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, Http404
 from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
 from django.contrib.auth.hashers import check_password
@@ -10,8 +10,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from articles.models import Article
-from .serializers import UserCreationSerializer, UserSerializer, WaitingSerializer, AccountCookieSerializer
-from .models import User, Waiting, AccountCookie
+from .serializers import UserCreationSerializer, UserSerializer, WaitingSerializer, AccountCookieSerializer, NotificationSerializer
+from .models import User, Waiting, AccountCookie, Notification
 from .forms import WaitingForm, CustomUserCreationForm
 from datetime import datetime, timedelta
 from string import punctuation, ascii_letters, digits
@@ -48,9 +48,9 @@ def google(request):
         # ID token is valid. Get the user's Google Account ID from the decoded token.
         userid = idinfo['sub']
         username = idinfo['email']
-        account = User.objects.get(username=username)
+        account = User.objects.filter(username=username)
         if account:
-            serializer = UserSerializer(account)
+            serializer = UserSerializer(account[0])
             return Response(serializer.data)
         nickname = idinfo['email']
         email = idinfo['email']
@@ -149,7 +149,7 @@ def email_auth(request):
                 user_email = user.username
                 # print(user_email)
                 mail_subject = '[SOT] 회원가입 인증 메일입니다.'
-                message = render_to_string('accounts/mail_template.html', {'user': user})
+                message = render_to_string('accounts/email_template.html', {'user': user})
                 email = EmailMessage(mail_subject, message, to=[user_email])
                 email.content_subtype = "html"
                 email.send()
@@ -312,3 +312,25 @@ def profile(request):
         'like_nums': like_nums
     }
     return Response(data)
+
+
+class NotificationList(APIView):
+    def get_object(self, nickname):
+        return nickname
+
+    def get(self, request, nickname, format=None):
+        person = self.get_object(nickname)
+        user_notis = Notification.objects.filter(nickname=person)
+        notis = []
+        pic = []
+        for noti in user_notis:
+            if noti:
+                send_user = User.objects.get(nickname=noti.send_user)
+
+                serializer = NotificationSerializer(noti)
+                notis.append(serializer.data)
+                pic.append(str(send_user.pic_name))
+                # serializer = NotificationSerializer()
+        
+        data = [notis, pic]
+        return Response(data)
