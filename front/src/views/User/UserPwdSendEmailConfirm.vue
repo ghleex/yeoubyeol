@@ -38,13 +38,13 @@ export default {
   },
   methods: {
     backward() {
-      var router = this.$router;
+      let router = this.$router;
       router.push({
         name: "비밀번호 변경"
       });
     },
     toLogin() {
-      var router = this.$router;
+      let router = this.$router;
       router.push({ name: "로그인" });
     }
   }

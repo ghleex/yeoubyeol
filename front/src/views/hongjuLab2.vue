@@ -42,13 +42,13 @@ export default {
     }
 
     this.getTime();
- /*    setInterval(() => {
+    setInterval(() => {
       this.getTime();
-    }, 1000); */
+    }, 1000);
   },
   methods: {
     updateTransition(time) {
-      var el = document.querySelector("#lastTime");
+      let el = document.querySelector("#lastTime");
       
       if (time === 11) {
         el.className = "last_time1";

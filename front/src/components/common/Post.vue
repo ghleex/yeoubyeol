@@ -170,7 +170,7 @@ export default {
     removePostBtn() {
       let date = new Date();
       console.log(date.getHours());
-      var ans = confirm("게시글을 삭제할까요 ?");
+      let ans = confirm("게시글을 삭제할까요 ?");
       if (ans == true) {
         if (date.getMinutes() % 2 == 0) {
           this.$emit("delPost", this.post.id);
@@ -207,7 +207,7 @@ export default {
     },
      iLoveIt() {
       let userInfo = this.$cookies.get('LoginUserInfo');
-      var form = new FormData();
+      let form = new FormData();
       let LoginId = userInfo.id;
       let LoginNickname = userInfo.nickname;
       form.append("article_id", this.post.id);
@@ -231,7 +231,7 @@ export default {
     },
 
     comment() {
-      var router = this.$router;
+      let router = this.$router;
       // router.push(`feed/${this.id}`);
       this.$router.push({ name: "댓글", params: { id: this.post.id } });
     }

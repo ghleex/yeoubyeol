@@ -7,7 +7,7 @@ export const authMixin = {
         checkToken: function(provider, redirect){
             axios.post("http://192.168.31.87:8000/api/check/", {"token": localStorage.getItem("vue-authenticate.vueauth_token")})
             .then((response) => {
-                    var path = (response.data.status)? true : "/";
+                    let path = (response.data.status)? true : "/";
                     redirect({ path: path});
                 }).catch((error) => {
             });

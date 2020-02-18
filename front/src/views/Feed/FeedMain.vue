@@ -105,32 +105,7 @@ export default {
   },
   created() {
     this.getUserInformation();
-    // this.getArticlesFromServer();
-    // let requireData = new FormData();
-    // requireData.append('nickname', this.loginedNickname)
-    // requireData.append('start', this.limit)
-    // axios.post('http://192.168.31.87:8000/articles/mainfeed/', requireData)
-    //   .then((response) => {
-    //     if (response.data.length) {
-    //       for (let i = 0; i < response.data.length; i++) {
-    //           let article_prop = {
-    //             nickname: response.data[i].nickname,
-    //             pic_name: require("@/assets/images/profile/" + response.data[i].pic_name + ".png"),
-    //             img:response.data[i].image,
-    //             id: response.data[i].id,
-    //             article: response.data[i].article,
-    //             hashtags: response.data[i].hashtags,
-    //             likes: response.data[i].like_users.length,
-    //             comments: response.data[i].comments,
-    //             created_at: response.data[i].created_at,
-    //             like_users:response.data[i].like_users,
-    //           };
-
-    //           this.articles.push(article_prop);
-    //         }
-    //       this.limit += 10
-    //     }
-    //   })
+    
   },
   data: () => {
     return {

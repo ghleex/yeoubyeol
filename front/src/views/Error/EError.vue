@@ -37,10 +37,10 @@ export default {
   },
   methods: {
     backward() {
-      var router = this.$router
+      let router = this.$router
       router.go(-1)
     },toHome(){
-       var router = this.$router
+       let router = this.$router
       router.push({name: '홈'})
     }
   }
