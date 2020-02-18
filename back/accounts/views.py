@@ -10,14 +10,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
 from articles.models import Article
-<<<<<<< HEAD
 from .serializers import UserCreationSerializer, UserSerializer, WaitingSerializer, AccountCookieSerializer, NotificationSerializer
 from .models import User, Waiting, AccountCookie, Notification
-from .forms import WaitingForm, CustomUserCreationForm
-=======
-from .serializers import UserCreationSerializer, UserSerializer, WaitingSerializer, AccountCookieSerializer
-from .models import User, Waiting, AccountCookie
->>>>>>> a06cd7002ed75af17568129b0e52d6a2408aa8fc
 from datetime import datetime, timedelta
 from string import punctuation, ascii_letters, digits
 import random

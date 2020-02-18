@@ -125,10 +125,6 @@ class ArticleDetail(APIView):
                 hash_serializer.save()
             article.hashtags.add(hashtag)
         # for hashtag in hashtags: 
-<<<<<<< HEAD
-
-=======
->>>>>>> a06cd7002ed75af17568129b0e52d6a2408aa8fc
         data = {
             'article': article.article,
             'author': article.author_id,
@@ -600,16 +596,6 @@ def keyword(request):
 
 @api_view(['GET', ])
 def hashtagtrend(request):
-<<<<<<< HEAD
-    """
-        해시태그가 많이 사용된 순으로 해시태그 단순 나열
-
-        ---
-    """
-    
-    hashtags = Hashtag.objects.all()
-=======
->>>>>>> a06cd7002ed75af17568129b0e52d6a2408aa8fc
     datas = []
     for hashtag in hashtags:
         datas.append([len(hashtag.hashtag_articles.all()), hashtag.hashtag])
@@ -624,13 +610,10 @@ def monthlytrend(request):
 
         ---
     """
-<<<<<<< HEAD
-
-=======
     hashtags = Hashtag.objects.all()
->>>>>>> a06cd7002ed75af17568129b0e52d6a2408aa8fc
     articles = Article.objects.order_by('-popular_post', '-id')
     datas = []
+
     for article in articles:
         if article.popular_post == datetime.now().month:
             comments = article.comment_set.all()
