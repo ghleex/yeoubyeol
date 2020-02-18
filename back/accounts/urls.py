@@ -8,17 +8,18 @@ from . import views
 
 app_name = 'accounts'
 urlpatterns = [
-    path('', views.AccountList.as_view(), name='accounts'),
-    path('email/', views.email_auth, name='email_auth'),
-    path('google/', views.google, name='google'),
-    path('signup/<secret_key>/', views.user_signup, name='signup'),
-    path('user_detail/<int:id>/', views.user_detail, name='user_detail'),
+    path('', views.AccountList.as_view()),
+    path('email/', views.email_auth),
+    path('google/', views.google),
+    path('signup/<secret_key>/', views.user_signup),
+    path('user_detail/<int:id>/', views.user_detail),
     path('checkpwd/', views.checkpwd),
-    path('findpwd/', views.findpwd, name='findpwd'),
-    path('changepwd/', views.changepwd, name='changepwd'),
-    path('profile/', views.profile, name='profile'),
+    path('findpwd/', views.findpwd),
+    path('changepwd/', views.changepwd),
+    path('profile/', views.profile),
     path('checknickname/', views.checknickname),
     path('check/', views.check),
     path('logout/', views.logout),
+    path('noti/<nickname>/', views.NotificationList.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
  

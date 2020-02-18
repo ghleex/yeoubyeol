@@ -1,7 +1,7 @@
 
 <template>
   <v-card dark color="#110b22">
-    <v-form ref="form" v-model="valid" lazy-validation>
+    <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="validate">
       <v-container fluid class="py-3">
         <v-row no-gutters justify="space-between" align="center">
           <v-col cols="12" class="pt-2">
@@ -49,7 +49,11 @@
               @click="validate"
               @keyup.enter="validate"
             >로그인</v-btn>
-            <v-spacer></v-spacer>
+          </v-col>
+          
+          <v-col cols="12" class="mt-5">
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            <a href="#" onclick="signOut();">Sign out</a>
           </v-col>
 
           <v-col cols="12" class="d-flex justify-space-around px-12">
@@ -83,6 +87,7 @@ import PV from "password-validator";
 import axios from 'axios'
 import * as EmailValidator from "email-validator";
 import UserApi from "../../apis/UserApi";
+
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -216,5 +221,3 @@ export default {
   })
 };
 </script>
-
-

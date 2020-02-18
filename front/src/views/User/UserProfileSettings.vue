@@ -5,7 +5,7 @@
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-list dark color="#110B22">
             <v-list-item>
-              <v-btn text dark small>취소</v-btn>
+              <v-btn text dark small @click="backToMain">취소</v-btn>
               <v-spacer></v-spacer>
               <v-btn text dark small :disabled="!valid" @click="validate" color="#71D087">저장</v-btn>
               <br />
@@ -66,7 +66,7 @@
               ></v-text-field>
             </v-list-item>
             <v-list-item>
-              <v-btn block outlined>비밀번호 변경</v-btn>
+              <v-btn block outlined @click="changePassword">비밀번호 변경</v-btn>
             </v-list-item>
           </v-list>
         </v-form>
@@ -121,6 +121,12 @@ export default {
     };
   },
   methods: {
+    changePassword() {
+      this.$router.push({ name: "비밀번호변경"});
+    },
+    backToMain() {
+      this.$router.push({ name: "메인피드" });
+    },
     delCurrpic() {
       this.url = "";
       this.selectedFile = "";
@@ -161,7 +167,10 @@ export default {
           this.$cookies.set("LoginUserInfo", userData, 0);
 
           // console.log(res);
-           this.$router.push({ name: '프로필', params: { email: this.input.nickname } });
+          this.$router.push({
+            name: "프로필",
+            params: { email: this.input.nickname }
+          });
         },
         error => {
           console.log(error);

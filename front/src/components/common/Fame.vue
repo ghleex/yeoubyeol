@@ -1,47 +1,54 @@
 <template>
-  <v-card dark color="#110B22" outlined style="border: 1px solid #71d087;" class="pt-0">
-    <v-card-subtitle class="ma-2 d-flex align-center">
-      <v-avatar class="mr-3" size="40">
-        <v-img :src="avatar_img"></v-img>
-      </v-avatar>
-      <span class="subtitle-1">
-        유저명 : {{ author }}
-      </span>
-    </v-card-subtitle>
-    <v-card-text class="d-flex justify-center ma-2">
-      {{ article }}
+  <v-card dark color="#110B22" outlined style="border: 1px solid #71d087;" class="ma-2">
+    <v-img :src="imgUrl"></v-img>
+
+    <v-card-text>
+      <div>{{article}}</div>
     </v-card-text>
-    <v-divider dark class="mx-4"></v-divider>
-    <v-card-actions class="ma-2">
-      <v-chip v-for="hashtag in hashtags" :key="hashtag" label color="#71d087" small class="mx-1">#{{ hashtag }}</v-chip>
-    </v-card-actions>
+
+    <v-divider class="mx-4"></v-divider>
+    <v-card-title class="pa-1 ml-1">
+      <v-chip
+        v-for="(hashtag,idx) in hashtags"
+        :key="idx"
+        @click="gotoKeywordDetailPage(hashtag)"
+      >{{hashtag}}</v-chip>
+    </v-card-title>
   </v-card>
 </template>
 
 <script>
+import dotenv from "dotenv";
+
+dotenv.config();
 export default {
-    name: 'fame',
-    props: {
-      article: {
-        type: String,
-      },
-      author: {
-        type: Number,
-      },
-      hashtags: {
-        type: Array,
-      },
+  name: "Fame",
+  props: {
+    id: {
+      type: Number
     },
-    data() {
-      return {
-        avatar_img: require("@/assets/images/profile/" + this.author + ".png")
-        //  this.currUserInfo.picname=`${process.env.VUE_APP_IP}${res.data.pic_name}`;
-      
-      }
+    article: {
+      type: String
+    },
+    hashtags: {
+      type: Array
+    },
+    image: {
+      type: String
     }
-}
+  },
+  data() {
+    return {
+      imgUrl: "@/assets/images/default.jpg"
+    };
+  },
+  created() {
+    this.imgUrl = `${process.env.VUE_APP_IP}${this.image}`;
+  },
+  methods: {
+    gotoKeywordDetailPage(target) {
+      this.$router.push({ name: "검색 결과", params: { keyword: target } });
+    }
+  }
+};
 </script>
-
-<style>
-
-</style>

@@ -144,6 +144,32 @@ const editUsersProfile = (data, callback, errorCallback) => {
 
         });
 }
+//유저 비밀번호 수정하기 전에 확인하기
+const confirmPassword = (data, callback, errorCallback) => {
+    axios
+        .post(`${process.env.VUE_APP_IP}/accounts/checkpwd/`, data, {
+        })
+        .then(response => {
+            callback(response)
+        })
+        .catch(error => {
+            errorCallback(error);
+
+        });
+}
+//유저 비밀번호 수정하기 
+const editUserPassword = (data, callback, errorCallback) => {
+    axios
+        .post(`${process.env.VUE_APP_IP}/accounts/changepwd/`, data, {
+        })
+        .then(response => {
+            callback(response)
+        })
+        .catch(error => {
+            errorCallback(error);
+
+        });
+}
 
 const UserApi = {
     requestSignup: (data, callback, errorCallback) => requestSignup(data, callback, errorCallback),
@@ -154,5 +180,7 @@ const UserApi = {
     requestLoginCheck: (data, callback, errorCallback) => requestLoginCheck(data, callback, errorCallback),
     checkNicknameAvaliable: (data, callback, errorCallback) => checkNicknameAvaliable(data, callback, errorCallback),
     editUsersProfile: (data, callback, errorCallback) => editUsersProfile(data, callback, errorCallback),
+    confirmPassword: (data, callback, errorCallback) => confirmPassword(data, callback, errorCallback),
+    editUserPassword: (data, callback, errorCallback) => editUserPassword(data, callback, errorCallback),
 }
 export default UserApi
