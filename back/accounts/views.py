@@ -12,7 +12,6 @@ from django.contrib.auth import get_user_model
 from articles.models import Article
 from .serializers import UserCreationSerializer, UserSerializer, WaitingSerializer, AccountCookieSerializer
 from .models import User, Waiting, AccountCookie
-from .forms import WaitingForm, CustomUserCreationForm
 from datetime import datetime, timedelta
 from string import punctuation, ascii_letters, digits
 import random
@@ -48,9 +47,9 @@ def google(request):
         # ID token is valid. Get the user's Google Account ID from the decoded token.
         userid = idinfo['sub']
         username = idinfo['email']
-        account = User.objects.get(username=username)
+        account = User.objects.filter(username=username)
         if account:
-            serializer = UserSerializer(account)
+            serializer = UserSerializer(account[0])
             return Response(serializer.data)
         nickname = idinfo['email']
         email = idinfo['email']

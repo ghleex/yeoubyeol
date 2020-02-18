@@ -11,7 +11,6 @@ urlpatterns = [
    #  path('articles/', views.article_list),
     path('', views.ArticleList.as_view()),
     path('<int:pk>/', views.ArticleDetail.as_view()),
-    path('update/', views.update),
     path('comment/', views.CommentList.as_view()),
     path('comment/<int:pk>', views.CommentDetail.as_view()),
     path('search/', views.SearchResultList.as_view()),
@@ -25,7 +24,7 @@ urlpatterns = [
     path('recommend/', views.rec_hashtag),
     path('hashtag/', views.hashtag),
     path('keyword/', views.keyword),
-    path('hashtagtrend/', views.trend),
+    path('hashtagtrend/', views.hashtagtrend),
     path('monthlytrend/', views.monthlytrend),
 ] 
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

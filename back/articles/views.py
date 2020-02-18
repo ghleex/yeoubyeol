@@ -12,6 +12,7 @@ from accounts.models import Notification, User
 from accounts.serializers import UserSerializer, NotificationSerializer
 from string import ascii_letters
 from collections import Counter
+from datetime import datetime
 # from directmessages.apps import Inbox
 from konlpy.tag import Hannanum
 import konlpy
@@ -62,7 +63,7 @@ class ArticleList(APIView):
                 article.hashtags.add(hashtag)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(data, status=status.HTTP_204_NO_CONTENT)
-
+    
 
 class ArticleDetail(APIView):
     # 아래는 삭제 금지
@@ -106,49 +107,39 @@ class ArticleDetail(APIView):
         }
         return Response(result)
 
+    def put(self, request, pk, format=None):
+        article = self.get_object(pk)
+        article.article = request.data.get('article')
+        article_hashtags = article.hashtags.all()
+        for article_hashtag in article_hashtags:
+            article.hashtags.remove(article_hashtag.id)
+        if request.data.get('image'):
+            article.image = request.data.get('image')
+        hashtags = request.data.get('hashtags')
+        hashtags = hashtags.split(',')
+        # like_users = article.like_users.all()
+        for word in hashtags:
+            hashtag, created = Hashtag.objects.get_or_create(hashtag=word)
+            hash_serializer = HashtagSerializer(data=hashtag)
+            if hash_serializer.is_valid():
+                hash_serializer.save()
+            article.hashtags.add(hashtag)
+        # for hashtag in hashtags: 
+        data = {
+            'article': article.article,
+            'author': article.author_id,
+            'image': article.image,
+        }
+        serializer = ArticleSerializer(article, data=data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response(article.id)
+
     # 글 삭제
     def delete(self, request, pk, format=None):
         article = self.get_object(pk)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-def update(request):
-    # 아래는 삭제 금지
-    """
-        글 수정할 때 사용할 API
-
-        ---
-    """
-    pk = request.data.get('id')
-    article = get_object_or_404(Article, id=pk)
-    article.article = request.data.get('article')
-    article_hashtags = article.hashtags.all()
-    for article_hashtag in article_hashtags:
-        article.hashtags.remove(article_hashtag.id)
-    if request.data.get('image'):
-        article.image = request.data.get('image')
-    hashtags = request.data.get('hashtags')
-    hashtags = hashtags.split(',')
-    # like_users = article.like_users.all()
-    for word in hashtags:
-        hashtag, created = Hashtag.objects.get_or_create(hashtag=word)
-        hash_serializer = HashtagSerializer(data=hashtag)
-        if hash_serializer.is_valid():
-            hash_serializer.save()
-        article.hashtags.add(hashtag)
-    # for hashtag in hashtags: 
-
-    data = {
-        'article': article.article,
-        'author': article.author_id,
-        'image': article.image,
-    }
-    serializer = ArticleSerializer(article, data=data)
-    if serializer.is_valid():
-        serializer.save()
-    return Response(article.id)
-    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST', ])
@@ -370,6 +361,10 @@ def like(request):
     user = get_object_or_404(User, nickname=nickname)
     # 좋아요 한 글
     article = get_object_or_404(Article, id=request.data.get('article_id'))
+    month = datetime.now().month
+    if article.month != month:
+        article.month = month
+        article.popular_post = 0
     like_users = article.like_users.all()
     article_like_users = []
     article_hashtags = []
@@ -391,7 +386,8 @@ def like(request):
         if article.like_users.filter(id=user.id).exists():
             # index = serializer.data.get('like_users').index(user.id)
             article.like_users.remove(user.id)
-            article.popular_post -= 1
+            if article.popular_post > 0:
+                article.popular_post -= 1
         else:
             article.like_users.add(user.id)
             article.popular_post += 1
@@ -598,33 +594,37 @@ def keyword(request):
 
 
 @api_view(['GET', ])
-def trend(request):
+def hashtagtrend(request):
+    datas = []
+    for hashtag in hashtags:
+        datas.append([len(hashtag.hashtag_articles.all()), hashtag.hashtag])
+        datas.sort(key=lambda x: x[0])
+    return Response(datas)
+        
+
+@api_view(['GET', ])
+def monthlytrend(request):
     """
         이전 한 달 간 인기글 가져올 때 사용할 API
 
         ---
     """
     hashtags = Hashtag.objects.all()
-    datas = []
-    for hashtag in hashtags:
-        datas.append([len(hashtag.hashtag_articles.all()), hashtag.hashtag])
-    return Response(datas)
-        
-
-@api_view(['GET', ])
-def monthlytrend(request):
     articles = Article.objects.order_by('-popular_post', '-id')
     datas = []
-    for article in articles[0:10]:
-        comments = article.comment_set.all()
-        article_serializer = ArticleSerializer(article)
-        account = get_object_or_404(User, id=article_serializer.data.get('author'))
-        data = article_serializer.data
-        data['pic_name'] = f'/uploads/{account.pic_name}'
-        for u in range(len(data['hashtags'])):
-            hashtag = get_object_or_404(Hashtag, id=data['hashtags'][u])
-            data['hashtags'][u] = hashtag.hashtag
-        data['nickname'] = account.nickname
-        data['comments'] = len(comments)
-        datas.append(data)
+    for article in articles:
+        if article.popular_post == datetime.now().month:
+            comments = article.comment_set.all()
+            article_serializer = ArticleSerializer(article)
+            account = get_object_or_404(User, id=article_serializer.data.get('author'))
+            data = article_serializer.data
+            data['pic_name'] = f'/uploads/{account.pic_name}'
+            for u in range(len(data['hashtags'])):
+                hashtag = get_object_or_404(Hashtag, id=data['hashtags'][u])
+                data['hashtags'][u] = hashtag.hashtag
+            data['nickname'] = account.nickname
+            data['comments'] = len(comments)
+            datas.append(data)
+        if len(datas) == 10:
+            break
     return Response(datas)

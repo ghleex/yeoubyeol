@@ -18,6 +18,7 @@ class Article(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_articles', blank=True)
     hashtags = models.ManyToManyField(Hashtag, related_name='hashtag_articles', blank=True)
+    month = models.IntegerField(blank=True)
     popular_post = models.IntegerField(default=0)
     image = ProcessedImageField(
         processors=[ResizeToFit(300, 300)],
