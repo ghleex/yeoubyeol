@@ -26,12 +26,12 @@ from .views import check_token
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Snippets API",
+      title='Yeoubyeol API',
       default_version='v1',
-      description="This is for a SNS which allows someone to write something at the middle of the night",
-      terms_of_service="https://www.google.com/policies/terms/",
-      contact=openapi.Contact(email="midnight@ssafy.com"),
-      license=openapi.License(name="SSAFY License"),
+      description='This is for a SNS which allows someone to write something at the middle of the night',
+      terms_of_service='https://www.google.com/policies/terms/',
+      contact=openapi.Contact(email='yeoubyeol.sns@gmail.com'),
+      license=openapi.License(name='SSAFY License'),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),

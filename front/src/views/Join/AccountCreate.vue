@@ -346,7 +346,7 @@ export default {
       }
     }
   },
- /*  watch: {
+   watch: {
     form: {
       deep: true,
       handler() {
@@ -360,6 +360,6 @@ export default {
         }
       }
     }
-  } */
+  } 
 };
 </script>
