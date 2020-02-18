@@ -200,9 +200,7 @@ export default {
       let user = this.$cookies.get("username");
       let userInfo = new FormData();
       userInfo.append("username", user);
-      console.log(userInfo);
-      axios
-        .post(`${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
+      axios.post(`${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
         .then(response => {
           console.log(response);
           sessionStorage.removeItem("refresh_token");

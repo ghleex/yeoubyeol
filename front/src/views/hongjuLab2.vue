@@ -42,9 +42,9 @@ export default {
     }
 
     this.getTime();
- /*    setInterval(() => {
+    setInterval(() => {
       this.getTime();
-    }, 1000); */
+    }, 1000);
   },
   methods: {
     updateTransition(time) {
