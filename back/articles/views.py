@@ -63,7 +63,7 @@ class ArticleList(APIView):
                 article.hashtags.add(hashtag)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(data, status=status.HTTP_204_NO_CONTENT)
-
+    
 
 class ArticleDetail(APIView):
     # 아래는 삭제 금지
@@ -125,7 +125,10 @@ class ArticleDetail(APIView):
                 hash_serializer.save()
             article.hashtags.add(hashtag)
         # for hashtag in hashtags: 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a06cd7002ed75af17568129b0e52d6a2408aa8fc
         data = {
             'article': article.article,
             'author': article.author_id,
@@ -597,6 +600,7 @@ def keyword(request):
 
 @api_view(['GET', ])
 def hashtagtrend(request):
+<<<<<<< HEAD
     """
         해시태그가 많이 사용된 순으로 해시태그 단순 나열
 
@@ -604,6 +608,8 @@ def hashtagtrend(request):
     """
     
     hashtags = Hashtag.objects.all()
+=======
+>>>>>>> a06cd7002ed75af17568129b0e52d6a2408aa8fc
     datas = []
     for hashtag in hashtags:
         datas.append([len(hashtag.hashtag_articles.all()), hashtag.hashtag])
@@ -618,19 +624,26 @@ def monthlytrend(request):
 
         ---
     """
+<<<<<<< HEAD
 
+=======
+    hashtags = Hashtag.objects.all()
+>>>>>>> a06cd7002ed75af17568129b0e52d6a2408aa8fc
     articles = Article.objects.order_by('-popular_post', '-id')
     datas = []
-    for article in articles[0:10]:
-        comments = article.comment_set.all()
-        article_serializer = ArticleSerializer(article)
-        account = get_object_or_404(User, id=article_serializer.data.get('author'))
-        data = article_serializer.data
-        data['pic_name'] = f'/uploads/{account.pic_name}'
-        for u in range(len(data['hashtags'])):
-            hashtag = get_object_or_404(Hashtag, id=data['hashtags'][u])
-            data['hashtags'][u] = hashtag.hashtag
-        data['nickname'] = account.nickname
-        data['comments'] = len(comments)
-        datas.append(data)
+    for article in articles:
+        if article.popular_post == datetime.now().month:
+            comments = article.comment_set.all()
+            article_serializer = ArticleSerializer(article)
+            account = get_object_or_404(User, id=article_serializer.data.get('author'))
+            data = article_serializer.data
+            data['pic_name'] = f'/uploads/{account.pic_name}'
+            for u in range(len(data['hashtags'])):
+                hashtag = get_object_or_404(Hashtag, id=data['hashtags'][u])
+                data['hashtags'][u] = hashtag.hashtag
+            data['nickname'] = account.nickname
+            data['comments'] = len(comments)
+            datas.append(data)
+        if len(datas) == 10:
+            break
     return Response(datas)
