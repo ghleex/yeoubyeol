@@ -454,7 +454,7 @@ def like(request):
                     notification = noti_serializer.save()
                     notification.save()
         article.save()
-    if len(article.like_users.all()) >= 5:
+    if len(article.like_users.all()) >= 10:
         article_hashtag = []
         for hashtag in article.hashtags.all():
             article_hashtag.append(hashtag.id)
@@ -479,7 +479,6 @@ def like(request):
         noti_serializer = NotificationSerializer(data=json_noti)
         if noti_serializer.is_valid():
             noti_serializer.save()
-        article.delete()
     return Response(serializer.data)
 
 
