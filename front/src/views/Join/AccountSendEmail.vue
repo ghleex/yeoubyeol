@@ -7,7 +7,7 @@
           <v-card dark color="#110b22">
             <h1>가입할 때 사용할</h1>
             <h1>이메일을 입력해주세요.</h1>
-            <h1>함께할 초대장을 보내드림다.</h1>
+            <h1>함께할 초대장을 보내드려요.</h1>
             <div class="py-2"></div>
             <v-text-field
               outlined

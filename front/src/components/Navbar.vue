@@ -201,12 +201,9 @@ export default {
       );
     },
     changeViewProfile(path, usersEmail) {
-      if (this.pageTitle == usersEmail) {
         this.drawer = !this.drawer;
-      } else {
         this.pageTitle = usersEmail;
         this.$router.push({ name: path, params: { email: usersEmail } });
-      }
     },
     changeViewProfileSetting(path, usersEmail) {
       if (this.pageTitle == "프로필 변경") {

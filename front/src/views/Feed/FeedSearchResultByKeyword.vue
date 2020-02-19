@@ -38,7 +38,7 @@ export default {
     delPost(postId){
       FeedApi.deletePost(postId,res=>{
         let target = this.$route.params.keyword;
-         alert("게시글 삭제 완료 ~!!! 나의 감성 안뇽");
+         alert("게시글 삭제가 완료되었어요.");
         this.$router.push({name: '검색 결과', params: { keyword: target }});
       },error=>{
         alert("피드 삭제에 오류가 발생했어요 ..");

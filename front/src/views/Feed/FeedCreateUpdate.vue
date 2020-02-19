@@ -151,7 +151,6 @@ export default {
     this.loginedNickname = userInfo.nickname;
     this.timeCalc = setInterval(() => {
           this.getTime();
-          console.log('yam')
         }, 1000);
   },
 
@@ -194,8 +193,7 @@ export default {
     editPostDone() {
       let date = new Date();
       let currHour = date.getHours();
-      // if(currHour >=23 && currHour<6){
-      if (date.getMinutes() % 2 == 0) {
+      if(currHour >=11 && currHour<17){
         let tagLists = [];
         for (let i = 0; i < this.model.length; i++) {
           tagLists.push(this.model[i].text);

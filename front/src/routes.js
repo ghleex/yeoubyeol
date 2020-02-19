@@ -36,8 +36,6 @@ import Deactivate from './views/Settings/Deactivate.vue'
 //검색
 import Search from './views/Search.vue'
 import FeedSearchResultByKeyword from './views/Feed/FeedSearchResultByKeyword.vue'
-import hongjuLab2 from './views/hongjuLab2.vue'
-import hongjuLab3 from './views/hongjuLab3.vue'
 
 
 const requireAuth = () => (to, from, next) => {
@@ -49,7 +47,6 @@ const requireAuth = () => (to, from, next) => {
     let cookie3 = value3? value3[2] : null;
 
     if(!!cookie1 && !!cookie2 && !!cookie3){
-        // if (this.$cookies.isKey('auth_cookie')) {
       return next();
     } else {
         next('/');
@@ -65,7 +62,6 @@ const LoginUsersCantAccess = () => (to, from, next) => {
     let cookie3 = value3? value3[2] : null;
 
     if(!cookie1 || !cookie2 || !cookie3){
-    // if (this.$cookies.isKey('auth_cookie')) {
       return next();
     }
     next('/error');
@@ -84,49 +80,49 @@ export default [
         path: '/join',
         name: '인증메일 발송',
         component: AccountSendEmail,
-        // beforeEnter: LoginUsersCantAccess()
+        beforeEnter: LoginUsersCantAccess()
     },
     {
         path: '/join/ok',
         component: AccountSendEmailConfirm,
-        // beforeEnter: LoginUsersCantAccess()
+        beforeEnter: LoginUsersCantAccess()
     },
     {
         path: '/join/form/:key',
         name: '회원가입',
         component: AccountCreate,
-        // beforeEnter: LoginUsersCantAccess()
+        beforeEnter: LoginUsersCantAccess()
     },
     //회원 관리
     {
         path: '/user/login',
         name: '로그인',
         component: UserLogin,
-        // beforeEnter: LoginUsersCantAccess()
+        beforeEnter: LoginUsersCantAccess()
     },
     {
         path: '/user/password',
         name: '비밀번호 변경',
         component: UserPwdSendEmail,
-        // beforeEnter: LoginUsersCantAccess()
+        beforeEnter: LoginUsersCantAccess()
     },
     {
         path: '/user/password/ok',
         component: UserPwdSendEmailConfirm,
-        // beforeEnter: LoginUsersCantAccess()
+        beforeEnter: LoginUsersCantAccess()
     },
     {
         path: '/user/:email',
         name: '프로필',
         component: UserProfile,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
         
     },
     {
         path: '/user/settings/:email',
         name: '프로필 변경',
         component: UserProfileSettings,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
     {
         path: '/user/deactivate',
@@ -138,26 +134,26 @@ export default [
         path: '/feed',
         name: '메인피드',
         component: FeedMain,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
     {
         path: '/feed/up',
         name: '새 피드 작성',
         component: FeedCreateUpdate,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
     {
         path: '/feed/update',
         name: '피드 수정',
         component: FeedCreateUpdate,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
 
     {
         path: '/feed/:id',
         name: '댓글',
         component: FeedComment,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
     //에러
     {
@@ -176,19 +172,19 @@ export default [
         path: '/noti',
         name: '알림',
         component: Noti,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
     {
         path: '/follow/:email',
         name: '팔로',
         component: Follow,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
     {
         path: '/password',
         name: '비밀번호변경',
         component: Password,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
 
     //검색
@@ -196,40 +192,30 @@ export default [
         path: '/search',
         name: '검색',
         component: Search,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
     {
         path: '/search/:keyword',
         name: '검색 결과',
         component: FeedSearchResultByKeyword,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
     
     {
         path: '*',
         redirect: '/404'
     },
-    //홍주의 실험실...
-    {
-        path: '/lab2',
-        name: '홍주랩실2',
-        component: hongjuLab2
-    },
-    {
-        path: '/lab3',
-        name: '홍주랩실3',
-        component: hongjuLab3
-    },
+   
     {
         path: '/fame',
         name: '명예의 전당',
         component: FeedOfFame,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     },
     {
         path: '/trend',
         name: '트렌드',
         component: FeedOfTrend,
-        // beforeEnter: requireAuth()
+        beforeEnter: requireAuth()
     }
 ]

@@ -36,7 +36,7 @@
                 style="background-color:#110b22"
               >
                 >
-                <p class="white--text subtitle-1">아직 노 팔로워..Oops! 자극적인 글을 써보는건 어떨까요???</p>
+                <p class="white--text subtitle-1"> 괜찮아요. 제가 친구가 되어드릴께요. </p>
               </v-row>
             </v-tab-item>
             <!-- 잉~~ 부분 -->
@@ -63,7 +63,7 @@
                 justify="center"
                 style="background-color:#110b22"
               >
-                <p class="white--text subtitle-1">아직 노 팔로잉..Oops! 친구를 팔로잉해봐용</p>
+                <p class="white--text subtitle-1">혼자에 익숙해지는 중입니다.</p>
               </v-row>
             </v-tab-item>
           </v-tabs>
@@ -144,7 +144,6 @@ export default {
     },
     getFollowingList() {
       this.followings = [];
-      // console.log("팔로잉 조회할 아이디는요 ", this.currUserName);
       UserApi.requestFollowings(
         this.currUserName,
         res => {

@@ -70,7 +70,7 @@ const requestFollowers = (data, callback, errorCallback) => {
     let nickname = {
         nickname: data,
     }
-    axios.post(`${process.env.VUE_APP_IP}/articles/followerlist/`, nickname)
+    axios.post(`${process.env.VUE_APP_IP}/articles/follower/`, nickname)
         .then(res => {
             callback(res)
         })
