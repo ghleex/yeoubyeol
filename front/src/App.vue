@@ -1,18 +1,8 @@
 <template>
   <v-app style="background-color:#110b22;">
     <v-content v-if="isLogin && userNickname">
-      <hongjulab v-on:logoutEvent="logoutEvent" />
+      <Navbar v-on:logoutEvent="logoutEvent" />
        <router-view :key="$route.fullPath"></router-view>
-<!--       <v-dialog max-width="600px">
-        <template v-slot:activator="{ on }">
-          <v-btn fixed dark fab bottom right color="#71d087" v-on="on">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </template>
-
-     
-        <feedCreateUpdate />
-      </v-dialog> -->
     </v-content>
 
     <v-content v-if="!isLogin">
@@ -26,7 +16,7 @@
 
       
 <script>
-import hongjulab from "./components/hongjulab";
+import Navbar from "./components/Navbar";
 import feedCreateUpdate from "@/views/Feed/FeedCreateUpdate.vue";
 import axios from 'axios';
 import dotenv from 'dotenv';
@@ -35,7 +25,7 @@ dotenv.config();
 export default {
   name: "App",
   components: {
-    hongjulab,
+    Navbar,
   },
   data: () => ({
     isLogin: false,
@@ -89,7 +79,6 @@ export default {
         .then(response => {
           let refresh_token = response.data.token_2;
           sessionStorage.setItem('refresh_token', refresh_token)
-          alert('세션에 저장했어용')
         })
     }
     // this.$vuetify.theme.themes.dark.background="#4caf50"

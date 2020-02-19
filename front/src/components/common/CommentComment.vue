@@ -3,10 +3,10 @@
     <!-- 일반 보여주기 -->
     <v-card class="mx-2 py-0" color="#110B22" dark v-if="!isEdit">
       <v-list-item>
-        <v-list-item-avatar color="grey darken-3" size="36">
+        <v-list-item-avatar color="grey darken-3" size="36" @click="viewUserPfPage(nickname)">
           <v-img :src="pic_name"></v-img>
         </v-list-item-avatar>
-        <v-list-item-content>
+        <v-list-item-content @click="viewUserPfPage(nickname)">
           <v-list-item-title class="subtitle-2">{{nickname}}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -72,6 +72,10 @@ export default {
     };
   },
   methods: {
+    viewUserPfPage(nickname){
+ this.$router.push({ name: "프로필", params: { email: nickname } });
+    
+    },
     setTimeValues() {
       let date = new Date();
       let maybe = new Date(this.created_at);
@@ -90,10 +94,8 @@ export default {
       if (this.content.trim() === "") {
         alert("내용을 입력해주세요 ");
       } else {
-        let form = new FormData();
-        form.append("comment_id", this.comment_id);
-        form.append("comment", this.secondaryContent);
-        this.$emit("editComment", form);
+        let data = {"comment_id": this.comment_id, "comment":this.secondaryContent};
+        this.$emit("editComment", data);
         this.isEdit = false;
       }
     },

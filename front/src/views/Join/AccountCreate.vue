@@ -147,7 +147,6 @@ export default {
       .spaces();
 
     let URL = document.location.href;
-    console.log(URL.split("/")[5].split("+"));
     this.form.email = URL.split("/")[5].split("+")[1];
     this.form.key = URL.split("/")[5].split("+")[0];
   },
@@ -238,7 +237,6 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         // this.snackbar = true;
-        console.log(this.isOkay,"====",this.isSubmit);
         if (this.isOkay) {
           this.isSubmit = true;
           this.join();
@@ -291,7 +289,6 @@ export default {
       }
     },
     join() {
-      console.log("가입시켜줘!!!!");
       if (
         !this.error.email &&
         !this.error.password &&
@@ -309,9 +306,6 @@ export default {
         UserApi.requestSignup(
           joinForm,
           response => {
-            console.log("-----------------------");
-            console.log("어서와!");
-            console.log(response);
             this.isSuccess = response.data.message;
             setTimeout(() => {
               this.isSuccess = false;
@@ -319,7 +313,6 @@ export default {
             }, 2000);
           },
           error => {
-            console.log("싫은데!");
             this.isFail = true;
             setTimeout(() => {
               this.isFail = false;
@@ -347,9 +340,8 @@ export default {
       handler() {
         // this.validate();
         let check = this.checkForm();
-        console.log(check);
         if (check) {
-          console.log("오류가 있소");
+          alert('한번 더 확인해주세요.')
         } else {
           this.isSubmit = true;
         }

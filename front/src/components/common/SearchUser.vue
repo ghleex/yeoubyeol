@@ -68,12 +68,10 @@ export default {
         sendData,
         res => {
           //성공시
-          console.log("성공쿠 : " + res);
           this.v_isFollowing=true;
         },
         error => {
           //실패 시
-          console.log("팔로우 실패 ㅜ" + error);
         }
       );
     }

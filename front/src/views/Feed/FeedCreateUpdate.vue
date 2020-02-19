@@ -62,6 +62,8 @@
                 style="color:#71d087;"
                 class="ma-1"
               >해시태그 추천받기</v-btn>
+                 <v-progress-linear :active="loading" :indeterminate="loading" absolute color="green"></v-progress-linear>
+
               <!-- 여기부터 시작야이             -->
             </v-col>
 
@@ -147,14 +149,19 @@ export default {
     }
     this.loadWeather();
     this.loginedNickname = userInfo.nickname;
-
-    setInterval(() => {
-      this.getTime();
-    }, 1000);
+    this.timeCalc = setInterval(() => {
+          this.getTime();
+        }, 1000);
   },
+
+  beforeRouteLeave(to,from,next){
+    clearInterval(this.timeCalc);
+    return next();
+  },
+
+
   computed: {
     bgByWeather: function() {
-      console.log(this.weather_id, "~~~~~~~~");
       let min = 1;
       let calc_name = "d1.gif";
       if (this.weather_id >= 200 && this.weather_id < 600) {
@@ -186,8 +193,7 @@ export default {
     editPostDone() {
       let date = new Date();
       let currHour = date.getHours();
-      // if(currHour >=23 && currHour<6){
-      if (date.getMinutes() % 2 == 0) {
+      if(currHour >=11 && currHour<17){
         let tagLists = [];
         for (let i = 0; i < this.model.length; i++) {
           tagLists.push(this.model[i].text);
@@ -198,7 +204,6 @@ export default {
         FeedApi.editPost(
           form,
           res => {
-            console.log("res after edit", res);
             alert("수정 완료 ! ");
             this.$router.push({ name: "댓글", params: { id: this.postId } });
           },
@@ -216,7 +221,6 @@ export default {
         res => {
           //성공시
           //article
-          console.log(res);
           this.url = `${process.env.VUE_APP_IP}${res.data.article.image}`;
           this.inputPostContent = res.data.article.article;
           this.model = [];
@@ -234,6 +238,7 @@ export default {
     requestHashTags() {
       let form = new FormData();
       form.append("article", this.inputPostContent);
+      this.loading=true;
       FeedApi.requestHashTags(
         form,
         res => {
@@ -245,9 +250,7 @@ export default {
           for (let i = 0; i < this.model.length; i++) {
             temp.push(this.model[i].text);
           }
-          console.log(temp, "~~!!");
           for (let i = 0; i < res.data.length; i++) {
-            console.log("넣을 키워드는 :", res.data[i]);
             if (!temp.includes(res.data[i])) {
               this.model.push({
                 text: res.data[i]
@@ -255,9 +258,10 @@ export default {
               this.items.push({ text: res.data[i] });
             }
           }
+          this.loading=false;
         },
         error => {
-          console.log("error");
+          this.loading=false;
         }
       );
     },
@@ -292,7 +296,6 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         // this.snackbar = true;
-        console.log("this post Id ", this.postId);
         if (this.postId < 0) {
           this.newPost();
         } else {
@@ -305,7 +308,6 @@ export default {
         alert("사진을 등록해 주세요!");
         return;
       }
-      console.log(this.hash_check);
       let form = new FormData();
       let tagLists = [];
       for (let i = 0; i < this.model.length; i++) {
@@ -313,7 +315,6 @@ export default {
       }
 
       let token = this.$cookies.get("auth_cookie");
-      console.log(token);
       form.append("token", token);
       form.append("nickname", this.loginedNickname);
       form.append("article", this.inputPostContent);
@@ -322,13 +323,10 @@ export default {
       FeedApi.newPost(
         form,
         res => {
-          console.log(res);
           alert("글이 성공적으로 게시되었습니다.");
-          console.log(res.data.id, "로 조회 외 않데 ?");
           this.$router.push({ name: "댓글", params: { id: res.data.id } });
         },
         error => {
-          console.log("error");
         }
       );
     },
@@ -341,7 +339,6 @@ export default {
         .then(json => {
           const name = json.name;
           const temperature = json.main.temp;
-          console.log(json);
           // this.data = json;
           this.weather_id = json.weather[0].id;
           this.weather_icon = json.weather[0].icon;
@@ -362,7 +359,7 @@ export default {
     },
 
     handleGeoFailure() {
-      console.log("no location");
+      alert('새로고침 해주세요!')
     },
 
     loadWeather() {
@@ -379,6 +376,7 @@ export default {
       }
     },
     getTime() {
+      console.log("안멈춰 ..")
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
@@ -433,6 +431,8 @@ export default {
   },
   data: () => {
     return {
+      timeCalc:"",
+      loading:false,
       postId: -1,
       weather_id: null,
       weather_icon: "",

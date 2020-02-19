@@ -12,7 +12,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text icon v-if="!isPostPage">
+      <v-btn text icon v-if="!isPostPage && enableTime">
         <v-icon @click="changeViewPost('새 피드 작성')">mdi-pencil-plus-outline</v-icon>
       </v-btn>
       <v-btn text icon v-if="!isSearchPage">
@@ -22,15 +22,15 @@
 
     <v-navigation-drawer v-model="drawer" app clipped color="#110B22" dark>
       <v-list>
-        <v-list-item  v-if="hasNewNoti">
+        <v-list-item v-if="hasNewNoti">
           <v-spacer></v-spacer>
           <v-badge offset-x="13" offset-y="13" color="pink" dot>
             <v-btn text color="#71d087" @click="changeView('알림')">알림</v-btn>
           </v-badge>
         </v-list-item>
-        <v-list-item  v-else>
+        <v-list-item v-else>
           <v-spacer></v-spacer>
-            <v-btn text color="#71d087" @click="changeView('알림')">알림</v-btn>
+          <v-btn text color="#71d087" @click="changeView('알림')">알림</v-btn>
         </v-list-item>
 
         <v-list-item>
@@ -90,6 +90,8 @@ import dotenv from "dotenv";
 dotenv.config();
 export default {
   data: () => ({
+    enableTime: true,
+
     profileUsername: "",
     drawer: null,
     item: 0,
@@ -97,7 +99,7 @@ export default {
     loginedNickname: "",
     isSearchPage: false,
     isPostPage: false,
-    hasNewNoti:false,
+    hasNewNoti: false,
     currUserInfo: {
       nickname: "로그인 에러",
       username: "잠시 후에 다시 시도해주세요",
@@ -109,7 +111,17 @@ export default {
     }
   }),
   updated() {
-    this.getLoginUserProfile();
+    if (this.drawer) {
+      this.getLoginUserProfile();
+      this.getNotiUnread();
+    }
+    //time check
+      const curr = new Date();
+    if (curr.getHours() >= 11 && curr.getHours() < 17) {
+      this.enableTime = true;
+    } else {
+      this.enableTime = false;
+    }
 
     if (this.$route.name === "프로필") {
       this.pageTitle = this.$route.params.email;
@@ -136,6 +148,13 @@ export default {
     }
   },
   created() {
+    //time check
+    const curr = new Date();
+    if (curr.getHours() >= 11 && curr.getHours() < 17) {
+      this.enableTime = true;
+    } else {
+      this.enableTime = false;
+    }
     //가라천국....heaven
     // this.$vuetify.theme.dark = true
     if (this.$route.name !== "프로필") {
@@ -149,14 +168,31 @@ export default {
     this.getLoginUserProfile();
   },
   methods: {
+    getNotiUnread() {
+      if (this.$cookies.isKey("LoginUserInfo")) {
+        let userInfo = this.$cookies.get("LoginUserInfo");
+        let loginID = userInfo.id;
+        UserApi.requestNonreadNotification(
+          loginID,
+          res => {
+            if (res.data.not_read) {
+              this.hasNewNoti = true;
+            } else {
+              this.hasNewNoti = false;
+            }
+          },
+          error => {
+            this.hasNewNoti = false;
+          }
+        );
+      }
+    },
     //path와 닉넴을받으면 프로필로 기기
     getLoginUserProfile() {
       //프로필 정보를 불러올거에여~~!
       if (this.$cookies.isKey("LoginUserInfo")) {
         let userInfo = this.$cookies.get("LoginUserInfo");
         this.loginedNickname = userInfo.nickname;
-      } else {
-        this.$router.push({ name: "Error" });
       }
 
       UserApi.requestUserProfile(
@@ -164,7 +200,6 @@ export default {
         res => {
           //확인용 ..useless ...
           let sentData = JSON.stringify(res.data);
-          console.log("프로필 정보 : " + JSON.stringify(res.data));
           this.currUserInfo.followers = JSON.stringify(
             res.data.followers.length
           );
@@ -174,10 +209,6 @@ export default {
           this.currUserInfo.intro = res.data.intro;
           this.currUserInfo.nickname = res.data.nickname;
           this.currUserInfo.username = res.data.username;
-          // console.log('pic name is ',res.data.pic_name);
-          /* this.currUserInfo.picname = require("@/assets/images/profile/" +
-          res.data.pic_name +
-          ".png"); */
           this.currUserInfo.picname = `${process.env.VUE_APP_IP}${res.data.pic_name}`;
         },
         err => {
@@ -186,12 +217,17 @@ export default {
       );
     },
     changeViewProfile(path, usersEmail) {
-      if (this.pageTitle == usersEmail) {
-        this.drawer = !this.drawer;
-      } else {
-        this.pageTitle = usersEmail;
-        this.$router.push({ name: path, params: { email: usersEmail } });
-      }
+      this.drawer = !this.drawer;
+      this.pageTitle = usersEmail;
+      // this.$router.push({ name: path, params: { email: usersEmail } });
+       this.$router.replace({
+        name:path,
+        params:{
+          email:usersEmail
+        }
+      }).catch(err =>{
+        this.drawer = false;
+      })
     },
     changeViewProfileSetting(path, usersEmail) {
       if (this.pageTitle == "프로필 변경") {
@@ -208,25 +244,31 @@ export default {
     //그냥 이동일 경우
     changeView(path) {
       this.pageTitle = path;
-      this.$router.push({ name: path });
+      // this.$router.push({ name: path });
+      this.$router.replace({
+        name:path,
+      }).catch(err =>{
+        this.drawer = false;
+      })
     },
     logout() {
       let user = this.$cookies.get("username");
+      console.log(user)
       let userInfo = new FormData();
       userInfo.append("username", user);
       axios.post(`${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
         .then(response => {
-          console.log(response);
           sessionStorage.removeItem("refresh_token");
           this.$cookies.remove("auth_cookie");
           this.$cookies.remove("LoginUserInfo");
           this.$cookies.remove("username");
-          alert("로그아웃되었습니다.");
+          this.$emit("logoutEvent");
           this.isLogin = false;
+        })
+        .then(result => {
+          alert("로그아웃되었습니다.");
+          this.changeView("홈");
         });
-      this.$emit("logoutEvent");
-      console.log("```hongjulan");
-      this.changeView("홈");
     }
   }
 };

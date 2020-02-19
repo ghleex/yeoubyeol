@@ -75,7 +75,6 @@ export default {
   methods: {
     wordClickHandler(name, value, vm) {
       this.$router.push({ name: "검색 결과", params: { keyword: name } });
-      // console.log("wordClickHandler", name, value, vm);
     },
     getTrendHashtags() {
       TrendFameApi.requestTrendHashtags(
@@ -101,7 +100,6 @@ export default {
       TrendFameApi.requestTrendArticle(
         0,
         response => {
-          console.log("~~~~", response);
           this.trends = [];
           for (let i = 0; i < response.data.length; i++) {
             let prop = {

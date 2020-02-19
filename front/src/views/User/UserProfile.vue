@@ -137,14 +137,12 @@ export default {
       this.$router.push({ name: path });
     },
     editPost(postId) {
-      console.log("수정할 아이디는 요 ",postId);
       this.$router.push({ name: "피드 수정", params: { postId: postId } });
     },
     delPost(postId) {
       FeedApi.deletePost(
         postId,
         res => {
-          console.log(res);
           //뒤로 가기
           alert("게시글 삭제 완료 ~!!! 나의 감성 안뇽");
           this.getMyArticlesFromServer();
@@ -163,18 +161,15 @@ export default {
           sendData,
           res => {
             //성공시
-            console.log("성공쿠 : " + res);
             this.isFollow = !this.isFollow;
           },
           error => {
             //실패 시
-            console.log("팔로우 실패 ㅜ" + error);
           }
         );
       }
     },
     viewFollows() {
-      console.log(this.userInfo.nickname);
       this.$router.push({ name: "팔로", params: this.nickname });
     },
     getLoginUserInformation() {
@@ -191,7 +186,6 @@ export default {
         res => {
           //확인용 ..useless ...
           let sentData = JSON.stringify(res.data);
-          console.log("프로필1111 : " + JSON.stringify(res.data));
           this.userInfo.followers = JSON.stringify(res.data.followers.length);
           this.userInfo.followings = JSON.stringify(res.data.followings.length);
           this.userInfo.id = res.data.id;
@@ -214,16 +208,12 @@ export default {
             let userInfo = this.$cookies.get('LoginUserInfo');
             const followerList = res.data.followers;
             const LoginId = userInfo.id;
-            // console.log("Login id -> ",LoginId," followerList is -> ",followerList)
             if (followerList.includes(LoginId)) {
-              console.log("팔로우한 사람이자너 ~!!");
               this.isFollow = true;
             } else {
-              console.log("팔로우 아님 ㅋ");
               this.isFollow = false;
             }
 
-            // console.log(followerList);
             this.isMyAccount = false;
             //내 계정이 아니고,
           }
@@ -261,17 +251,14 @@ export default {
       this.PostArticle = [];
       this.LikeArticle = [];
 
-      // console.log("--->"+this.loginedNickname);
       FeedApi.getPostLikedArticles(
         this.$route.params.email,
         res => {
-          // console.log(res.data);
           //게시피드
           this.getDataFromResponse(res.data.my_articles, this.PostArticle);
           this.getDataFromResponse(res.data.like_articles, this.LikeArticle);
         },
         error => {
-          console.log(error);
         }
       );
     }

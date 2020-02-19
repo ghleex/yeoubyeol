@@ -32,7 +32,6 @@ export default {
     };
   },
   created() {
-    // console.log(this.$store.state.form);
     this.email = this.$store.state.form.email;
   },
   methods: {

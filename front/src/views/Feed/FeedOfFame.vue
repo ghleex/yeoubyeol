@@ -1,6 +1,8 @@
 <template>
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
+       <v-progress-linear :active="!isLoading" :indeterminate="!isLoading" absolute color="green"></v-progress-linear>
+
       <!-- 글 원문  -->
       <v-col cols="12">
         <div style="text-align:center" class="mt-2">
@@ -8,7 +10,7 @@
           <br />
           <h5 class="white--text">
             명예의 전당은
-            <b>5 개 이상의 좋아요</b> 수를 받은 게시글로 선정됩니다.
+            <b>10 개 이상의 좋아요</b> 수를 받은 게시글로 선정됩니다.
           </h5>
         </div>
       </v-col>
@@ -56,7 +58,6 @@ export default {
   created() {
     TrendFameApi.requestFeedOfFame(
       response => {
-        console.log(response);
         this.feeds = [];
         for (let i = 0; i < response.data.length; i++) {
           let feed = {

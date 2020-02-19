@@ -1,6 +1,6 @@
 <template>
   <v-card dark color="#110b22">
-    <v-card-actions class="px-0">
+    <v-card-actions class="mx-0">
       <v-list-item class="grow px-2 py-0">
         <v-list-item-avatar color="grey darken-3">
           <v-img class="elevation-6" :src="getPic"></v-img>
@@ -68,12 +68,10 @@ export default {
         sendData,
         res => {
           //성공시
-          console.log("성공쿠 : " + res);
           this.$emit('updateFollowerList');
         },
         error => {
           //실패 시
-          console.log("팔로우 실패 ㅜ" + error);
         }
       );
     }
