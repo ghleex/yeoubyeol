@@ -30,12 +30,3 @@ SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '816014797066-epr1ld8dep07dat6na0mmcksdo6fv3s4.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'egAvmYS-6fyldocIs0R_ju6q'
-
-# setting for sending email
-# EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = 'yeoubyeol.sns@gmail.com'
-# EMAIL_HOST_PASSWORD = 'dudnquf@102',
-# EMAIL_PORT = '465'
-# EMAIL_USE_TLS = True
-# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

@@ -40,7 +40,7 @@ class PwdFind(models.Model):
 # 알림센터 모델링
 class Notification(models.Model):
     # username: 알림 받는 사람
-    nickname = models.CharField(max_length=50)
+    nickname = models.IntegerField()
     # is_read: 열람 여부
     is_read = models.BooleanField(default=0)
     # created_at: noti 생성 시각
@@ -48,7 +48,9 @@ class Notification(models.Model):
     # message: noti 내용
     message = models.CharField(max_length=100)
     # send_user: 알림 보내는 사람
-    send_user = models.CharField(max_length=50)
+    send_user = models.IntegerField()
+    # article_no: 해당 글 번호
+    article_no = models.IntegerField(null=True)
     
     class Meta:
         ordering = ('-pk',)
