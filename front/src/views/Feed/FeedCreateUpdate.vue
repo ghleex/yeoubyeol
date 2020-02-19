@@ -6,9 +6,7 @@
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-row class="py-0 ma-2">
             <v-col cols="4" class="px-0">
-              <v-btn dark text>
-                취소
-              </v-btn>
+              <v-btn dark text>취소</v-btn>
             </v-col>
             <v-col cols="4" dark class="timer px-0 white--text text-center d-flex justify-center">
               <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
@@ -62,7 +60,7 @@
                 style="color:#71d087;"
                 class="ma-1"
               >해시태그 추천받기</v-btn>
-                 <v-progress-linear :active="loading" :indeterminate="loading" absolute color="green"></v-progress-linear>
+              <v-progress-linear :active="loading" :indeterminate="loading" absolute color="green"></v-progress-linear>
 
               <!-- 여기부터 시작야이             -->
             </v-col>
@@ -139,26 +137,33 @@ const WEATHER_API = "https://api.openweathermap.org/data/2.5/weather?";
 
 export default {
   created() {
+    //time check
+    let date = new Date();
+    let currHour = date.getHours();
+    if (!(currHour >= 11 && currHour < 17)) {
+      alert("지금은 작성 가능한 시간이 아니에요 ..");
+      this.$router.push({ name: "메인피드" });
+    }
+
     let userInfo = this.$cookies.get("LoginUserInfo");
     if (this.$route.params.postId > 0) {
       this.postId = this.$route.params.postId;
     }
     if (this.postId > 0) {
-      //게시글 수정인 ㄱㅇ우
+      //게시글 수정인 경우
       this.getArticleByIdBindingData(this.postId);
     }
     this.loadWeather();
     this.loginedNickname = userInfo.nickname;
     this.timeCalc = setInterval(() => {
-          this.getTime();
-        }, 1000);
+      this.getTime();
+    }, 1000);
   },
 
-  beforeRouteLeave(to,from,next){
+  beforeRouteLeave(to, from, next) {
     clearInterval(this.timeCalc);
     return next();
   },
-
 
   computed: {
     bgByWeather: function() {
@@ -193,14 +198,17 @@ export default {
     editPostDone() {
       let date = new Date();
       let currHour = date.getHours();
-      if(currHour >=11 && currHour<17){
+      if (currHour >= 11 && currHour < 17) {
         let tagLists = [];
         for (let i = 0; i < this.model.length; i++) {
           tagLists.push(this.model[i].text);
         }
-      let form = {'id':this.postId,'article':this.inputPostContent,
-      'image':this.selectedFile,
-      'hashtags':tagLists}
+        let form = {
+          id: this.postId,
+          article: this.inputPostContent,
+          image: this.selectedFile,
+          hashtags: tagLists
+        };
         FeedApi.editPost(
           form,
           res => {
@@ -238,7 +246,7 @@ export default {
     requestHashTags() {
       let form = new FormData();
       form.append("article", this.inputPostContent);
-      this.loading=true;
+      this.loading = true;
       FeedApi.requestHashTags(
         form,
         res => {
@@ -258,10 +266,10 @@ export default {
               this.items.push({ text: res.data[i] });
             }
           }
-          this.loading=false;
+          this.loading = false;
         },
         error => {
-          this.loading=false;
+          this.loading = false;
         }
       );
     },
@@ -308,27 +316,32 @@ export default {
         alert("사진을 등록해 주세요!");
         return;
       }
-      let form = new FormData();
-      let tagLists = [];
-      for (let i = 0; i < this.model.length; i++) {
-        tagLists.push(this.model[i].text);
-      }
-
-      let token = this.$cookies.get("auth_cookie");
-      form.append("token", token);
-      form.append("nickname", this.loginedNickname);
-      form.append("article", this.inputPostContent);
-      form.append("image", this.selectedFile);
-      form.append("hashtags", tagLists);
-      FeedApi.newPost(
-        form,
-        res => {
-          alert("글이 성공적으로 게시되었습니다.");
-          this.$router.push({ name: "댓글", params: { id: res.data.id } });
-        },
-        error => {
+      let date = new Date();
+      let currHour = date.getHours();
+      if (currHour >= 11 && currHour < 17) {
+        let form = new FormData();
+        let tagLists = [];
+        for (let i = 0; i < this.model.length; i++) {
+          tagLists.push(this.model[i].text);
         }
-      );
+
+        let token = this.$cookies.get("auth_cookie");
+        form.append("token", token);
+        form.append("nickname", this.loginedNickname);
+        form.append("article", this.inputPostContent);
+        form.append("image", this.selectedFile);
+        form.append("hashtags", tagLists);
+        FeedApi.newPost(
+          form,
+          res => {
+            alert("글이 성공적으로 게시되었습니다.");
+            this.$router.push({ name: "댓글", params: { id: res.data.id } });
+          },
+          error => {}
+        );
+      } else {
+        alert("지금은 작성 가능한 시간이 아니에요.");
+      }
     },
     // weatherapi -----------------------
     getWeather(coords) {
@@ -359,7 +372,7 @@ export default {
     },
 
     handleGeoFailure() {
-      alert('새로고침 해주세요!')
+      alert("새로고침 해주세요!");
     },
 
     loadWeather() {
@@ -376,63 +389,62 @@ export default {
       }
     },
     getTime() {
-      console.log("안멈춰 ..")
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
       const seconds = now.getSeconds();
 
       const baseTime = new Date();
-      let newDate = baseTime.getDate() + 1
-      if (hours >= 16 ) {
-        baseTime.setDate(newDate)
+      let newDate = baseTime.getDate() + 1;
+      if (hours >= 16) {
+        baseTime.setDate(newDate);
       }
-      baseTime.setHours(16)
-      baseTime.setMinutes(0)
-      baseTime.setSeconds(0)
+      baseTime.setHours(16);
+      baseTime.setMinutes(0);
+      baseTime.setSeconds(0);
 
       const diffTime = (baseTime - now) / 1000;
       let lastHours = diffTime / 3600;
       if (0 <= lastHours && lastHours < 10) {
         lastHours = `0${Math.floor(lastHours)}`;
       } else if (lastHours < 0 || isNaN(lastHours)) {
-        lastHours = '00';
+        lastHours = "00";
       } else {
         lastHours = Math.floor(lastHours);
       }
-      
-      let lastMinutes = diffTime % 3600 / 60;
+
+      let lastMinutes = (diffTime % 3600) / 60;
       if (0 <= lastMinutes && lastMinutes < 10) {
         lastMinutes = `0${Math.floor(lastMinutes)}`;
       } else if (lastMinutes < 0 || isNaN(lastMinutes)) {
-        lastMinutes = '00';
+        lastMinutes = "00";
       } else {
         lastMinutes = Math.floor(lastMinutes);
       }
 
-      let lastSeconds = diffTime % 3600 % 60;
+      let lastSeconds = (diffTime % 3600) % 60;
       if (0 <= lastSeconds && lastSeconds < 10) {
         lastSeconds = `0${Math.floor(lastSeconds)}`;
       } else if (lastSeconds < 0 || isNaN(lastSeconds)) {
-        lastSeconds = '00';
+        lastSeconds = "00";
       } else {
         lastSeconds = Math.floor(lastSeconds);
       }
 
-      const Time = `${lastHours}:${lastMinutes}:${lastSeconds}`
-      this.lastTime = Time
+      const Time = `${lastHours}:${lastMinutes}:${lastSeconds}`;
+      this.lastTime = Time;
 
-      if (this.lastTime === '24:00:00') {
-        alert('이제 잠에서 깰 시간이에요.')
-        var router = this.$router
-        router.push({'name': '홈'})
+      if (this.lastTime === "24:00:00") {
+        alert("이제 잠에서 깰 시간이에요.");
+        var router = this.$router;
+        router.push({ name: "홈" });
       }
     }
   },
   data: () => {
     return {
-      timeCalc:"",
-      loading:false,
+      timeCalc: "",
+      loading: false,
       postId: -1,
       weather_id: null,
       weather_icon: "",
@@ -461,7 +473,7 @@ export default {
       hash_check: false,
       valid: false,
       contentRules: [v => !!v || "내용을 입력해주세요.."],
-      lastTime: '',
+      lastTime: ""
     };
   },
   watch: {
@@ -498,7 +510,7 @@ export default {
 }
 
 .timer {
-  font-family: 'ZCOOL QingKe HuangYou', cursive;
+  font-family: "ZCOOL QingKe HuangYou", cursive;
   font-size: 24px;
 }
 </style>
