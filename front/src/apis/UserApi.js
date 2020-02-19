@@ -58,10 +58,10 @@ const requestUserProfile = (data, callback, errorCallback) => {
     }
     axios.post(`${process.env.VUE_APP_IP}/accounts/profile/`, nickname)
         .then(res => {
-            // this.$store.dispatch('login', res.data.token)
             callback(res)
         })
         .catch(err => {
+            errorCallback(err)
         })
 }
 

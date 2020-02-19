@@ -236,11 +236,13 @@ export default {
           this.$cookies.remove("auth_cookie");
           this.$cookies.remove("LoginUserInfo");
           this.$cookies.remove("username");
-          alert("로그아웃되었습니다.");
+          this.$emit("logoutEvent");
           this.isLogin = false;
+        })
+        .then(result => {
+          alert("로그아웃되었습니다.");
+          this.changeView("홈");
         });
-      this.$emit("logoutEvent");
-      this.changeView("홈");
     }
   }
 };

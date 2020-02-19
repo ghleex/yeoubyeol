@@ -67,11 +67,9 @@ export default {
   methods: {
     sendEmailPW() {
       let router = this.$router;
-      //   console.log(this.email);
       JoinApi.sendEmailPW(
         this.email,
         res => {
-          console.log(res);
           //성공 시
           if (res.status === 200) {
             this.$store.emailPW = this.email;
@@ -87,7 +85,6 @@ export default {
         },
         error => {
           //에러
-          console.log(error);
           router.push({ path: "/error" });
         }
       );

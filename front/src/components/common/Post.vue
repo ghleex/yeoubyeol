@@ -231,7 +231,6 @@ export default {
 
     comment() {
       let router = this.$router;
-      // router.push(`feed/${this.id}`);
       this.$router.push({ name: "댓글", params: { id: this.post.id } });
     }
   }

@@ -83,7 +83,6 @@ export default {
       FeedApi.deletePost(
         postId,
         res => {
-          console.log(res);
           //뒤로 가기
           alert("게시글 삭제 완료 ~!!! 나의 감성 안뇽");
           this.$router.push({ name: "메인피드" });
@@ -147,7 +146,6 @@ export default {
       this.loginUserInfo.pic_name = `${process.env.VUE_APP_IP}${userInfo.pic_name}`;
     },
     AddComment() {
-      console.log(this.loginUserInfo.content);
       if (this.loginUserInfo.content.trim() === "") {
         alert("내용을 입력해주세요.");
       } else {
@@ -214,7 +212,6 @@ export default {
         error => {
           //실패 시
           this.isArticleLoaded = false;
-          console.log("로딩 실패 ㅜ" + error);
           alert("댓글과 게시물을 불러오는데 오류가 발생했어요 ..");
           this.$router.push({ path: "/feed" });
         }

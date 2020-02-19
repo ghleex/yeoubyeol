@@ -76,12 +76,10 @@ export default {
   methods: {
     sendEmail() {
       let router = this.$router;
-      console.log(this.email);
         this.loading=true;
       JoinApi.JoinsendEmail(
         this.email,
         res => {
-          console.log(res);
           //성공 시
           if (res.status === 200) {
             this.$store.email = this.email;
@@ -99,7 +97,6 @@ export default {
         },
         error => {
           //에러
-          console.log(error);
           this.loading=false;
           router.push({ path: "/error" });
         }

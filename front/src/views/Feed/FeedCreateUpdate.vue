@@ -163,7 +163,6 @@ export default {
 
   computed: {
     bgByWeather: function() {
-      console.log(this.weather_id, "~~~~~~~~");
       let min = 1;
       let calc_name = "d1.gif";
       if (this.weather_id >= 200 && this.weather_id < 600) {
@@ -207,7 +206,6 @@ export default {
         FeedApi.editPost(
           form,
           res => {
-            console.log("res after edit", res);
             alert("수정 완료 ! ");
             this.$router.push({ name: "댓글", params: { id: this.postId } });
           },
@@ -225,7 +223,6 @@ export default {
         res => {
           //성공시
           //article
-          console.log(res);
           this.url = `${process.env.VUE_APP_IP}${res.data.article.image}`;
           this.inputPostContent = res.data.article.article;
           this.model = [];
@@ -255,9 +252,7 @@ export default {
           for (let i = 0; i < this.model.length; i++) {
             temp.push(this.model[i].text);
           }
-          console.log(temp, "~~!!");
           for (let i = 0; i < res.data.length; i++) {
-            console.log("넣을 키워드는 :", res.data[i]);
             if (!temp.includes(res.data[i])) {
               this.model.push({
                 text: res.data[i]
@@ -268,7 +263,6 @@ export default {
           this.loading=false;
         },
         error => {
-          alert("해쉬태그 추천에 오류가 발생했어요")
           this.loading=false;
         }
       );
@@ -304,7 +298,6 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         // this.snackbar = true;
-        console.log("this post Id ", this.postId);
         if (this.postId < 0) {
           this.newPost();
         } else {
@@ -317,7 +310,6 @@ export default {
         alert("사진을 등록해 주세요!");
         return;
       }
-      console.log(this.hash_check);
       let form = new FormData();
       let tagLists = [];
       for (let i = 0; i < this.model.length; i++) {
@@ -325,7 +317,6 @@ export default {
       }
 
       let token = this.$cookies.get("auth_cookie");
-      console.log(token);
       form.append("token", token);
       form.append("nickname", this.loginedNickname);
       form.append("article", this.inputPostContent);
@@ -334,13 +325,10 @@ export default {
       FeedApi.newPost(
         form,
         res => {
-          console.log(res);
           alert("글이 성공적으로 게시되었습니다.");
-          console.log(res.data.id, "로 조회 외 않데 ?");
           this.$router.push({ name: "댓글", params: { id: res.data.id } });
         },
         error => {
-          console.log("error");
         }
       );
     },
@@ -353,7 +341,6 @@ export default {
         .then(json => {
           const name = json.name;
           const temperature = json.main.temp;
-          console.log(json);
           // this.data = json;
           this.weather_id = json.weather[0].id;
           this.weather_icon = json.weather[0].icon;
@@ -374,7 +361,7 @@ export default {
     },
 
     handleGeoFailure() {
-      console.log("no location");
+      alert('새로고침 해주세요!')
     },
 
     loadWeather() {

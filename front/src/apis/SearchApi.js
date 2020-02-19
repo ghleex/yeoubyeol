@@ -10,7 +10,6 @@ const SearchUser = (data, callback, errorCallback) => {
     let searchKeyword = new FormData()
     searchKeyword.append('keyword', data.keyword)
 
-
     axios.post(`${process.env.VUE_APP_IP}/articles/search/`, searchKeyword)
         .then(res => {
             callback(res)
@@ -22,7 +21,6 @@ const SearchUser = (data, callback, errorCallback) => {
 const SearchKeyword = (data, callback, errorCallback) => {
     let searchKeyword = new FormData()
     searchKeyword.append('keyword', data.keyword)
-
 
     axios.post(`${process.env.VUE_APP_IP}/articles/keyword/`, searchKeyword)
         .then(res => {

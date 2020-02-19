@@ -142,8 +142,6 @@ export default {
          let form = new FormData();
       form.append("password", this.form.password);
       form.append("nickname", this.loginedNickname);
-          console.log(this.form.password);
-          console.log(this.loginedNickname);
         UserApi.editUserPassword(
           form,
           res => {
