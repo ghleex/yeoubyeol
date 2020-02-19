@@ -124,8 +124,9 @@ class AccountList(APIView):
     def put(self, request, format=None):
         data = request.data
         username = data.get('username')
+        username = int(username)
         user = get_object_or_404(User, id=username)
-        username = user.username    
+        username = user.username
         nickname = data.get('nickname')
         intro = data.get('intro')
         followers = user.followers.all()
@@ -161,9 +162,16 @@ class AccountList(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class AccountDetail(APIView):
+    """
+        회원 탈퇴 시 사용
+
+        ---
+    """
     # 유저 삭제
     def delete(self, request, pk, format=None):
-        user = self.get_object(pk)
+        user = get_object_or_404(User, id=pk)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -200,7 +208,7 @@ def google(request):
         nickname = idinfo['email']
         email = idinfo['email']
         pic_name = random.randrange(1, 13, 1)
-        pic_name = f'/accounts/pic_names/{pic_name}.jpg'
+        pic_name = f'accounts/pic_names/{pic_name}.jpg'
         user = User.objects.create_user(username, email=email, nickname=nickname, pic_name=pic_name, social=True, password=None)
         user.set_unusable_password()
         user.save()
@@ -277,7 +285,7 @@ def user_signup(request, secret_key):
             pic_name = random.randrange(1, 13, 1)
             user = serializer.save()
             user.set_password(request.data.get('password'))
-            user.pic_name = f'/accounts/pic_names/{pic_name}.jpg'
+            user.pic_name = f'accounts/pic_names/{pic_name}.jpg'
             user.save()
             waiting.delete()
             return Response({'message': '회원가입이 성공적으로 완료되었습니다.'}, status=status.HTTP_200_OK)
@@ -293,9 +301,9 @@ def check_is_logged_in(request):
 
         ---
     """
-    account = AccountCookie.objects.filter(username=request.data.get('username'))
     username = request.data.get('username')
     token_1 = request.data.get('token_1')
+    account = AccountCookie.objects.filter(username=username)
     if not account:
         token_2 = secrets.token_urlsafe(50)
         data = {
@@ -326,7 +334,7 @@ def check_is_logged_in(request):
             re_token_1 = request.data.get('token_1')
             re_token_2 = request.data.get('token_2')
             if re_token_1 == account.token_1 and re_token_2 == account.token_2:
-                    return Response(status=status.HTTP_200_OK)
+                return Response(status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -339,6 +347,7 @@ def logout(request):
         ---
     """
     username = request.data.get('username')
+    print(username)
     account = get_object_or_404(AccountCookie, username=username)
     account.delete()
     return Response({'message': '삭제 성공이다!!'})
