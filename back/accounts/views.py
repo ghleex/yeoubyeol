@@ -27,47 +27,91 @@ User = get_user_model()
 
 # (Receive token by HTTPS POST)
 # ...
-@api_view(['POST', ])
-def google(request):
-    CLIENT_ID = '832271626552-bpmo24c8a7e1s2lfhs1jfl0ena583jt1.apps.googleusercontent.com'
-    token = request.POST.get('id_token')
-    try:
-        # Specify the CLIENT_ID of the app that accesses the backend:
-        
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
-        # Or, if multiple clients access the backend server:
-        # idinfo = id_token.verify_oauth2_token(token, requests.Request())
-        # if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
-        #     raise ValueError('Could not verify audience.')
-        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-            raise ValueError('Wrong issuer.')
-        # If auth request is from a G Suite domain:
-        # if idinfo['hd'] != GSUITE_DOMAIN_NAME:
-        #     raise ValueError('Wrong hosted domain.')
-        # ID token is valid. Get the user's Google Account ID from the decoded token.
-        userid = idinfo['sub']
-        username = idinfo['email']
-        account = User.objects.filter(username=username)
-        if account:
-            serializer = UserSerializer(account[0])
-            return Response(serializer.data)
-        nickname = idinfo['email']
-        email = idinfo['email']
-        pic_name = random.randrange(1, 13, 1)
-        pic_name = f'/accounts/pic_names/{pic_name}.jpg'
-        user = User.objects.create_user(username, email=email, nickname=nickname, pic_name=pic_name, social=True, password=None)
-        user.set_unusable_password()
-        user.save()
-        serializer = UserSerializer(user)
-        # print(serializer.data)
-        return Response(serializer.data)
-    except ValueError:
-        # Invalid token
-        return Response(status=status.HTTP_101_SWITCHING_PROTOCOLS)
+class NotificationList(APIView):
+    """
+        알림센터
+
+        ---
+    """
+    def get_object(self, pk):
+        person = User.objects.filter(id=pk)
+        user_notis = Notification.objects.filter(nickname=person[0].id)
+        return user_notis
+    
+    def get_noti(self, pk):
+        noti = Notification.objects.filter(id=pk)
+        return noti[0]
+
+    def get(self, request, pk, format=None):
+        user_notis = self.get_object(pk)
+        noti_ids, send_nicknames, notis, pic = [], [], [], []
+        cnt = 0
+        for noti in user_notis:
+            if noti:
+                cnt += 1
+                noti_ids.append(noti.id)
+                send_user = User.objects.filter(id=noti.send_user)
+                send_nicknames.append(send_user[0].nickname)
+                serializer = NotificationSerializer(noti)
+                notis.append(serializer.data)
+                pic.append('/uploads/' + str(send_user[0].pic_name))
+
+        data = {
+            'noti_ids': noti_ids,
+            'send_nicknames': send_nicknames,
+            'notifications': notis,
+            'pic_names': pic,
+        }
+        return Response(data)
+
+    def put(self, request, pk, format=None):
+        notis = self.get_noti(pk)
+        noti = {
+            'id': notis.id,
+            'nickname': notis.nickname,
+            'is_read': True,
+            'created_at': notis.created_at,
+            'message': notis.message,
+            'send_user': notis.send_user,
+            'article_no': notis.article_no,
+        }
+        serializer = NotificationSerializer(notis, data=noti)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class NotificationIsLeftList(APIView):
+    """
+        확인하지 않은 알림 유무 확인
+
+        ---
+    """
+    def get_object(self, pk):
+        obj = Notification.objects.filter(nickname=pk)
+        return obj
+
+    def get(self, request, pk, format=None):
+        notis = self.get_object(pk)
+        not_read = False
+        for noti in notis:
+            if noti.is_read == 0:
+                not_read = True
+
+        ret = {
+            'not_read': not_read,
+        }
+        return Response(ret, status=status.HTTP_200_OK)
 
 
 class AccountList(APIView):
-    # 유저 리스트 조회(영자님 전용)
+    """
+        로그인 시, 프로필 정보 수정 시 사용
+
+        ---
+    """
+
     def post(self, request, format=None):
         users = User.objects.filter(username=request.data.get('email'))
         serializer = UserSerializer(users, many=True)
@@ -78,9 +122,6 @@ class AccountList(APIView):
 
     # 유저 정보 수정
     def put(self, request, format=None):
-        # print('------------------')
-        # print(request.data)
-        # print('------------------')
         data = request.data
         username = data.get('username')
         user = get_object_or_404(User, id=username)
@@ -127,8 +168,55 @@ class AccountList(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@api_view(['POST', ])
+def google(request):
+    """
+        구글 소셜 로그인 시 사용
+
+        ---
+    """
+    CLIENT_ID = '832271626552-bpmo24c8a7e1s2lfhs1jfl0ena583jt1.apps.googleusercontent.com'
+    token = request.POST.get('id_token')
+    try:
+        # Specify the CLIENT_ID of the app that accesses the backend:
+        
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+        # Or, if multiple clients access the backend server:
+        # idinfo = id_token.verify_oauth2_token(token, requests.Request())
+        # if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
+        #     raise ValueError('Could not verify audience.')
+        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+            raise ValueError('Wrong issuer.')
+        # If auth request is from a G Suite domain:
+        # if idinfo['hd'] != GSUITE_DOMAIN_NAME:
+        #     raise ValueError('Wrong hosted domain.')
+        # ID token is valid. Get the user's Google Account ID from the decoded token.
+        userid = idinfo['sub']
+        username = idinfo['email']
+        account = User.objects.filter(username=username)
+        if account:
+            serializer = UserSerializer(account[0])
+            return Response(serializer.data)
+        nickname = idinfo['email']
+        email = idinfo['email']
+        pic_name = random.randrange(1, 13, 1)
+        pic_name = f'/accounts/pic_names/{pic_name}.jpg'
+        user = User.objects.create_user(username, email=email, nickname=nickname, pic_name=pic_name, social=True, password=None)
+        user.set_unusable_password()
+        user.save()
+        return Response(serializer.data)
+    except ValueError:
+        # Invalid token
+        return Response(status=status.HTTP_101_SWITCHING_PROTOCOLS)
+
+
 @api_view(['POST',])
 def email_auth(request):
+    """
+        이메일 인증
+
+        ---
+    """
     waitings = Waiting.objects.all()
     for waiting in waitings:
         if waiting.created_at < datetime.now() - timedelta(minutes=10):
@@ -146,7 +234,6 @@ def email_auth(request):
             if serializer.is_valid(raise_exception=True):
                 user = serializer.save()
                 user_email = user.username
-                # print(user_email)
                 mail_subject = '[SOT] 회원가입 인증 메일입니다.'
                 message = render_to_string('accounts/email_template.html', {'user': user})
                 email = EmailMessage(mail_subject, message, to=[user_email])
@@ -162,6 +249,11 @@ def email_auth(request):
 
 @api_view(['POST',])
 def checknickname(request):
+    """
+        닉네임 중복 체크
+
+        ---
+    """
     nickname = request.data.get('nickname')
     user = User.objects.filter(nickname=nickname)
     if user:
@@ -173,6 +265,11 @@ def checknickname(request):
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
 def user_signup(request, secret_key):
+    """
+        회원가입
+
+        ---
+    """
     waiting = get_object_or_404(Waiting, secret_key=secret_key)
     if waiting and waiting.created_at > datetime.now() - timedelta(minutes=10):
         serializer = UserCreationSerializer(data=request.data)
@@ -188,8 +285,14 @@ def user_signup(request, secret_key):
         waiting.delete()
         return Response({'message': '인증 메일을 다시 요청해주세요.'}, status=status.HTTP_202_ACCEPTED)
 
+
 @api_view(['POST', ])
-def check(request):
+def check_is_logged_in(request):
+    """
+        로그인 여부 확인
+
+        ---
+    """
     account = AccountCookie.objects.filter(username=request.data.get('username'))
     username = request.data.get('username')
     token_1 = request.data.get('token_1')
@@ -207,9 +310,7 @@ def check(request):
     else:
         account = account[0]
         if not request.data.get('token_2'):
-            # print(account.token_1)
             account.token_1 = request.data.get('token_1')
-            # print(account.token_1)
             data = {
                 'username': account.username,
                 'token_1': account.token_1,
@@ -232,29 +333,30 @@ def check(request):
 
 @api_view(['POST'])
 def logout(request):
+    """
+        로그아웃
+
+        ---
+    """
     username = request.data.get('username')
-    # print(username)
     account = get_object_or_404(AccountCookie, username=username)
     account.delete()
     return Response({'message': '삭제 성공이다!!'})
 
-@api_view(['GET'])
-def user_detail(request, id):
-    user = get_object_or_404(User, id=id)
-    serializer = UserSerializer(user)
-    # print(serializer.data.get('pic_name'))
-    return Response(serializer.data)
-
 
 @api_view(['POST',])
 def findpwd(request):
+    """
+        비밀번호 찾기
+
+        ---
+    """
     username = request.data.get('username')
 
     user = get_object_or_404(User, username=username)
 
     symbols = ascii_letters + digits + punctuation
     new_pwd = ''.join(secrets.SystemRandom().choice(symbols) for i in range(10))
-    # print(new_pwd)
     user.set_password(new_pwd)
     user.save()
     
@@ -267,12 +369,17 @@ def findpwd(request):
     
     return Response({'message': '메일을 전송했습니다.'})
 
+
 @api_view(['POST', ])
 def checkpwd(request):
+    """
+        비밀번호 변경 전 현재 비밀번호 확인
+
+        ---
+    """
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
     password = request.data.get('password')
-    # print(user.check_password(password))
     if user.check_password(password):
         return Response(status=status.HTTP_200_OK)
     else:
@@ -281,9 +388,13 @@ def checkpwd(request):
 
 @api_view(['POST', ])
 def changepwd(request):
+    """
+        비밀번호 변경
+
+        ---
+    """
     nickname = request.data.get('nickname')
     password = request.data.get('password')
-    # print(nickname, password)
     user = get_object_or_404(User, nickname=nickname)
     user.set_password(password)
     user.save()
@@ -293,6 +404,11 @@ def changepwd(request):
 # 타 유저 프로필 조회
 @api_view(['POST',])
 def profile(request):
+    """
+        다른 사용자 프로필 조회
+
+        ---
+    """
     nickname = request.data.get('nickname')
     user = get_object_or_404(User, nickname=nickname)
     serializer = UserSerializer(user)
@@ -311,25 +427,3 @@ def profile(request):
         'like_nums': like_nums
     }
     return Response(data)
-
-
-class NotificationList(APIView):
-    def get_object(self, nickname):
-        return nickname
-
-    def get(self, request, nickname, format=None):
-        person = self.get_object(nickname)
-        user_notis = Notification.objects.filter(nickname=person)
-        notis = []
-        pic = []
-        for noti in user_notis:
-            if noti:
-                send_user = User.objects.get(nickname=noti.send_user)
-
-                serializer = NotificationSerializer(noti)
-                notis.append(serializer.data)
-                pic.append(str(send_user.pic_name))
-                # serializer = NotificationSerializer()
-        
-        data = [notis, pic]
-        return Response(data)
