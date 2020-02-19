@@ -1,7 +1,7 @@
 
 <template>
   <v-card dark color="#110b22">
-    <v-form ref="form" v-model="valid" lazy-validation>
+   
       <v-container fluid class="py-3">
         <v-row no-gutters justify="space-between" align="center">
           <v-col cols="12">
@@ -23,12 +23,12 @@
                   id="nickname"
                   hint="영문과 숫자만 사용하여 입력해주세요."
                   outlined
-                  required
                   dense
                   @keyup="isValidNickname"
                 ></v-text-field>
                 {{isOkay ? "✔️" : "❌" }}
               </v-list-item>
+               <v-form ref="form" v-model="valid" lazy-validation  @submit.prevent="validate">
               <v-list-item style="justify-content:center">
                 <v-text-field
                   v-model="form.email"
@@ -97,6 +97,7 @@
               <v-list-item style="justify-content:center">
                 <v-btn
                   @click="validate"
+                  @keyup.enter="validate"
                   width="100%"
                   :disabled="!valid || !isSubmit"
                   color="#71d087"
@@ -106,13 +107,14 @@
                   <v-icon>mdi-account-check</v-icon>
                 </v-btn>
               </v-list-item>
+                 </v-form>
             </v-list>
           </v-col>
         </v-row>
         <v-alert v-model="isFail" type="warning" dismissible class="py-2 my-3">회원가입 실패</v-alert>
         <v-alert v-model="isSuccess" type="success" dismissible class="py-2 my-3">회원가입 성공</v-alert>
       </v-container>
-    </v-form>
+ 
   </v-card>
 </template>
 
@@ -220,14 +222,12 @@ export default {
   methods: {
     isValidNickname() {
       let temp = this.form.nickName.replace(/(\s*)/g, "");
-      console.log("~~~", temp);
       this.form.Nickname = temp;
       let nickname = new FormData();
       nickname.append("nickname", temp);
       UserApi.checkNicknameAvaliable(
         nickname,
         res => {
-          console.log(res);
           this.isOkay = true;
         },
         error => {
@@ -238,6 +238,7 @@ export default {
     validate() {
       if (this.$refs.form.validate()) {
         // this.snackbar = true;
+        console.log(this.isOkay,"====",this.isSubmit);
         if (this.isOkay) {
           this.isSubmit = true;
           this.join();
@@ -258,10 +259,7 @@ export default {
       window.open("", "_self").close();
     },
     checkForm() {
-      if (!this.form.nickName) {
-        this.error.nickName = "별명을 확인해주세요.";
-        return "별명을 확인해주세요.";
-      } else if (this.form.email && !EmailValidator.validate(this.form.email)) {
+     if (this.form.email && !EmailValidator.validate(this.form.email)) {
         this.error.nickName = false;
         this.error.email = "이메일을 확인해주세요.";
         return "이메일을 확인해주세요.";
@@ -285,7 +283,6 @@ export default {
         this.error.term = "약관에 동의해야합니다.";
         return "약관에 동의해야합니다.";
       } else {
-        this.error.nickName = false;
         this.error.email = false;
         this.error.password = false;
         this.error.passwordConfirm = false;
@@ -296,7 +293,6 @@ export default {
     join() {
       console.log("가입시켜줘!!!!");
       if (
-        !this.error.nickName &&
         !this.error.email &&
         !this.error.password &&
         !this.error.passwordConfirm &&
@@ -332,7 +328,6 @@ export default {
         );
         //----------------------------------------
         // 회원가입을 위해 back으로 추가정보 전송
-        // var router = this.$router
         // router.push({name: '이메일 인증'})
         //----------------------------------------
       } else if (this.error.nickName) {
@@ -346,12 +341,12 @@ export default {
       }
     }
   },
-   watch: {
+  watch: {
     form: {
       deep: true,
       handler() {
-        this.validate();
-        var check = this.checkForm();
+        // this.validate();
+        let check = this.checkForm();
         console.log(check);
         if (check) {
           console.log("오류가 있소");
@@ -360,6 +355,6 @@ export default {
         }
       }
     }
-  } 
+  }
 };
 </script>

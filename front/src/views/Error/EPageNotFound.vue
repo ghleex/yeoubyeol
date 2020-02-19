@@ -23,7 +23,7 @@ import '../../assets/css/errorpage.scss'
 export default {
   methods: {
     toHome() {
-      var router = this.$router
+      let router = this.$router
       router.push({name: '홈'})
     }
   }

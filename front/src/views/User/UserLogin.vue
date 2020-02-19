@@ -52,8 +52,16 @@
           </v-col>
           
           <v-col cols="12" class="mt-5">
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
-            <a href="#" onclick="signOut();">Sign out</a>
+            <GoogleLogin 
+              :params="params" 
+              :onSuccess="onSuccess" 
+              :onFailure="onFailure"
+              style="width: 100%; height: 50px; border-radius: 5px; background-color: white; color: #110b22; font-family: 'Roboto'; display: flex; justify-content: center; align-content: center;"
+            >
+              <v-icon color="#110b22">mdi-google</v-icon> <span><strong>oogle</strong>로 로그인</span>
+            </GoogleLogin>
+            <!-- <div class="g-signin2" data-onsuccess="onSignIn" style="display: flex; flex-direction: column;"></div>
+            <a href="#" onclick="signOut();">Sign out</a> -->
           </v-col>
 
           <v-col cols="12" class="d-flex justify-space-around px-12">
@@ -80,7 +88,7 @@
 </template>
 
 <script>
-
+import GoogleLogin from 'vue-google-login';
 import "../../assets/css/style.scss";
 import "../../assets/css/user.scss";
 import PV from "password-validator";
@@ -97,7 +105,7 @@ export default {
   created() {
     if (sessionStorage.getItem("refresh_token")) {
       alert("이미 로그인된 상태입니다.");
-      var router = this.$router;
+      let router = this.$router;
       router.push({ name: "홈" });
     }
 
@@ -107,6 +115,60 @@ export default {
     }
   },
   methods: {
+    onSuccess(googleUser) {
+      var profile = googleUser.getBasicProfile();
+      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+      console.log('Name: ' + profile.getName());
+      console.log('Image URL: ' + profile.getImageUrl());
+      console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+      var id_token = googleUser.getAuthResponse().id_token;
+      console.log('ID_TOKEN: ' + id_token)
+
+      var form = new FormData();
+      form.append('id_token', id_token)
+      axios.defaults.xsrfCookieName = 'csrftoken'
+      axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+      axios.post(`${process.env.VUE_APP_IP}/accounts/google/`, form)
+        .then(response => {
+          console.log(response)
+          const LoginUserInfo={
+            username: response.data.username,
+            nickname : response.data.nickname,
+            id : response.data.id,
+            pic_name:response.data.pic_name
+          }
+          let userData = JSON.stringify(LoginUserInfo)
+
+          this.$cookies.set('LoginUserInfo', userData, 0)
+          this.$cookies.set('auth_cookie', id_token, 0)
+          this.$cookies.set('username', response.username, 0)
+
+          var userInfo = new FormData();
+          userInfo.append('username', response.data.username)
+          userInfo.append('token_1', id_token)
+          
+          var router = this.$router
+          axios.post(`${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
+            .then(response => {
+              let refresh_token = response.data.token_2
+              sessionStorage.setItem('refresh_token', refresh_token)
+              alert('3단계')
+              router.push({ name: '메인피드'})
+              alert('4단계')
+            })
+            .catch(error => {
+              alert('로그인 실패')
+              router.push({ name: "홈" });
+            })
+        })
+        .catch(error => {
+        console.log(error)
+        })
+    },
+    onFailure(error) {
+      console.log(error)
+    },
     validate() {
       if (this.$refs.form.validate()) {
         // this.snackbar = true;
@@ -131,10 +193,10 @@ export default {
             //통신을 통해 전달받은 값 콘솔에 출력
             // console.log("Success");
             // console.log(res);
-            var router = this.$router;
+            let router = this.$router;
             this.tokenFromLogin = res.data.token;
             if (res.status === 200) {
-              alert("1단계");
+              // alert("1단계");
               
               //요청이 끝나면 버튼 활성화
               let data={'email':email};
@@ -154,7 +216,7 @@ export default {
                   this.$cookies.set('auth_cookie', this.tokenFromLogin, 0)
                   this.$cookies.set('username', data.email, 0)
                   
-                  var userInfo = new FormData();
+                  let userInfo = new FormData();
                   userInfo.append('username', data.email)
                   userInfo.append('token_1', this.tokenFromLogin)
                   console.log(data.email)
@@ -166,9 +228,9 @@ export default {
                       let refresh_token = response.data.token_2
                       console.log(refresh_token)
                       sessionStorage.setItem('refresh_token', refresh_token)
-                      alert('3단계')
+                      // alert('3단계')
                       router.push({ name: '메인피드'})
-                      alert('4단계')
+                      // alert('4단계')
                     })
                     .catch(error => {
                       console.log('++++++++++++++++++++++++++++++++++')
@@ -217,7 +279,18 @@ export default {
     ],
 
     alert: false,
-    isSubmit: false
-  })
+    isSubmit: false,
+
+    params: {
+      client_id: "832271626552-bpmo24c8a7e1s2lfhs1jfl0ena583jt1.apps.googleusercontent.com"
+    },
+    // only needed if you want to render the button with the google ui
+    renderParams: {
+      longtitle: true
+    }
+  }),
+  components: {
+    GoogleLogin
+  }
 };
 </script>

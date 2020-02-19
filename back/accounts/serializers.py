@@ -25,7 +25,7 @@ class WaitingSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = ('nickname', 'is_read', 'created_at', 'message', 'send_user')
+        fields = ('id', 'nickname', 'is_read', 'created_at', 'message', 'send_user', 'article_no')
         
 class AccountCookieSerializer(serializers.ModelSerializer):
     class Meta:
