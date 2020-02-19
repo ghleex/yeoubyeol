@@ -116,7 +116,7 @@ export default {
         event.preventDefault();
       }
     }, true);
-    
+
     if (sessionStorage.getItem("refresh_token")) {
       alert("이미 로그인된 상태입니다.");
       let router = this.$router;
