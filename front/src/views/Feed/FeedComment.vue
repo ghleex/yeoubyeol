@@ -117,7 +117,6 @@ export default {
     },
     async secondeditComment(data) {
       let articleID = await this.editCommentdone(data);
-      console.log("1 : ", articleID);
       this.getArticleById(articleID);
     },
     editComment(data) {

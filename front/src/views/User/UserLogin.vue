@@ -101,6 +101,22 @@ dotenv.config();
 let tokenFromLogin='';
 export default {
   created() {
+    window.addEventListener('keydown', function (event) {
+      if (event.defaultPrevented) {
+        return;
+      }
+    
+      let handled = false;
+    
+      if (event.keyCode == 13) {
+        handled = true;
+      }
+    
+      if (handled) {
+        event.preventDefault();
+      }
+    }, true);
+    
     if (sessionStorage.getItem("refresh_token")) {
       alert("이미 로그인된 상태입니다.");
       let router = this.$router;
