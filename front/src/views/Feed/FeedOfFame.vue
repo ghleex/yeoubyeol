@@ -56,7 +56,6 @@ export default {
   created() {
     TrendFameApi.requestFeedOfFame(
       response => {
-        console.log(response);
         this.feeds = [];
         for (let i = 0; i < response.data.length; i++) {
           let feed = {

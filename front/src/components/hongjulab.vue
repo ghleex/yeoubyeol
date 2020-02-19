@@ -166,7 +166,6 @@ export default {
         res => {
           //확인용 ..useless ...
           let sentData = JSON.stringify(res.data);
-          console.log("프로필 정보 : " + JSON.stringify(res.data));
           this.currUserInfo.followers = JSON.stringify(
             res.data.followers.length
           );
@@ -176,10 +175,6 @@ export default {
           this.currUserInfo.intro = res.data.intro;
           this.currUserInfo.nickname = res.data.nickname;
           this.currUserInfo.username = res.data.username;
-          // console.log('pic name is ',res.data.pic_name);
-          /* this.currUserInfo.picname = require("@/assets/images/profile/" +
-          res.data.pic_name +
-          ".png"); */
           this.currUserInfo.picname = `${process.env.VUE_APP_IP}${res.data.pic_name}`;
         },
         err => {
@@ -218,7 +213,6 @@ export default {
       userInfo.append("username", user);
       axios.post(`${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
         .then(response => {
-          console.log(response);
           sessionStorage.removeItem("refresh_token");
           this.$cookies.remove("auth_cookie");
           this.$cookies.remove("LoginUserInfo");

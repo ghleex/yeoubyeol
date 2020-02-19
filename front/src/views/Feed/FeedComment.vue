@@ -76,7 +76,6 @@ export default {
       FeedApi.deletePost(
         postId,
         res => {
-          console.log(res);
           //뒤로 가기
           alert("게시글 삭제 완료 ~!!! 나의 감성 안뇽");
           this.$router.push({ name: "메인피드" });
@@ -100,7 +99,6 @@ export default {
       CommentApi.DeleteComments(
         v,
         res => {
-          console.log("삭제 완료");
           this.getArticleById(this.$route.params.id);
         },
         error => {
@@ -112,24 +110,20 @@ export default {
       CommentApi.EditComments(
         form,
         res => {
-          console.log("수정스 완료");
           this.getArticleById(this.$route.params.id);
         },
         error => {
-          console.log("에로 ㅠㅠ");
           alert("댓글 수정에 오류가 생겻다리");
         }
       );
     },
     getUserInformation() {
       let userInfo = this.$cookies.get('LoginUserInfo');
-      console.log(userInfo);
       this.loginUserInfo.nickname = userInfo.nickname;
         this.loginUserInfo.pic_name =`${process.env.VUE_APP_IP}${userInfo.pic_name}`;
       
     },
     AddComment() {
-      console.log(this.loginUserInfo.content);
       if (this.loginUserInfo.content.trim() === "") {
         alert("내용을 입력해주세요 ~!!");
       } else {
@@ -144,7 +138,6 @@ export default {
       CommentApi.PostComments(
         form,
         res => {
-          console.log("댓글달기 성공쿠");
           alert("댓글 달기를 성공했어요 ");
           this.loginUserInfo.content = "";
           this.getArticleById(this.article.id);
@@ -163,10 +156,6 @@ export default {
         res => {
           //성공시
           //article
-          console.log(res);
-        /*     pic_name: require("@/assets/images/profile/" +
-              res.data.pic_name +
-              ".png"), */
           let articleFromServer = {
             nickname: res.data.nickname,
             img: res.data.article.image,
@@ -187,9 +176,6 @@ export default {
 
           this.comments = [];
 
-            /*      pic_name: require("@/assets/images/profile/" +
-                   res.data.comments[c][1] +
-                   ".png"), */
           for (let c = 0; c < res.data.comments.length; c++) {
             let comment = {
               nickname: res.data.comments[c][0],
@@ -199,14 +185,12 @@ export default {
               content: res.data.comments[c][3],
               created_at: res.data.comments[c][4]
             };
-            // console.log(comment);
             this.comments.push(comment);
           }
         },
         error => {
           //실패 시
           this.isArticleLoaded = false;
-          console.log("로딩 실패 ㅜ" + error);
           alert("댓글과 게시물을 불러오는데 오류가 발생했어요 ..");
           // this.$router.push({ path: "/error" });
         }

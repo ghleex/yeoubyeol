@@ -156,7 +156,6 @@ export default {
         data,
         res => {
           alert("정보 변경이 완료되었어요 !");
-          console.log(res);
           const LoginUserInfo = {
             username: data.email,
             nickname: res.data.nickname,
@@ -166,14 +165,12 @@ export default {
           let userData = JSON.stringify(LoginUserInfo);
           this.$cookies.set("LoginUserInfo", userData, 0);
 
-          // console.log(res);
           this.$router.push({
             name: "프로필",
             params: { email: this.input.nickname }
           });
         },
         error => {
-          console.log(error);
         }
       );
     },
@@ -201,7 +198,6 @@ export default {
         this.loginedNickname,
         res => {
           let sentData = JSON.stringify(res.data);
-          console.log("프로필1111 : " + JSON.stringify(res.data));
           this.user.id = res.data.id;
           this.user.intro = res.data.intro;
           this.user.nickname = res.data.nickname;

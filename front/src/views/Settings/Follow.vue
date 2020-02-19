@@ -62,7 +62,6 @@ export default {
   },
   methods: {
     updateFollowerList() {
-      // console.log("EEMMIITT!!");
       this.checkFollowInfo();
       this.getFollowerList();
     },
@@ -78,7 +77,6 @@ export default {
           this.LU_followings = res.data.followings;
         },
         err => {
-          console.log("또잉");
           this.$router.push({ path: "/404" });
         }
       );
@@ -95,13 +93,10 @@ export default {
     },
     getFollowerList() {
       this.followers = [];
-      console.log("팔로워를 조회할 아이디는요 ", this.currUserName);
       UserApi.requestFollowers(
         this.currUserName,
         res => {
-          console.log("callback 에서 ", res);
           for (let i = 0; i < res.data.data.length; i++) {
-            // console.log(res.data.data[i]);
             let followerInfo = {
               shownNickname: res.data.data[i].nickname,
               intro: res.data.data[i].intro,
@@ -113,18 +108,15 @@ export default {
           }
         },
         error => {
-          console.log("에러콜백에서 ", error);
           // this.$router.push({ path: "/" });
         }
       );
     },
     getFollowingList() {
       this.followings=[];
-      // console.log("팔로잉 조회할 아이디는요 ", this.currUserName);
       UserApi.requestFollowings(
         this.currUserName,
         res => {
-          // console.log("callback 에서 ", res);
           for (let i = 0; i < res.data.data.length; i++) {
             let followingInfo = {
               shownNickname: res.data.data[i].nickname,
@@ -136,7 +128,6 @@ export default {
           }
         },
         error => {
-          console.log("에러콜백에서 ", error);
           // this.$router.push({ path: "/" });
         }
       );

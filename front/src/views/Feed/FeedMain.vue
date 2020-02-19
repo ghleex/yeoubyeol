@@ -24,7 +24,6 @@ export default {
     InfiniteLoading,
   },
   methods: {
-
     getUserInformation() {
       if (this.$cookies.isKey('LoginUserInfo')) {
         let userInfo = this.$cookies.get('LoginUserInfo');
@@ -33,37 +32,6 @@ export default {
         this.$router.push({ name: "Error" });
       }
     },
-    // getArticlesFromServer() {
-    //   this.articles=[];
-
-    //   FeedApi.getArticles(
-    //     this.loginedNickname,
-    //     res => {
-    //       for (let i = 0; i < res.data.length; i++) {
-    //         let article_prop = {
-    //           nickname: res.data[i].nickname,
-    //           pic_name: require("@/assets/images/profile/" +
-    //             res.data[i].pic_name +
-    //             ".png"),
-    //             img:res.data[i].image,
-    //           id: res.data[i].id,
-    //           article: res.data[i].article,
-    //           hashtags: res.data[i].hashtags,
-    //           likes: res.data[i].like_users.length,
-    //           comments: res.data[i].comments,
-    //           created_at: res.data[i].created_at,
-    //           like_users:res.data[i].like_users,
-    //         };
-
-    //         this.articles.push(article_prop);
-
-    //       }
-    //     },
-    //     error => {
-    //       console.log(error);
-    //     }
-    //   );
-    // },
     infiniteHandler($state) {
       let requireData = new FormData();
       requireData.append('nickname', this.loginedNickname)
@@ -99,7 +67,6 @@ export default {
             }
           }, 1000)
         }).catch(error => {
-          console.error(error);
         })
     }
   },

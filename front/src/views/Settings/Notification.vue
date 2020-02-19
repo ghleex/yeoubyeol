@@ -24,7 +24,6 @@ export default {
       let userInfo = this.$cookies.get("LoginUserInfo");
       let loginedNickname = userInfo.nickname;
       UserApi.loadNotifications(loginedNickname, res => {
-        console.log(res);
         this.notifications=[];
         for(let i=0; i<res.data.length; i++){
           let noti = {

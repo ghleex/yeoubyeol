@@ -160,7 +160,6 @@ export default {
     },
     editPostBtn() {
       let date = new Date();
-      console.log(date.getHours());
       if (date.getMinutes() % 2 == 0) {
         this.$emit("editPost", this.post.id);
       } else {
@@ -169,7 +168,6 @@ export default {
     },
     removePostBtn() {
       let date = new Date();
-      console.log(date.getHours());
       let ans = confirm("게시글을 삭제할까요 ?");
       if (ans == true) {
         if (date.getMinutes() % 2 == 0) {
@@ -212,8 +210,6 @@ export default {
       let LoginNickname = userInfo.nickname;
       form.append("article_id", this.post.id);
       form.append("nickname", LoginNickname);
-      console.log(this.post.id, "--1", LoginNickname);
-      // this.PostArticle[data[1]].article="SSSSSSs";
       FeedApi.userLikesPost(
         form,
         res => {
@@ -232,7 +228,6 @@ export default {
 
     comment() {
       let router = this.$router;
-      // router.push(`feed/${this.id}`);
       this.$router.push({ name: "댓글", params: { id: this.post.id } });
     }
   }

@@ -8,19 +8,15 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 
 const requestFollow = (data, callback, errorCallback) => {
-    console.log(data);
     let form = new FormData()
     form.append('my_nickname', data.loginedNickname)
     form.append('your_nickname', data.shownNickname)
     axios.post(`${process.env.VUE_APP_IP}/articles/follower/`, form)
         .then((response) => {
-            console.log(response)
             callback(response)
 
         })
         .catch((response) => {
-            console.log(response)
-            console.log('catch ' + response)
             errorCallback('error')
         })
 }
@@ -33,13 +29,10 @@ const newPost = (form, callback, errorCallback) => {
             }
         })
         .then((response) => {
-            console.log('글작성 :', response)
             callback(response)
 
         })
         .catch((response) => {
-            console.log(response)
-            console.log('글작성 오류' + response)
             errorCallback('error')
         })
 }
@@ -50,13 +43,10 @@ const requestHashTags = (form, callback, errorCallback) => {
 
     axios.post(`${process.env.VUE_APP_IP}/articles/recommend/`, form, {})
         .then((response) => {
-            console.log('해시태그 받기 성공 :', response)
             callback(response)
 
         })
         .catch((response) => {
-            console.log(response)
-            console.log('해시태그 받기 오류' + response)
             errorCallback('error')
         })
 }
@@ -67,13 +57,10 @@ const getArticles = (data, callback, errorCallback) => {
     form.append('nickname', data)
     axios.post(`${process.env.VUE_APP_IP}/articles/mainfeed/`, form, {})
         .then((response) => {
-            console.log('게시글 받기 성공 :', response)
             callback(response)
 
         })
         .catch((response) => {
-            console.log(response)
-            console.log('게시글 받기 오류' + response)
             errorCallback('error')
         })
 }
@@ -83,13 +70,10 @@ const getArticles = (data, callback, errorCallback) => {
 const getArticleById = (data, callback, errorCallback) => {
     axios.get(`${process.env.VUE_APP_IP}/articles/${data}/`, {})
         .then((response) => {
-            console.log('게시글 받기 성공 :', response)
             callback(response)
 
         })
         .catch((response) => {
-            console.log(response)
-            console.log('게시글 받기 오류' + response)
             errorCallback('error')
         })
 }
@@ -98,16 +82,12 @@ const getArticleById = (data, callback, errorCallback) => {
 const getPostLikedArticles = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('nickname', data)
-    console.log('~누구의 글이냐 ', data)
     axios.post(`${process.env.VUE_APP_IP}/articles/myarticle/`, form, {})
         .then((response) => {
-            console.log('내 게시글 받기 성공 :', response)
             callback(response)
 
         })
         .catch((response) => {
-            console.log(response)
-            console.log('내 게시글 받기 오류' + response)
             errorCallback('error')
         })
 }
@@ -117,13 +97,10 @@ const getPostLikedArticles = (data, callback, errorCallback) => {
 const userLikesPost = (form, callback, errorCallback) => {
     axios.post(`${process.env.VUE_APP_IP}/articles/like/`, form, {})
         .then((response) => {
-            console.log('게시글 좋아요 성공 :', response)
             callback(response)
 
         })
         .catch((response) => {
-            console.log(response)
-            console.log('게시글 좋아요 오류' + response)
             errorCallback('error')
         })
 }
@@ -132,13 +109,10 @@ const userLikesPost = (form, callback, errorCallback) => {
 const deletePost = (id, callback, errorCallback) => {
     axios.delete(`${process.env.VUE_APP_IP}/articles/${id}`, {})
         .then((response) => {
-            console.log('게시글 삭제 성공 :', response)
             callback(response)
 
         })
         .catch((response) => {
-            console.log(response)
-            console.log('게시글 삭제 오류' + response)
             errorCallback('error')
         })
 }
@@ -158,12 +132,10 @@ const editPost = (data, callback, errorCallback) => {
             }
         })
         .then((response) => {
-            console.log('게시글 수정 성공 :', response)
             callback(response)
 
         })
         .catch((response) => {
-            console.log('게시글 수정 오류' + response)
             errorCallback()
         })
 }
