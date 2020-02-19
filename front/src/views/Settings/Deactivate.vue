@@ -3,34 +3,28 @@
     <v-row class="pt-0" align="start" justify="center">
       <v-col cols="12" class="py-0">
         <v-list dark color="#110B22">
-          <v-list-item style="justify-content:center">
-            <v-btn text dark small @click="backToProfileSetting">취소</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn
-              text
-              dark
-              small
-              :disabled="!valid"
-              v-show="isConfirm"
-              @click="validate"
-              color="#71D087"
-            >저장</v-btn>
-            <br />
+          <v-list-item style="justify-content:start">
+            <v-btn text dark small color="#71d087" @click="backToProfileSetting">취소</v-btn>
           </v-list-item>
-          <v-list-item style="justify-content:center">
-            <v-divider></v-divider>
+          <v-list-item style="justify-content: center;">
+            <v-content class="text-center mb-5">
+                <span>
+                    <strong class="title red--text">정말</strong> 떠나실건가요?
+                </span><br>
+                <span>
+                    지금 떠나면 작성한 모든 것들은 <strong class="red--text">사라집니다.</strong>
+                </span>
+            </v-content>
           </v-list-item>
           <v-form
             ref="form"
             v-model="valid"
             lazy-validation
-            v-if="!isConfirm"
             @submit.prevent="validate"
           >
             <v-list-item style="justify-content:center">
-            
               <v-text-field
-                label="현재 비밀번호"
+                label="비밀번호"
                 v-model="currPwd"
                 dark
                 type="password"
@@ -38,39 +32,12 @@
                 outlined
                 dense
                 required
+                placeholder="현재 비밀번호를 입력해주세요."
                 :rules="[rules.requiredPassword, rules.minLengthmax, rules.validatePassword, rules.hasSpace]"
               ></v-text-field>
             </v-list-item>
             <v-list-item>
-              <v-btn block outlined @click="validate">확인</v-btn>
-            </v-list-item>
-          </v-form>
-          <v-form ref="form" v-model="valid" lazy-validation v-if="isConfirm">
-            <v-list-item>
-              <v-text-field
-                v-model="form.password"
-                :rules="[rules.requiredPassword, rules.minLengthmax, rules.validatePassword, rules.hasSpace]"
-                type="password"
-                name="password"
-                label="새 비밀번호"
-                hint="영문, 숫자, 특수문자를 포함하여 8자 이상 입력해야합니다."
-                counter
-                outlined
-                dense
-              ></v-text-field>
-            </v-list-item>
-            <v-list-item>
-              <v-text-field
-                v-model="form.passwordConfirm"
-                :rules="[rules.validateConfirm(form.password, form.passwordConfirm)]"
-                name="passwordConfirm"
-                type="password"
-                label="새 비밀번호 확인"
-                hint="비밀번호를 다시 한번 입력해주세요."
-                counter
-                outlined
-                dense
-              ></v-text-field>
+              <v-btn block outlined @click="validate" color="red">확인</v-btn>
             </v-list-item>
           </v-form>
         </v-list>
@@ -118,14 +85,27 @@ export default {
     };
   },
   methods: {
-    checkPassword() {
+    deactivate() {
       let form = new FormData();
       form.append("password", this.currPwd);
       form.append("nickname", this.loginedNickname);
       UserApi.confirmPassword(
         form,
         res => {
-          this.isConfirm = !this.isConfirm;
+            let userInfo = this.$cookies.get('LoginUserInfo')
+
+            axios.delete(`${process.env.VUE_APP_IP}/accounts/${userInfo.id}/`)
+                .then(response => {
+                    alert('탈퇴 처리되었습니다.')
+                    this.$cookies.remove('LoginUserInfo')
+                    this.$cookies.remove('username')
+                    this.$cookies.remove('auth_cookie')
+                    sessionStorage.removeItem('refresh_token')
+                })
+                .then(() => {
+                    let router = this.$router
+                    router.push({ name: '홈'})
+                })
         },
         error => {
           alert("입력한 비밀번호가 틀렸습니다.");
@@ -158,17 +138,13 @@ export default {
       }
     },
     validate() {
-      if (this.$refs.form.validate()) {
-        //저장하는 메소드 들어가야함
-        if (!this.isConfirm) {
-          this.checkPassword();
-        } else {
-          this.changePassword();
+        if (this.$refs.form.validate()) {
+            //저장하는 메소드 들어가야함
+            this.deactivate();
         }
-      }
     }
   }
-};
+}
 </script>
 
 <style>

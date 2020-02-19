@@ -5,7 +5,7 @@
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-list dark color="#110B22">
             <v-list-item>
-              <v-btn text dark small @click="backToMain">취소</v-btn>
+              <v-btn text dark small @click="backToProfile">취소</v-btn>
               <v-spacer></v-spacer>
               <v-btn text dark small :disabled="!valid" @click="validate" color="#71D087">저장</v-btn>
               <br />
@@ -68,6 +68,9 @@
             <v-list-item>
               <v-btn block outlined @click="changePassword">비밀번호 변경</v-btn>
             </v-list-item>
+            <v-list-item>
+              <v-btn block outlined color="red" @click="deactivateUser">회원 탈퇴</v-btn>
+            </v-list-item>
           </v-list>
         </v-form>
       </v-col>
@@ -121,11 +124,14 @@ export default {
     };
   },
   methods: {
+    deactivateUser() {
+      this.$router.push({ name: '회원 탈퇴'})
+    },
     changePassword() {
       this.$router.push({ name: "비밀번호변경"});
     },
-    backToMain() {
-      this.$router.push({ name: "메인피드" });
+    backToProfile() {
+      this.$router.push({ name: "프로필" });
     },
     delCurrpic() {
       this.url = "";
@@ -156,7 +162,6 @@ export default {
         data,
         res => {
           alert("정보 변경이 완료되었어요 !");
-          console.log(res);
           const LoginUserInfo = {
             username: data.email,
             nickname: res.data.nickname,
@@ -166,14 +171,12 @@ export default {
           let userData = JSON.stringify(LoginUserInfo);
           this.$cookies.set("LoginUserInfo", userData, 0);
 
-          // console.log(res);
           this.$router.push({
             name: "프로필",
             params: { email: this.input.nickname }
           });
         },
         error => {
-          console.log(error);
         }
       );
     },
@@ -201,7 +204,6 @@ export default {
         this.loginedNickname,
         res => {
           let sentData = JSON.stringify(res.data);
-          console.log("프로필1111 : " + JSON.stringify(res.data));
           this.user.id = res.data.id;
           this.user.intro = res.data.intro;
           this.user.nickname = res.data.nickname;

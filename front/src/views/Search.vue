@@ -148,7 +148,6 @@ export default {
           this.LU_followings = res.data.followings;
         },
         err => {
-          console.log("또잉");
           this.$router.push({ path: "/404" });
         }
       );
@@ -162,14 +161,12 @@ export default {
       SearchApi.SearchKeyword(
         data,
         res => {
-          console.log("key word ~~", res);
           this.SearchKeywordResult = [];
           for (let i = 0; i < res.data.length; i++) {
             this.SearchKeywordResult.push({ keyword: res.data[i] });
           }
         },
         error => {
-          console.log("errornn");
         }
       );
     },
@@ -199,7 +196,6 @@ export default {
             }
           },
           error => {
-            console.log("에러");
           }
         );
         let searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
@@ -211,7 +207,6 @@ export default {
       }
     },
     search() {
-      // console.log("검색쿠 :" + this.keyword);
       if (this.keyword.trim() !== "") {
         this.isSearched = true;
         this.SearchByKeyword();
@@ -237,7 +232,6 @@ export default {
     }
   },
   created() {
-    // this.searchedHistory = this.$store.getters.getsearchHistory;
     this.checkFollowInfo();
   }
 };

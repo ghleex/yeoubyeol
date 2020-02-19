@@ -10,28 +10,26 @@ axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 const PostComments = (data, callback, errorCallback) => {
     axios.post(`${process.env.VUE_APP_IP}/articles/comment/`, data)
         .then((response) => {
-            console.log(response)
             callback(response)
         
         })
         .catch((response) => {
-            console.log(response)
-            console.log('catch ' + response)
             errorCallback('error')
         })
 }
 
 // 댓글 수정하기
 const EditComments = (data, callback, errorCallback) => {
-    axios.put(`${process.env.VUE_APP_IP}/articles/comment/`, data)
+    let id = data.comment_id;
+    let form=new FormData();
+    form.append("comment",data.comment);
+
+    axios.put(`${process.env.VUE_APP_IP}/articles/comment/${id}/`, form)
         .then((response) => {
-            console.log(response)
             callback(response)
         
         })
         .catch((response) => {
-            console.log(response)
-            console.log('catch ' + response)
             errorCallback('error')
         })
 }
@@ -40,13 +38,10 @@ const EditComments = (data, callback, errorCallback) => {
 const DeleteComments = (data, callback, errorCallback) => {
     axios.delete(`${process.env.VUE_APP_IP}/articles/comment/${data}`)
         .then((response) => {
-            console.log(response)
             callback(response)
         
         })
         .catch((response) => {
-            console.log(response)
-            console.log('catch ' + response)
             errorCallback('error')
         })
 }

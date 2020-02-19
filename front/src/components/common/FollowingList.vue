@@ -1,6 +1,6 @@
 <template>
   <v-card dark color="#110b22">
-    <v-card-actions class="px-0">
+    <v-card-actions class="mx-0">
       <v-list-item class="grow px-2 py-0">
         <v-list-item-avatar color="grey darken-3">
           <v-img class="elevation-6" :src="getPic"></v-img>
@@ -12,7 +12,7 @@
         </v-list-item-content>
 
         <v-col align="center" justify="end" cols="4" v-if="isMyAccount">
-          <span class="subheading grey--text px-2">
+          <span class="subheading grey--text pr-1">
             <!-- <v-btn v-if="isFollowing" text style="color:#71d087" @click="unfollowBtn">UNFOLLOW</v-btn> -->
             <v-btn text style="color:#71d087"  @click="unfollowBtn">UNFOLLOW</v-btn>
           </span>
@@ -63,12 +63,10 @@ export default {
         sendData,
         res => {
           //성공시
-          console.log("성공쿠 : " + res);
           this.$emit('updateFollowingList');
         },
         error => {
           //실패 시
-          console.log("팔로우 실패 ㅜ" + error);
         }
       );
     }
