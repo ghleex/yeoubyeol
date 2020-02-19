@@ -93,7 +93,6 @@ export default {
         form,
         res => {
             let userInfo = this.$cookies.get('LoginUserInfo')
-            console.log(userInfo)
 
             axios.delete(`${process.env.VUE_APP_IP}/accounts/${userInfo.id}/`)
                 .then(response => {
