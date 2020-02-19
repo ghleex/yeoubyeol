@@ -9,6 +9,7 @@ from . import views
 app_name = 'accounts'
 urlpatterns = [
     path('', views.AccountList.as_view()),
+    path('<int:pk>/', views.AccountDetail.as_view()),
     path('email/', views.email_auth),
     path('google/', views.google),
     path('signup/<secret_key>/', views.user_signup),
