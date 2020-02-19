@@ -17,7 +17,6 @@ export const authMixin = {
             .then(function (response) {
                 window.location = "/dashboard";
             }).catch(error => {
-                console.log(error);
             });
         }
     }

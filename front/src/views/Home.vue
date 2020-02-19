@@ -54,10 +54,8 @@ export default {
       // userInfo.append('token_2', null)
       
       UserApi.requestLoginCheck(userInfo, response => {
-        console.log('로그인 상태 확인')
         this.isLogin = true
       }, error => {
-        console.log('로그인 상태 아니지요!!!')
       })
 
     }
@@ -80,10 +78,8 @@ export default {
       let user = this.$cookies.get('username')
       let userInfo = new FormData();
       userInfo.append('username', user)
-      console.log(userInfo)
       axios.post(`${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
         .then(response => {
-          console.log(response)
           sessionStorage.removeItem("refresh_token");
           this.$cookies.remove("auth_cookie");
           this.$cookies.remove("LoginUserInfo");

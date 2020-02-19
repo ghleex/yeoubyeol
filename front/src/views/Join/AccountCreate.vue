@@ -225,9 +225,11 @@ export default {
       this.form.Nickname = temp;
       let nickname = new FormData();
       nickname.append("nickname", temp);
+      console.log(temp);
       UserApi.checkNicknameAvaliable(
         nickname,
         res => {
+          console.log(res);
           this.isOkay = true;
         },
         error => {

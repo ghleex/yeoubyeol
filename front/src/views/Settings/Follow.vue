@@ -1,46 +1,76 @@
 <template>
-  <v-tabs centered fixed-tabs dark background-color="transparent" class="py-12">
-    <v-tabs-slider color="#71d087"></v-tabs-slider>
+  <v-responsive fluid>
+    <v-row class="pt-0" align="start" justify="center">
+      <!-- 글 원문  -->
+      <v-col cols="12">
+        <keep-alive>
+          <v-tabs centered fixed-tabs dark background-color="transparent" class="py-12">
+            <v-tabs-slider color="#71d087"></v-tabs-slider>
 
-    <v-tab href="#tab-1" @click="updateFollowerList">워</v-tab>
+            <v-tab href="#tab-1" @click="updateFollowerList">워</v-tab>
 
-    <v-tab href="#tab-2" @click="updateFollowingList">잉</v-tab>
+            <v-tab href="#tab-2" @click="updateFollowingList">잉</v-tab>
 
-    <!-- 워 ~~~ 부분 -->
-    <v-tab-item id="tab-1">
-      <v-container v-if="followers.length>0" centered class="my-0">
-        <v-layout row class="my-0 py-0">
-          <v-flex xs12 sm12 v-for="(items,i) in followers" :key="i">
-            <FollowerList
-              @updateFollowerList="updateFollowerList"
-              v-bind="items"
-              :isMyAccount="isMyAccount"
-            />
-          </v-flex>
-        </v-layout>
-      </v-container>
-      <v-container v-else>
-        <p class="white--text subtitle-1">아직 노 팔로워..Oops! 자극적인 글을 써보는건 어떨까요???</p>
-      </v-container>
-    </v-tab-item>
-    <!-- 잉~~ 부분 -->
-    <v-tab-item id="tab-2">
-      <v-container v-if="followings.length>0" centered class="my-0">
-        <v-layout row class="my-0 py-0">
-          <v-flex xs12 sm12 v-for="(items,i) in followings" :key="i">
-            <FollowingList
-              @updateFollowingList="updateFollowingList"
-              v-bind="items"
-              :isMyAccount="isMyAccount"
-            />
-          </v-flex>
-        </v-layout>
-      </v-container>
-      <v-container v-else>
-        <p class="white--text subtitle-1">아직 노 팔로잉..Oops! 친구를 팔로잉해봐용</p>
-      </v-container>
-    </v-tab-item>
-  </v-tabs>
+            <!-- 워 ~~~ 부분 -->
+            <v-tab-item id="tab-1">
+              <v-row
+                v-if="followers.length>0"
+                class="pt-0"
+                align="start"
+                justify="center"
+                style="background-color:#110b22"
+              >
+                <v-col cols="12" v-for="(items,i) in followers" :key="i">
+                  <FollowerList
+                    @updateFollowerList="updateFollowerList"
+                    v-bind="items"
+                    :isMyAccount="isMyAccount"
+                  />
+                </v-col>
+              </v-row>
+              <v-row
+                v-else
+                class="pt-0"
+                align="start"
+                justify="center"
+                style="background-color:#110b22"
+              >
+                >
+                <p class="white--text subtitle-1">아직 노 팔로워..Oops! 자극적인 글을 써보는건 어떨까요???</p>
+              </v-row>
+            </v-tab-item>
+            <!-- 잉~~ 부분 -->
+            <v-tab-item id="tab-2">
+              <v-row
+                v-if="followings.length>0"
+                class="pt-0"
+                align="start"
+                justify="center"
+                style="background-color:#110b22"
+              >
+                <v-col cols="12" v-for="(items,i) in followings" :key="i">
+                  <FollowingList
+                    @updateFollowingList="updateFollowingList"
+                    v-bind="items"
+                    :isMyAccount="isMyAccount"
+                  />
+                </v-col>
+              </v-row>
+              <v-row
+                v-else
+                class="pt-0"
+                align="start"
+                justify="center"
+                style="background-color:#110b22"
+              >
+                <p class="white--text subtitle-1">아직 노 팔로잉..Oops! 친구를 팔로잉해봐용</p>
+              </v-row>
+            </v-tab-item>
+          </v-tabs>
+        </keep-alive>
+      </v-col>
+    </v-row>
+  </v-responsive>
 </template>
 
 <script>
@@ -56,7 +86,7 @@ export default {
   },
   created() {
     this.currUserName = this.$route.params.email;
-    this.loginedNickname = this.$cookies.get('LoginUserInfo').nickname;
+    this.loginedNickname = this.$cookies.get("LoginUserInfo").nickname;
     this.checkFollowInfo(); //현재 로그인한사람의 팔로워 팔로잉정보 받아오고
     this.getAndSetData(); //조회하는 사람의 팔로워팔로잉정보 세팅
   },
@@ -119,7 +149,7 @@ export default {
       );
     },
     getFollowingList() {
-      this.followings=[];
+      this.followings = [];
       // console.log("팔로잉 조회할 아이디는요 ", this.currUserName);
       UserApi.requestFollowings(
         this.currUserName,

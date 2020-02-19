@@ -62,6 +62,8 @@
                 style="color:#71d087;"
                 class="ma-1"
               >해시태그 추천받기</v-btn>
+                 <v-progress-linear :active="loading" :indeterminate="loading" absolute color="green"></v-progress-linear>
+
               <!-- 여기부터 시작야이             -->
             </v-col>
 
@@ -147,11 +149,18 @@ export default {
     }
     this.loadWeather();
     this.loginedNickname = userInfo.nickname;
-
-    setInterval(() => {
-      this.getTime();
-    }, 1000);
+    this.timeCalc = setInterval(() => {
+          this.getTime();
+          console.log('yam')
+        }, 1000);
   },
+
+  beforeRouteLeave(to,from,next){
+    clearInterval(this.timeCalc);
+    return next();
+  },
+
+
   computed: {
     bgByWeather: function() {
       console.log(this.weather_id, "~~~~~~~~");
@@ -234,6 +243,7 @@ export default {
     requestHashTags() {
       let form = new FormData();
       form.append("article", this.inputPostContent);
+      this.loading=true;
       FeedApi.requestHashTags(
         form,
         res => {
@@ -255,9 +265,11 @@ export default {
               this.items.push({ text: res.data[i] });
             }
           }
+          this.loading=false;
         },
         error => {
-          console.log("error");
+          alert("해쉬태그 추천에 오류가 발생했어요")
+          this.loading=false;
         }
       );
     },
@@ -433,6 +445,8 @@ export default {
   },
   data: () => {
     return {
+      timeCalc:"",
+      loading:false,
       postId: -1,
       weather_id: null,
       weather_icon: "",

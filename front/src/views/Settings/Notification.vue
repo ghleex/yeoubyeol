@@ -1,8 +1,12 @@
 <template>
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
+      <v-progress-linear :active="loading" :indeterminate="loading" absolute color="green"></v-progress-linear>
+      <v-col cols="12" v-if="!loading" class="pt-0">
+        <v-btn text block class="red--text" @click="readAll">모두 읽음 처리</v-btn>
+      </v-col>
       <!-- 글 원문  -->
-      <v-col cols="12">
+      <v-col cols="12" v-if="!loading" class="pt-0">
         <v-flex xs12 sm12 v-for="(items,i) in notifications" :key="i">
           <NotiList v-bind="items" />
         </v-flex>
@@ -20,71 +24,77 @@ export default {
     NotiList
   },
   methods: {
+    async readAll() {
+      await this.postReadSign();
+      this.loadNotifications();
+    },
+    postReadSign() {
+      return new Promise((succ, fail) => {
+        this.loading = true;
+        console.log("promise ~~~~~~~~~~~");
+        for (let i = 0; i < this.notifications.length; i++) {
+          if (!this.notifications[i].is_read) {
+            let noti_id = this.notifications[i].id;
+            UserApi.readNotification(
+              noti_id,
+              res => {
+                succ(res);
+              },
+              error => {
+                fail(error);
+              }
+            );
+          }
+        }
+      });
+    },
+
     loadNotifications() {
       let userInfo = this.$cookies.get("LoginUserInfo");
-      let loginedNickname = userInfo.nickname;
-      UserApi.loadNotifications(loginedNickname, res => {
-        console.log(res);
-        this.notifications=[];
-        for(let i=0; i<res.data.length; i++){
-          let noti = {
-            is_read:res.data[0][i].is_read,
-            created_at:res.data[0][i].created_at,
-            message:res.data[0][i].message,
-            nickname:res.data[0][i].send_user,
-            pic_name:res.data[1][i],
+      let userId = userInfo.id;
+      console.log("load notification ~~");
+        this.notifications = [];
+      UserApi.loadNotifications(
+        userId,
+        res => {
+          for (let i = 0; i < res.data.noti_ids.length; i++) {
+            let noti = {
+              id: res.data.noti_ids[i],
+              nickname: res.data.send_nicknames[i],
+              is_read: res.data.notifications[i].is_read,
+              created_at: res.data.notifications[i].created_at,
+              message: res.data.notifications[i].message,
+              article_no: res.data.notifications[i].article_no,
+              pic_name: res.data.pic_names[i]
+            };
+            this.notifications.push(noti);
           }
-          this.notifications.push(noti);
+          this.loading = false;
+        },
+        error => {
+          console.log(error);
         }
-      },
-      error=>{
-
-      });
+      );
     }
   },
   created() {
+    this.loading = true;
     this.loadNotifications();
+
+    this.timeCalc = setInterval(() => {
+      this.loadNotifications();
+      console.log("yam22");
+    }, 5000);
+  },
+  beforeRouteLeave(to, from, next) {
+    clearInterval(this.timeCalc);
+    return next();
   },
   data: () => ({
     //code
-    // 1:댓글 2:좋아요 3: (나에게)팔로잉신청 4 (나의)팔로잉거절 5 팔로잉수락
-    notifications: [
-      {
-        uid: "sun_hangbok",
-        picName: "default",
-        code: "1",
-        time: "12:01",
-        isRead: false
-      },
-      {
-        uid: "roadhyun",
-        picName: "default",
-        code: "2",
-        time: "10:58",
-        isRead: false
-      },
-      {
-        uid: "kkyukkyuhong",
-        picName: "default",
-        code: "3",
-        time: "09:36",
-        isRead: false
-      },
-      {
-        uid: "hongjuzzang",
-        picName: "default",
-        code: "4",
-        time: "08:27",
-        isRead: false
-      },
-      {
-        uid: "zzidorii",
-        picName: "default",
-        code: "5",
-        time: "07:27",
-        isRead: false
-      }
-    ]
+    timeCalc: "",
+    loading: true,
+    notifications: []
   })
 };
 </script>

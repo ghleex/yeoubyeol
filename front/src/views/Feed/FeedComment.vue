@@ -1,11 +1,18 @@
 <template>
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
+      <v-progress-linear
+        :active="!isArticleLoaded"
+        :indeterminate="!isArticleLoaded"
+        absolute
+        color="green"
+      ></v-progress-linear>
+
       <!-- 글 원문  -->
       <v-col cols="12" v-if="isArticleLoaded">
         <!-- <div class="pa-2" @click="backward">
           <v-icon class="white--text">mdi-chevron-left</v-icon>
-        </div> -->
+        </div>-->
         <Post v-bind="article" v-on:delPost="delPost" v-on:editPost="editPost" />
       </v-col>
       <!-- 댓글 보여주기 -->
@@ -19,7 +26,7 @@
       <!-- 댓글 작성 -->
       <v-col cols="12">
         <v-card class="mx-2" fixed color="#110B22" dark outlined style="border: 1px solid #71d087;">
-          <v-form ref="form" v-model="valid" lazy-validation  @submit.prevent="validate">
+          <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="validate">
             <v-list-item>
               <v-list-item-avatar color="grey darken-3">
                 <v-img :src="loginUserInfo.pic_name"></v-img>
@@ -96,42 +103,53 @@ export default {
         this.PostComments();
       }
     },
-    removeComment(v) {
-      CommentApi.DeleteComments(
+    async removeComment(v) {
+       await this.removeCommentdone(v);
+      this.getArticleById(this.$route.params.id);
+     
+    },
+    removeCommentdone(v){
+      return new Promise((succ,fail)=>{
+         CommentApi.DeleteComments(
         v,
         res => {
-          console.log("삭제 완료");
-          this.getArticleById(this.$route.params.id);
+          succ(res);
         },
         error => {
-          alert("댓글 삭제에 오류가 생겻다리");
+          alert("댓글 삭제에 오류가 발생했습니다.");
         }
       );
+      })
     },
-    editComment(form) {
-      CommentApi.EditComments(
-        form,
-        res => {
-          console.log("수정스 완료");
-          this.getArticleById(this.$route.params.id);
-        },
-        error => {
-          console.log("에로 ㅠㅠ");
-          alert("댓글 수정에 오류가 생겻다리");
-        }
-      );
+    async editComment(data) {
+      let articleID = await this.editCommentdone(data);
+      console.log("1 : ", articleID);
+      this.getArticleById(articleID);
+    },
+    editCommentdone(data) {
+      return new Promise((succ, fail) => {
+        CommentApi.EditComments(
+          data,
+          res => {
+            succ(res.data.article);
+            
+          },
+          error => {
+            alert("댓글 수정에 오류가 발생했습니다.");
+          }
+        );
+      });
     },
     getUserInformation() {
-      let userInfo = this.$cookies.get('LoginUserInfo');
+      let userInfo = this.$cookies.get("LoginUserInfo");
       console.log(userInfo);
       this.loginUserInfo.nickname = userInfo.nickname;
-        this.loginUserInfo.pic_name =`${process.env.VUE_APP_IP}${userInfo.pic_name}`;
-      
+      this.loginUserInfo.pic_name = `${process.env.VUE_APP_IP}${userInfo.pic_name}`;
     },
     AddComment() {
       console.log(this.loginUserInfo.content);
       if (this.loginUserInfo.content.trim() === "") {
-        alert("내용을 입력해주세요 ~!!");
+        alert("내용을 입력해주세요.");
       } else {
         this.PostComments();
       }
@@ -144,7 +162,6 @@ export default {
       CommentApi.PostComments(
         form,
         res => {
-          console.log("댓글달기 성공쿠");
           alert("댓글 달기를 성공했어요 ");
           this.loginUserInfo.content = "";
           this.getArticleById(this.article.id);
@@ -157,21 +174,16 @@ export default {
       );
     },
     getArticleById(id) {
-      this.isArticleLoaded=false;
+      this.isArticleLoaded = false;
       FeedApi.getArticleById(
         id,
         res => {
           //성공시
-          //article
-          console.log(res);
-        /*     pic_name: require("@/assets/images/profile/" +
-              res.data.pic_name +
-              ".png"), */
           let articleFromServer = {
             nickname: res.data.nickname,
             img: res.data.article.image,
             pic_name: `${process.env.VUE_APP_IP}${res.data.pic_name}`,
-      
+
             id: res.data.article.id,
             article: res.data.article.article,
             author: res.data.article.author,
@@ -187,19 +199,15 @@ export default {
 
           this.comments = [];
 
-            /*      pic_name: require("@/assets/images/profile/" +
-                   res.data.comments[c][1] +
-                   ".png"), */
           for (let c = 0; c < res.data.comments.length; c++) {
             let comment = {
               nickname: res.data.comments[c][0],
-              pic_name : `${process.env.VUE_APP_IP}${res.data.comments[c][1]}`,
-      
+              pic_name: `${process.env.VUE_APP_IP}${res.data.comments[c][1]}`,
+
               comment_id: res.data.comments[c][2],
               content: res.data.comments[c][3],
               created_at: res.data.comments[c][4]
             };
-            // console.log(comment);
             this.comments.push(comment);
           }
         },
@@ -208,7 +216,7 @@ export default {
           this.isArticleLoaded = false;
           console.log("로딩 실패 ㅜ" + error);
           alert("댓글과 게시물을 불러오는데 오류가 발생했어요 ..");
-          // this.$router.push({ path: "/error" });
+          this.$router.push({ path: "/feed" });
         }
       );
     }

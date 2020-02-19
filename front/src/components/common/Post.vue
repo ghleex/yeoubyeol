@@ -62,7 +62,7 @@ export default {
       type: Number
     },
     id: {
-      type: Number,
+      type: Number
     },
     nickname: {
       type: String
@@ -95,6 +95,7 @@ export default {
   },
   data: function() {
     return {
+      validButton: "",
       isMyPost: false,
       imgUrl: "",
       post: {
@@ -130,27 +131,28 @@ export default {
       isLike: false,
       author: this.author
     };
-   let user = this.$cookies.get('LoginUserInfo');
+    let user = this.$cookies.get("LoginUserInfo");
     // let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
     let LoginId = user.id;
-    
+
     // if(LoginId=== this.post.author && (currHour>=23 && currHour< 6)){
-      this.setTimeValues();
-    setInterval(()=>{
-      
+    this.setTimeValues();
+    this.validButton = setInterval(() => {
       let date = new Date();
       let currHour = date.getHours();
-        if (LoginId === this.post.author && date.getMinutes() % 2 == 0) {
-          this.isMyPost = true;
-        } else {
-          this.isMyPost = false;
-        }
-
-    },1000);
+      if (LoginId === this.post.author && date.getMinutes() % 2 == 0) {
+        this.isMyPost = true;
+      } else {
+        this.isMyPost = false;
+      }
+    }, 1000);
     this.isLikeCheck();
     this.getImageUrl();
   },
-
+  beforeRouteLeave(to, from, next) {
+    clearInterval(this.validButton);
+    return next();
+  },
   methods: {
     gotoKeywordDetailPage(target) {
       this.$router.push({ name: "검색 결과", params: { keyword: target } });
@@ -160,7 +162,6 @@ export default {
     },
     editPostBtn() {
       let date = new Date();
-      console.log(date.getHours());
       if (date.getMinutes() % 2 == 0) {
         this.$emit("editPost", this.post.id);
       } else {
@@ -169,7 +170,6 @@ export default {
     },
     removePostBtn() {
       let date = new Date();
-      console.log(date.getHours());
       let ans = confirm("게시글을 삭제할까요 ?");
       if (ans == true) {
         if (date.getMinutes() % 2 == 0) {
@@ -182,8 +182,8 @@ export default {
     getImageUrl() {
       this.imgUrl = `${process.env.VUE_APP_IP}${this.post.img}`;
     },
-     isLikeCheck() {
-      let userInfo = this.$cookies.get('LoginUserInfo');
+    isLikeCheck() {
+      let userInfo = this.$cookies.get("LoginUserInfo");
       let LoginId = userInfo.id;
       if (this.post.like_users.includes(LoginId)) {
         this.post.isLike = true;
@@ -205,14 +205,13 @@ export default {
         this.post.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
       }
     },
-     iLoveIt() {
-      let userInfo = this.$cookies.get('LoginUserInfo');
+    iLoveIt() {
+      let userInfo = this.$cookies.get("LoginUserInfo");
       let form = new FormData();
       let LoginId = userInfo.id;
       let LoginNickname = userInfo.nickname;
       form.append("article_id", this.post.id);
       form.append("nickname", LoginNickname);
-      console.log(this.post.id, "--1", LoginNickname);
       // this.PostArticle[data[1]].article="SSSSSSs";
       FeedApi.userLikesPost(
         form,

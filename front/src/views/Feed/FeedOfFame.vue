@@ -1,6 +1,8 @@
 <template>
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
+       <v-progress-linear :active="!isLoading" :indeterminate="!isLoading" absolute color="green"></v-progress-linear>
+
       <!-- 글 원문  -->
       <v-col cols="12">
         <div style="text-align:center" class="mt-2">
