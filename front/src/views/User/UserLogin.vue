@@ -196,7 +196,7 @@ export default {
             let router = this.$router;
             this.tokenFromLogin = res.data.token;
             if (res.status === 200) {
-              alert("1단계");
+              // alert("1단계");
               
               //요청이 끝나면 버튼 활성화
               let data={'email':email};
@@ -228,9 +228,9 @@ export default {
                       let refresh_token = response.data.token_2
                       console.log(refresh_token)
                       sessionStorage.setItem('refresh_token', refresh_token)
-                      alert('3단계')
+                      // alert('3단계')
                       router.push({ name: '메인피드'})
-                      alert('4단계')
+                      // alert('4단계')
                     })
                     .catch(error => {
                       console.log('++++++++++++++++++++++++++++++++++')

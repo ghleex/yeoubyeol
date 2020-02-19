@@ -12,14 +12,14 @@ urlpatterns = [
     path('email/', views.email_auth),
     path('google/', views.google),
     path('signup/<secret_key>/', views.user_signup),
-    path('user_detail/<int:id>/', views.user_detail),
     path('checkpwd/', views.checkpwd),
     path('findpwd/', views.findpwd),
     path('changepwd/', views.changepwd),
     path('profile/', views.profile),
     path('checknickname/', views.checknickname),
-    path('check/', views.check),
+    path('check/', views.check_is_logged_in),
     path('logout/', views.logout),
-    path('noti/<nickname>/', views.NotificationList.as_view())
+    path('noti/<int:pk>/', views.NotificationList.as_view()),
+    path('noti_is_read/<int:pk>/', views.NotificationIsLeftList.as_view()),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
  
