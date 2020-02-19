@@ -88,9 +88,9 @@ export default {
           this.$cookies.remove("auth_cookie");
           this.$cookies.remove("LoginUserInfo");
           this.$cookies.remove("username");
+          this.$emit('logoutEvent')
           alert("로그아웃되었습니다.");
           this.isLogin = false;
-          this.$emit('logoutEvent')
         })
     },
     tologin() {

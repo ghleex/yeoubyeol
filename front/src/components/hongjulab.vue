@@ -109,7 +109,9 @@ export default {
     }
   }),
   updated() {
-    this.getLoginUserProfile();
+    if (this.drawer) {
+      this.getLoginUserProfile();
+    }
 
     if (this.$route.name === "프로필") {
       this.pageTitle = this.$route.params.email;
@@ -221,12 +223,13 @@ export default {
           this.$cookies.remove("auth_cookie");
           this.$cookies.remove("LoginUserInfo");
           this.$cookies.remove("username");
-          alert("로그아웃되었습니다.");
+          this.$emit("logoutEvent");
           this.isLogin = false;
+        })
+        .then(result => {
+          alert("로그아웃되었습니다.");
+          this.changeView("홈");
         });
-      this.$emit("logoutEvent");
-      console.log("```hongjulan");
-      this.changeView("홈");
     }
   }
 };
