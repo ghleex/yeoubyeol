@@ -8,16 +8,12 @@ axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
 
 const requestTrendArticle = (data, callback, errorCallback) => {
-    console.log(data);
     axios.get(`${process.env.VUE_APP_IP}/articles/monthlytrend/`)
         .then((response) => {
-            console.log(response)
             callback(response)
 
         })
         .catch((response) => {
-            console.log(response)
-            console.log('catch ' + response)
             errorCallback('error')
         })
 }
@@ -26,13 +22,10 @@ const requestTrendHashtags = (data, callback, errorCallback) => {
     
     axios.get(`${process.env.VUE_APP_IP}/articles/hashtagtrend/`)
         .then((response) => {
-            console.log(response,"--",data)
             callback(response)
 
         })
         .catch((response) => {
-            console.log(response)
-            console.log('catch ' + response)
             errorCallback('error')
         })
 }

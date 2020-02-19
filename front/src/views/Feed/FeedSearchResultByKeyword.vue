@@ -37,9 +37,8 @@ export default {
     },
     delPost(postId){
       FeedApi.deletePost(postId,res=>{
-        console.log(res);
         let target = this.$route.params.keyword;
-         alert("게시글 삭제 완료 ~!!! 나의 감성 안뇽");
+         alert("게시글 삭제가 완료되었어요.");
         this.$router.push({name: '검색 결과', params: { keyword: target }});
       },error=>{
         alert("피드 삭제에 오류가 발생했어요 ..");
@@ -53,9 +52,7 @@ export default {
       axios.post(`${process.env.VUE_APP_IP}/articles/hashtag/`, requireData) //api에 url 삽입
       
         .then(response => {
-          console.log(response);
           setTimeout(() => { //스크롤 페이징을 띄우기 위한 시간 지연(1초)
-              // pic_name: require("@/assets/images/profile/" + response.data[i].user.pic_name + ".png"),
             if (response.data.length) {
               for (let i = 0; i < response.data.length; i++) {
                   let article_prop = {

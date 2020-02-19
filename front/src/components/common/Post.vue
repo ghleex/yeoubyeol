@@ -38,8 +38,8 @@
             </a>
             <v-spacer></v-spacer>
             <div v-show="isMyPost">
-              <v-btn x-small text style="color:#ccc;" @click="editPostBtn">수정</v-btn>
-              <v-btn x-small text style="color:#ccc;" @click="removePostBtn">삭제</v-btn>
+              <v-btn small text style="color:#ccc;" @click="editPostBtn">수정</v-btn>
+              <v-btn small text style="color:#ccc;" @click="removePostBtn">삭제</v-btn>
             </div>
           </v-row>
         </v-list-item>
@@ -62,7 +62,7 @@ export default {
       type: Number
     },
     id: {
-      type: Number,
+      type: Number
     },
     nickname: {
       type: String
@@ -95,12 +95,13 @@ export default {
   },
   data: function() {
     return {
+      validButton: "",
       isMyPost: false,
       imgUrl: "",
       post: {
         id: -1,
         nickname: "loading",
-        article: "게시글을 불러오는 중이에용",
+        article: "게시글을 불러오는 중이에요",
         img: "/uploads/articles/images/default.jpg",
         pic_name: "../../assets/images/profile/1.png",
         comments: 0,
@@ -130,27 +131,28 @@ export default {
       isLike: false,
       author: this.author
     };
-   let user = this.$cookies.get('LoginUserInfo');
+    let user = this.$cookies.get("LoginUserInfo");
     // let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
     let LoginId = user.id;
-    
+
     // if(LoginId=== this.post.author && (currHour>=23 && currHour< 6)){
-      this.setTimeValues();
-    setInterval(()=>{
-      
+    this.setTimeValues();
+    this.validButton = setInterval(() => {
       let date = new Date();
       let currHour = date.getHours();
-        if (LoginId === this.post.author && date.getMinutes() % 2 == 0) {
-          this.isMyPost = true;
-        } else {
-          this.isMyPost = false;
-        }
-
-    },1000);
+      if (LoginId === this.post.author && currHour>=11 && currHour<17) {
+        this.isMyPost = true;
+      } else {
+        this.isMyPost = false;
+      }
+    }, 1000);
     this.isLikeCheck();
     this.getImageUrl();
   },
-
+  beforeRouteLeave(to, from, next) {
+    clearInterval(this.validButton);
+    return next();
+  },
   methods: {
     gotoKeywordDetailPage(target) {
       this.$router.push({ name: "검색 결과", params: { keyword: target } });
@@ -160,30 +162,28 @@ export default {
     },
     editPostBtn() {
       let date = new Date();
-      console.log(date.getHours());
-      if (date.getMinutes() % 2 == 0) {
+      if (date.getHours()>=11 && date.getHours()<17) {
         this.$emit("editPost", this.post.id);
       } else {
-        alert("지금은 삭제가 가능한 시간이 아니에요 ..");
+        alert("지금은 수정이 가능한 시간이 아니에요 . 오전 11시부터 오후 5시까지 가능합니다.");
       }
     },
     removePostBtn() {
       let date = new Date();
-      console.log(date.getHours());
       let ans = confirm("게시글을 삭제할까요 ?");
       if (ans == true) {
-        if (date.getMinutes() % 2 == 0) {
+        if (date.getHours()>=11 && date.getHours()<17) {
           this.$emit("delPost", this.post.id);
         } else {
-          alert("지금은 삭제가 가능한 시간이 아니에요 ..");
+          alert("지금은 삭제가 가능한 시간이 아니에요 . 오전 11시부터 오후 5시까지 가능합니다.");
         }
       }
     },
     getImageUrl() {
       this.imgUrl = `${process.env.VUE_APP_IP}${this.post.img}`;
     },
-     isLikeCheck() {
-      let userInfo = this.$cookies.get('LoginUserInfo');
+    isLikeCheck() {
+      let userInfo = this.$cookies.get("LoginUserInfo");
       let LoginId = userInfo.id;
       if (this.post.like_users.includes(LoginId)) {
         this.post.isLike = true;
@@ -205,14 +205,13 @@ export default {
         this.post.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
       }
     },
-     iLoveIt() {
-      let userInfo = this.$cookies.get('LoginUserInfo');
+    iLoveIt() {
+      let userInfo = this.$cookies.get("LoginUserInfo");
       let form = new FormData();
       let LoginId = userInfo.id;
       let LoginNickname = userInfo.nickname;
       form.append("article_id", this.post.id);
       form.append("nickname", LoginNickname);
-      console.log(this.post.id, "--1", LoginNickname);
       // this.PostArticle[data[1]].article="SSSSSSs";
       FeedApi.userLikesPost(
         form,
@@ -225,14 +224,13 @@ export default {
           this.post.likes = res.data.like_users.length;
         },
         error => {
-          alert("게시글 좋아요에 문제가 발생했습니다.. 지송");
+          alert("게시글 좋아요에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.");
         }
       );
     },
 
     comment() {
       let router = this.$router;
-      // router.push(`feed/${this.id}`);
       this.$router.push({ name: "댓글", params: { id: this.post.id } });
     }
   }

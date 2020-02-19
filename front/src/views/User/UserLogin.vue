@@ -1,15 +1,14 @@
 
 <template>
   <v-card dark color="#110b22">
-    <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="validate">
+    <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="">
       <v-container fluid class="py-3">
         <v-row no-gutters justify="space-between" align="center">
           <v-col cols="12" class="pt-2">
             <h1>
-              새벽이 되면
-              <br />다르게 보일거에요.
+              정말 특별한 감성을 
+              <br />지니신 것 같아요. 컴온('-^)7
             </h1>
-            <!-- <img src="../../assets/images/여우별(밤).png" alt width="100px" /> -->
             <br>
           </v-col>
           <v-col cols="12">
@@ -47,7 +46,6 @@
               color="#71d087"
               style="color:#110b22"
               @click="validate"
-              @keyup.enter="validate"
             >로그인</v-btn>
           </v-col>
           
@@ -81,7 +79,7 @@
           type="warning"
           color="#F15050"
           class="py-2"
-        >이메일과 비밀번호를 확인해주세요...</v-alert>
+        >이메일과 비밀번호를 확인해주세요.</v-alert>
       </v-container>
     </v-form>
   </v-card>
@@ -117,13 +115,7 @@ export default {
   methods: {
     onSuccess(googleUser) {
       var profile = googleUser.getBasicProfile();
-      console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-      console.log('Name: ' + profile.getName());
-      console.log('Image URL: ' + profile.getImageUrl());
-      console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-
       var id_token = googleUser.getAuthResponse().id_token;
-      console.log('ID_TOKEN: ' + id_token)
 
       var form = new FormData();
       form.append('id_token', id_token)
@@ -131,7 +123,6 @@ export default {
       axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
       axios.post(`${process.env.VUE_APP_IP}/accounts/google/`, form)
         .then(response => {
-          console.log(response)
           const LoginUserInfo={
             username: response.data.username,
             nickname : response.data.nickname,
@@ -142,10 +133,10 @@ export default {
 
           this.$cookies.set('LoginUserInfo', userData, 0)
           this.$cookies.set('auth_cookie', id_token, 0)
-          this.$cookies.set('username', response.username, 0)
+          this.$cookies.set('username', LoginUserInfo.username, 0)
 
           var userInfo = new FormData();
-          userInfo.append('username', response.data.username)
+          userInfo.append('username', LoginUserInfo.username)
           userInfo.append('token_1', id_token)
           
           var router = this.$router
@@ -153,9 +144,7 @@ export default {
             .then(response => {
               let refresh_token = response.data.token_2
               sessionStorage.setItem('refresh_token', refresh_token)
-              alert('3단계')
               router.push({ name: '메인피드'})
-              alert('4단계')
             })
             .catch(error => {
               alert('로그인 실패')
@@ -163,11 +152,11 @@ export default {
             })
         })
         .catch(error => {
-        console.log(error)
+          alert('새로고침 해주세요.')
         })
     },
     onFailure(error) {
-      console.log(error)
+      alert('정보를 불러오는데 실패했습니다. 새로고침 후 다시 시도해주세요.')
     },
     validate() {
       if (this.$refs.form.validate()) {
@@ -191,19 +180,13 @@ export default {
           data,
           res => {
             //통신을 통해 전달받은 값 콘솔에 출력
-            // console.log("Success");
-            // console.log(res);
             let router = this.$router;
             this.tokenFromLogin = res.data.token;
             if (res.status === 200) {
-              // alert("1단계");
               
               //요청이 끝나면 버튼 활성화
               let data={'email':email};
-              console.log('프로필조회 : '+data.email);
               axios.post(`${process.env.VUE_APP_IP}/accounts/`, data).then((response=>{
-                console.log('로그인 후 가져온 다라 '+response.data[0].nickname);
-                console.log("login -> ",response.data[0]);
                   const LoginUserInfo={
                     username: data.email,
                     nickname : response.data[0].nickname,
@@ -219,31 +202,21 @@ export default {
                   let userInfo = new FormData();
                   userInfo.append('username', data.email)
                   userInfo.append('token_1', this.tokenFromLogin)
-                  console.log(data.email)
-                  console.log(this.tokenFromLogin)
 
                   axios.post(`${process.env.VUE_APP_IP}/accounts/check/`, userInfo)
                     .then(response => {
-                      console.log('---------------------------------')
                       let refresh_token = response.data.token_2
-                      console.log(refresh_token)
                       sessionStorage.setItem('refresh_token', refresh_token)
-                      // alert('3단계')
                       router.push({ name: '메인피드'})
-                      // alert('4단계')
                     })
                     .catch(error => {
-                      console.log('++++++++++++++++++++++++++++++++++')
                       alert('로그인 실패')
                       router.push({ name: "홈" });
                     })
               }),error=>{
-                console.log("로그인 후 프로필 가져오기 문제");
-                alert('뭔가 문제가 있어')
               })
     
             } else {
-              // console.log("Fail");
               this.password = "";
               this.alert = true;
 
@@ -282,7 +255,7 @@ export default {
     isSubmit: false,
 
     params: {
-      client_id: "832271626552-bpmo24c8a7e1s2lfhs1jfl0ena583jt1.apps.googleusercontent.com"
+      client_id: `${process.env.VUE_APP_GOOGLE_CLIENT_ID}`
     },
     // only needed if you want to render the button with the google ui
     renderParams: {

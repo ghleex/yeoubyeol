@@ -5,10 +5,10 @@
     <article>
       <div dark color="transparent" style="top: 60%; margin-top:70px">
         <h1>
-          <br>달이 떴어요.
-          <br>모두 나오세요.
-          <br>
+          <br>궂은 날에 잠깐
+          <br>나왔다가 숨는 별.
         </h1>
+   
         <div v-if="!isLogin">
           <v-btn text @click="tologin" class="white--text">로그인</v-btn>|
           <v-btn text @click="toConfirmEmail" class="white--text">회원가입</v-btn>
@@ -54,10 +54,8 @@ export default {
       // userInfo.append('token_2', null)
       
       UserApi.requestLoginCheck(userInfo, response => {
-        console.log('로그인 상태 확인')
         this.isLogin = true
       }, error => {
-        console.log('로그인 상태 아니지요!!!')
       })
 
     }
@@ -80,17 +78,15 @@ export default {
       let user = this.$cookies.get('username')
       let userInfo = new FormData();
       userInfo.append('username', user)
-      console.log(userInfo)
       axios.post(`${process.env.VUE_APP_IP}/accounts/logout/`, userInfo)
         .then(response => {
-          console.log(response)
           sessionStorage.removeItem("refresh_token");
           this.$cookies.remove("auth_cookie");
           this.$cookies.remove("LoginUserInfo");
           this.$cookies.remove("username");
+          this.$emit('logoutEvent')
           alert("로그아웃되었습니다.");
           this.isLogin = false;
-          this.$emit('logoutEvent')
         })
     },
     tologin() {
