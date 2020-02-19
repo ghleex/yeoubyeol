@@ -124,6 +124,11 @@ export default [
         component: UserProfileSettings,
         beforeEnter: requireAuth()
     },
+    {
+        path: '/user/deactivate',
+        name: '회원 탈퇴',
+        component: Deactivate,
+    },
     //피드
     {
         path: '/feed',

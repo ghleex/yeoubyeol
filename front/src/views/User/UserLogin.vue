@@ -133,10 +133,10 @@ export default {
 
           this.$cookies.set('LoginUserInfo', userData, 0)
           this.$cookies.set('auth_cookie', id_token, 0)
-          this.$cookies.set('username', response.username, 0)
+          this.$cookies.set('username', LoginUserInfo.username, 0)
 
           var userInfo = new FormData();
-          userInfo.append('username', response.data.username)
+          userInfo.append('username', LoginUserInfo.username)
           userInfo.append('token_1', id_token)
           
           var router = this.$router
