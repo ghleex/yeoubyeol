@@ -31,6 +31,7 @@ import EError from './views/Error/EError.vue'
 import Noti from './views/Settings/Notification.vue'
 import Follow from './views/Settings/Follow.vue'
 import Password from './views/Settings/Password.vue'
+import Deactivate from './views/Settings/Deactivate.vue'
 
 //검색
 import Search from './views/Search.vue'
@@ -179,6 +180,11 @@ export default [
         name: '비밀번호변경',
         component: Password,
         beforeEnter: requireAuth()
+    },
+    {
+        path: '/user/deactivate',
+        name: '회원 탈퇴',
+        component: Deactivate,
     },
 
     //검색

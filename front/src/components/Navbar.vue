@@ -12,7 +12,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text icon v-if="!isPostPage">
+      <v-btn text icon v-if="!isPostPage && enableTime">
         <v-icon @click="changeViewPost('새 피드 작성')">mdi-pencil-plus-outline</v-icon>
       </v-btn>
       <v-btn text icon v-if="!isSearchPage">
@@ -90,6 +90,8 @@ import dotenv from "dotenv";
 dotenv.config();
 export default {
   data: () => ({
+    enableTime: true,
+
     profileUsername: "",
     drawer: null,
     item: 0,
@@ -112,6 +114,13 @@ export default {
     if (this.drawer) {
       this.getLoginUserProfile();
       this.getNotiUnread();
+    }
+    //time check
+      const curr = new Date();
+    if (curr.getHours() >= 11 && curr.getHours() < 17) {
+      this.enableTime = true;
+    } else {
+      this.enableTime = false;
     }
 
     if (this.$route.name === "프로필") {
@@ -139,6 +148,13 @@ export default {
     }
   },
   created() {
+    //time check
+    const curr = new Date();
+    if (curr.getHours() >= 11 && curr.getHours() < 17) {
+      this.enableTime = true;
+    } else {
+      this.enableTime = false;
+    }
     //가라천국....heaven
     // this.$vuetify.theme.dark = true
     if (this.$route.name !== "프로필") {
@@ -201,9 +217,17 @@ export default {
       );
     },
     changeViewProfile(path, usersEmail) {
-        this.drawer = !this.drawer;
-        this.pageTitle = usersEmail;
-        this.$router.push({ name: path, params: { email: usersEmail } });
+      this.drawer = !this.drawer;
+      this.pageTitle = usersEmail;
+      // this.$router.push({ name: path, params: { email: usersEmail } });
+       this.$router.replace({
+        name:path,
+        params:{
+          email:usersEmail
+        }
+      }).catch(err =>{
+        this.drawer = false;
+      })
     },
     changeViewProfileSetting(path, usersEmail) {
       if (this.pageTitle == "프로필 변경") {
@@ -220,7 +244,12 @@ export default {
     //그냥 이동일 경우
     changeView(path) {
       this.pageTitle = path;
-      this.$router.push({ name: path });
+      // this.$router.push({ name: path });
+      this.$router.replace({
+        name:path,
+      }).catch(err =>{
+        this.drawer = false;
+      })
     },
     logout() {
       let user = this.$cookies.get("username");

@@ -376,6 +376,7 @@ export default {
       }
     },
     getTime() {
+      console.log("안멈춰 ..")
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
