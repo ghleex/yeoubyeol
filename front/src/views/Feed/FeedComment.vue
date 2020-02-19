@@ -84,46 +84,44 @@ export default {
         postId,
         res => {
           //뒤로 가기
-          alert("게시글 삭제 완료 ~!!! 나의 감성 안뇽");
+          alert("게시글 삭제가 완료되었습니다.");
           this.$router.push({ name: "메인피드" });
         },
         error => {
-          alert("피드 삭제에 오류가 발생했어요 ..");
+          alert("피드 삭제에 오류가 발생했어요 .");
         }
       );
     },
 
-    backward() {
-      let router = this.$router;
-      router.go(-1);
-    },
     validate() {
       if (this.$refs.form.validate()) {
         this.PostComments();
       }
     },
     async removeComment(v) {
-       await this.removeCommentdone(v);
+      await this.removeCommentdone(v);
       this.getArticleById(this.$route.params.id);
-     
     },
-    removeCommentdone(v){
-      return new Promise((succ,fail)=>{
-         CommentApi.DeleteComments(
-        v,
-        res => {
-          succ(res);
-        },
-        error => {
-          alert("댓글 삭제에 오류가 발생했습니다.");
-        }
-      );
-      })
+    removeCommentdone(v) {
+      return new Promise((succ, fail) => {
+        CommentApi.DeleteComments(
+          v,
+          res => {
+            succ(res);
+          },
+          error => {
+            alert("댓글 삭제에 오류가 발생했습니다.");
+          }
+        );
+      });
     },
-    async editComment(data) {
+    async secondeditComment(data) {
       let articleID = await this.editCommentdone(data);
       console.log("1 : ", articleID);
       this.getArticleById(articleID);
+    },
+    editComment(data) {
+      this.secondeditComment(data);
     },
     editCommentdone(data) {
       return new Promise((succ, fail) => {
@@ -131,7 +129,6 @@ export default {
           data,
           res => {
             succ(res.data.article);
-            
           },
           error => {
             alert("댓글 수정에 오류가 발생했습니다.");
@@ -141,7 +138,6 @@ export default {
     },
     getUserInformation() {
       let userInfo = this.$cookies.get("LoginUserInfo");
-      console.log(userInfo);
       this.loginUserInfo.nickname = userInfo.nickname;
       this.loginUserInfo.pic_name = `${process.env.VUE_APP_IP}${userInfo.pic_name}`;
     },

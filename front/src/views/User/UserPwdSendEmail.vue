@@ -6,7 +6,7 @@
           <v-col cols="12" class="pt-2">
             <h1>가입할 때 사용한</h1>
             <h1>이메일을 입력해주세요.</h1>
-            <h1>임시비밀번호를 보내드림다.</h1>
+            <h1>임시비밀번호를 보내드립니다.</h1>
           </v-col>
           <v-col cols="12" class="pt-5">
             <v-text-field

@@ -28,6 +28,7 @@
             @submit.prevent="validate"
           >
             <v-list-item style="justify-content:center">
+            
               <v-text-field
                 label="현재 비밀번호"
                 v-model="currPwd"

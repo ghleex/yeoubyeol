@@ -11,7 +11,7 @@ const requestFollow = (data, callback, errorCallback) => {
     let form = new FormData()
     form.append('my_nickname', data.loginedNickname)
     form.append('your_nickname', data.shownNickname)
-    axios.post(`${process.env.VUE_APP_IP}/articles/follower/`, form)
+    axios.post(`${process.env.VUE_APP_IP}/articles/follow/`, form)
         .then((response) => {
             callback(response)
 

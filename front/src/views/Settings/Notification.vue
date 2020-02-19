@@ -31,7 +31,6 @@ export default {
     postReadSign() {
       return new Promise((succ, fail) => {
         this.loading = true;
-        console.log("promise ~~~~~~~~~~~");
         for (let i = 0; i < this.notifications.length; i++) {
           if (!this.notifications[i].is_read) {
             let noti_id = this.notifications[i].id;
@@ -52,7 +51,6 @@ export default {
     loadNotifications() {
       let userInfo = this.$cookies.get("LoginUserInfo");
       let userId = userInfo.id;
-      console.log("load notification ~~");
         this.notifications = [];
       UserApi.loadNotifications(
         userId,
@@ -72,7 +70,6 @@ export default {
           this.loading = false;
         },
         error => {
-          console.log(error);
         }
       );
     }
@@ -83,7 +80,6 @@ export default {
 
     this.timeCalc = setInterval(() => {
       this.loadNotifications();
-      console.log("yam22");
     }, 5000);
   },
   beforeRouteLeave(to, from, next) {

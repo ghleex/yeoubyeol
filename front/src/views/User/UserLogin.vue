@@ -1,15 +1,14 @@
 
 <template>
   <v-card dark color="#110b22">
-    <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="validate">
+    <v-form ref="form" v-model="valid" lazy-validation @submit.prevent="">
       <v-container fluid class="py-3">
         <v-row no-gutters justify="space-between" align="center">
           <v-col cols="12" class="pt-2">
             <h1>
-              새벽이 되면
-              <br />다르게 보일거에요.
+              정말 특별한 감성을 
+              <br />지니신 것 같아요. 컴온('-^)7
             </h1>
-            <!-- <img src="../../assets/images/여우별(밤).png" alt width="100px" /> -->
             <br>
           </v-col>
           <v-col cols="12">
@@ -47,7 +46,6 @@
               color="#71d087"
               style="color:#110b22"
               @click="validate"
-              @keyup.enter="validate"
             >로그인</v-btn>
           </v-col>
           
@@ -81,7 +79,7 @@
           type="warning"
           color="#F15050"
           class="py-2"
-        >이메일과 비밀번호를 확인해주세요...</v-alert>
+        >이메일과 비밀번호를 확인해주세요.</v-alert>
       </v-container>
     </v-form>
   </v-card>
@@ -146,9 +144,7 @@ export default {
             .then(response => {
               let refresh_token = response.data.token_2
               sessionStorage.setItem('refresh_token', refresh_token)
-              alert('3단계')
               router.push({ name: '메인피드'})
-              alert('4단계')
             })
             .catch(error => {
               alert('로그인 실패')
@@ -187,7 +183,6 @@ export default {
             let router = this.$router;
             this.tokenFromLogin = res.data.token;
             if (res.status === 200) {
-              alert("1단계");
               
               //요청이 끝나면 버튼 활성화
               let data={'email':email};
@@ -219,7 +214,6 @@ export default {
                       router.push({ name: "홈" });
                     })
               }),error=>{
-                alert('뭔가 문제가 있어')
               })
     
             } else {

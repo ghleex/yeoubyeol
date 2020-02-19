@@ -5,10 +5,10 @@
     <article>
       <div dark color="transparent" style="top: 60%; margin-top:70px">
         <h1>
-          <br>달이 떴어요.
-          <br>모두 나오세요.
-          <br>
+          <br>궂은 날에 잠깐
+          <br>나왔다가 숨는 별.
         </h1>
+   
         <div v-if="!isLogin">
           <v-btn text @click="tologin" class="white--text">로그인</v-btn>|
           <v-btn text @click="toConfirmEmail" class="white--text">회원가입</v-btn>

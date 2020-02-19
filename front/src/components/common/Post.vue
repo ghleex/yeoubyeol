@@ -38,8 +38,8 @@
             </a>
             <v-spacer></v-spacer>
             <div v-show="isMyPost">
-              <v-btn x-small text style="color:#ccc;" @click="editPostBtn">수정</v-btn>
-              <v-btn x-small text style="color:#ccc;" @click="removePostBtn">삭제</v-btn>
+              <v-btn small text style="color:#ccc;" @click="editPostBtn">수정</v-btn>
+              <v-btn small text style="color:#ccc;" @click="removePostBtn">삭제</v-btn>
             </div>
           </v-row>
         </v-list-item>
@@ -101,7 +101,7 @@ export default {
       post: {
         id: -1,
         nickname: "loading",
-        article: "게시글을 불러오는 중이에용",
+        article: "게시글을 불러오는 중이에요",
         img: "/uploads/articles/images/default.jpg",
         pic_name: "../../assets/images/profile/1.png",
         comments: 0,
@@ -140,7 +140,7 @@ export default {
     this.validButton = setInterval(() => {
       let date = new Date();
       let currHour = date.getHours();
-      if (LoginId === this.post.author && date.getMinutes() % 2 == 0) {
+      if (LoginId === this.post.author && currHour>=11 && currHour<17) {
         this.isMyPost = true;
       } else {
         this.isMyPost = false;
@@ -162,20 +162,20 @@ export default {
     },
     editPostBtn() {
       let date = new Date();
-      if (date.getMinutes() % 2 == 0) {
+      if (date.getHours()>=11 && date.getHours()<17) {
         this.$emit("editPost", this.post.id);
       } else {
-        alert("지금은 삭제가 가능한 시간이 아니에요 ..");
+        alert("지금은 수정이 가능한 시간이 아니에요 . 오전 11시부터 오후 5시까지 가능합니다.");
       }
     },
     removePostBtn() {
       let date = new Date();
       let ans = confirm("게시글을 삭제할까요 ?");
       if (ans == true) {
-        if (date.getMinutes() % 2 == 0) {
+        if (date.getHours()>=11 && date.getHours()<17) {
           this.$emit("delPost", this.post.id);
         } else {
-          alert("지금은 삭제가 가능한 시간이 아니에요 ..");
+          alert("지금은 삭제가 가능한 시간이 아니에요 . 오전 11시부터 오후 5시까지 가능합니다.");
         }
       }
     },
@@ -224,7 +224,7 @@ export default {
           this.post.likes = res.data.like_users.length;
         },
         error => {
-          alert("게시글 좋아요에 문제가 발생했습니다.. 지송");
+          alert("게시글 좋아요에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.");
         }
       );
     },
