@@ -384,10 +384,10 @@ export default {
 
       const baseTime = new Date();
       let newDate = baseTime.getDate() + 1
-      if (hours >= 16 ) {
+      if (hours >= 17 ) {
         baseTime.setDate(newDate)
       }
-      baseTime.setHours(16)
+      baseTime.setHours(17)
       baseTime.setMinutes(0)
       baseTime.setSeconds(0)
 

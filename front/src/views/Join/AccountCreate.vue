@@ -341,7 +341,7 @@ export default {
         // this.validate();
         let check = this.checkForm();
         if (check) {
-          alert('한번 더 확인해주세요.')
+          this.isSubmit = false;
         } else {
           this.isSubmit = true;
         }

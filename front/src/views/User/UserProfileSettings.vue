@@ -66,7 +66,7 @@
               ></v-text-field>
             </v-list-item>
             <v-list-item>
-              <v-btn block outlined @click="changePassword">비밀번호 변경</v-btn>
+              <v-btn block outlined @click="changePassword" v-if="!isSocial">비밀번호 변경</v-btn>
             </v-list-item>
             <v-list-item>
               <v-btn block outlined color="red" @click="deactivateUser">회원 탈퇴</v-btn>
@@ -88,10 +88,12 @@ export default {
   created() {
     let userInfo = this.$cookies.get("LoginUserInfo");
     this.loginedNickname = userInfo.nickname;
+    this.isSocial = userInfo.social;
     this.getUserInformation();
   },
   data() {
     return {
+      isSocial: false,
       valid: false,
       loginedNickname: "",
       user: {

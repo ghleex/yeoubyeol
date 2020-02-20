@@ -143,7 +143,8 @@ export default {
             username: response.data.username,
             nickname : response.data.nickname,
             id : response.data.id,
-            pic_name:response.data.pic_name
+            pic_name:response.data.pic_name,
+            social: response.data.social,
           }
           let userData = JSON.stringify(LoginUserInfo)
 
@@ -207,7 +208,8 @@ export default {
                     username: data.email,
                     nickname : response.data[0].nickname,
                     id : response.data[0].id,
-                    pic_name:response.data[0].pic_name
+                    pic_name:response.data[0].pic_name,
+                    social: response.data.social,
                   }
                   let userData = JSON.stringify(LoginUserInfo)
 
