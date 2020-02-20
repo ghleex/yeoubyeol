@@ -49,7 +49,7 @@
                 justify="center"
                 style="background-color:#110b22"
               >
-                <p class="white--text subtitle-1">해쉬태그 검색 결과가 없어여</p>
+                <p class="white--text subtitle-1 mt-2">해쉬태그 검색 결과가 없어요..<br> "감성" 해쉬태그를 검색해보는건 어떨까요?</p>
               </v-row>
             </v-tab-item>
             <!-- 결과 - 유저-->
@@ -78,7 +78,8 @@
                 justify="center"
                 style="background-color:#110b22"
               >
-                <p class="white--text subtitle-1">유저 검색 결과가 없어여</p>
+                <p class="white--text subtitle-1 mt-2">유저 검색 결과가 없어요.<br>
+                "YEOUBYEOL"을 검색해보시는건 어떨까요?</p>
               </v-row>
             </v-tab-item>
           </v-tabs>
