@@ -142,7 +142,7 @@ export default {
   created() {
     //time check
     const curr = new Date();
-    if (curr.getHours() >= 11 && curr.getHours() < 17) {
+    if (curr.getHours() >= 9 && curr.getHours() < 17) {
       this.enableTime = true;
     } else {
       this.enableTime = false;

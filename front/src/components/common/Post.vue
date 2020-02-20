@@ -131,7 +131,6 @@ export default {
       isLike: false,
       author: this.author
     };
-    console.log(this.post.created_at);
     let user = this.$cookies.get("LoginUserInfo");
     // let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
     let LoginId = user.id;
@@ -141,7 +140,7 @@ export default {
     this.validButton = setInterval(() => {
       let date = new Date();
       let currHour = date.getHours();
-      if (LoginId === this.post.author && currHour >= 11 && currHour < 17) {
+      if (LoginId === this.post.author && currHour >= 9 && currHour < 17) {
         this.isMyPost = true;
       } else {
         this.isMyPost = false;
@@ -163,11 +162,11 @@ export default {
     },
     editPostBtn() {
       let date = new Date();
-      if (date.getHours() >= 11 && date.getHours() < 17) {
+      if (date.getHours() >= 9 && date.getHours() < 17) {
         this.$emit("editPost", this.post.id);
       } else {
         alert(
-          "지금은 수정이 가능한 시간이 아니에요 . 오전 11시부터 오후 5시까지 가능합니다."
+          "지금은 수정이 가능한 시간이 아니에요 . 오전 9시부터 오후 5시까지 가능합니다."
         );
       }
     },
@@ -175,11 +174,11 @@ export default {
       let date = new Date();
       let ans = confirm("게시글을 삭제할까요 ?");
       if (ans == true) {
-        if (date.getHours() >= 11 && date.getHours() < 17) {
+        if (date.getHours() >= 9 && date.getHours() < 17) {
           this.$emit("delPost", this.post.id);
         } else {
           alert(
-            "지금은 삭제가 가능한 시간이 아니에요 . 오전 11시부터 오후 5시까지 가능합니다."
+            "지금은 삭제가 가능한 시간이 아니에요 . 오전 9시부터 오후 5시까지 가능합니다."
           );
         }
       }
