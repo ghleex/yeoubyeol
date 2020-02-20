@@ -29,6 +29,7 @@ class ArticleList(APIView):
     """
     
     def post(self, request, format=None):
+
         nickname = request.data.get('nickname')
         article = request.POST.get('article')
         hashtags = request.POST.get('hashtags')
@@ -90,7 +91,7 @@ class ArticleDetail(APIView):
             'hashtags': hashtag_list,
             'comments': data
         }
-        return Response(result)
+        return Response(result, status=status.HTTP_200_OK)
 
     def put(self, request, pk, format=None):
         article = self.get_object(pk)
@@ -118,7 +119,7 @@ class ArticleDetail(APIView):
         serializer = ArticleSerializer(article, data=data)
         if serializer.is_valid():
             serializer.save()
-        return Response(article.id)
+        return Response(article.id, status=status.HTTP_200_OK)
 
     # 글 삭제
     def delete(self, request, pk, format=None):
@@ -455,30 +456,30 @@ def like(request):
                     notification.save()
         article.save()
     if len(article.like_users.all()) >= 10:
-        article_hashtag = []
-        for hashtag in article.hashtags.all():
-            article_hashtag.append(hashtag.id)
-        data = {
-            'article': article.article,
-            'author': article.author_id,
-            'hashtags': article_hashtag,
-            'image': article.image
-        }
-        honorserializer = HonorArticleSerializer(data=data)
-        if honorserializer.is_valid():
-            honorserializer.save()
-        author = article.author_id
-        noti_user = get_object_or_404(User, id=author)
-        notification = {
-                'nickname': noti_user.id,
-                'message': 'MJ',
-                'send_user': noti_user.id,
-                'article_no': -1
+        if not HonorArticle.objects.filter(article=article.article): 
+            article_hashtag = []
+            for hashtag in article.hashtags.all():
+                article_hashtag.append(hashtag.id)
+            data = {
+                'article': article.article,
+                'author': article.author_id,
+                'hashtags': article_hashtag,
+                'image': article.image
             }
-        json_noti = json.dumps(notification)
-        noti_serializer = NotificationSerializer(data=json_noti)
-        if noti_serializer.is_valid():
-            noti_serializer.save()
+            honorserializer = HonorArticleSerializer(data=data)
+            if honorserializer.is_valid():
+                honorserializer.save()
+            author = article.author_id
+            noti_user = get_object_or_404(User, id=author)
+            notification = {
+                    'nickname': noti_user.id,
+                    'message': 'MJ',
+                    'send_user': noti_user.id,
+                    'article_no': -1
+            }
+            noti_serializer = NotificationSerializer(data=notification)
+            if noti_serializer.is_valid():
+                noti_serializer.save()
     return Response(serializer.data)
 
 
