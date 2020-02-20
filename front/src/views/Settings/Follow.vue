@@ -7,9 +7,13 @@
           <v-tabs centered fixed-tabs dark background-color="transparent" class="py-12">
             <v-tabs-slider color="#71d087"></v-tabs-slider>
 
-            <v-tab href="#tab-1" @click="updateFollowerList">워</v-tab>
+            <v-tab href="#tab-1" @click="updateFollowerList">
+              <h4>워</h4>
+            </v-tab>
 
-            <v-tab href="#tab-2" @click="updateFollowingList">잉</v-tab>
+            <v-tab href="#tab-2" @click="updateFollowingList">
+              <h4>잉</h4>
+            </v-tab>
 
             <!-- 워 ~~~ 부분 -->
             <v-tab-item id="tab-1">
@@ -36,7 +40,7 @@
                 style="background-color:#110b22"
               >
                 >
-                <p class="white--text subtitle-1"> 괜찮아요. 제가 친구가 되어드릴께요. </p>
+                <p class="white--text subtitle-1">괜찮아요. 제가 친구가 되어드릴께요.</p>
               </v-row>
             </v-tab-item>
             <!-- 잉~~ 부분 -->

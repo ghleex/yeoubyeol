@@ -33,7 +33,7 @@
               :style="setFollowBtn"
               @click="clickFollowBtn"
               :outlined="isFollow"
-            >{{isFollow? "unFollow" : "Follow"}}</v-btn>
+            >{{isFollow? "언팔로우" : "팔로우"}}</v-btn>
             <v-btn v-else min-width="190" small color="#71d087" outlined @click="changeView('프로필 변경')">SETTING PROFILE</v-btn>
           </v-list-item>
           <v-list-item>
@@ -83,7 +83,9 @@
               style="background-color:#110b22"
             >
               <v-col cols="12" style="border:2px solid #110b22">
-                <p class="white--text px-3">노 게시피드</p>
+                <h3 class="white--text px-3">
+                  게시피드가 없어요
+                  </h3>
               </v-col>
             </v-row>
           </v-tab-item>
@@ -108,7 +110,10 @@
               style="background-color:#110b22"
             >
               <v-col cols="12">
-                <p class="white--text px-3">노 좋아한피드</p>
+                  <h3 class="white--text px-3">
+
+                  좋아한피드가 없어요
+                  </h3>
               </v-col>
             </v-row>
           </v-tab-item>

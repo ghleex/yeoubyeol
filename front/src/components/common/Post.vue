@@ -15,7 +15,7 @@
       </v-list-item>
       <v-card-text class="subtitle-2 grey--text text--lighten-5 pb-0">
         <v-img :src="imgUrl"></v-img>
-        <div style="white-space:pre-wrap;">{{post.article}}</div>
+        <div style="white-space:pre-wrap;" class="my-2">{{post.article}}</div>
         <v-chip
           v-for="(tag,i)  in post.hashtags"
           :key="i"
@@ -131,6 +131,7 @@ export default {
       isLike: false,
       author: this.author
     };
+    console.log(this.post.created_at);
     let user = this.$cookies.get("LoginUserInfo");
     // let LoginId = JSON.parse(sessionStorage.getItem("LoginUserInfo")).id;
     let LoginId = user.id;
