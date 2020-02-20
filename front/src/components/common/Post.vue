@@ -15,7 +15,7 @@
       </v-list-item>
       <v-card-text class="subtitle-2 grey--text text--lighten-5 pb-0">
         <v-img :src="imgUrl"></v-img>
-        <p class="mt-1">{{post.article}}</p>
+        <div style="white-space:pre-wrap;">{{post.article}}</div>
         <v-chip
           v-for="(tag,i)  in post.hashtags"
           :key="i"
@@ -140,7 +140,7 @@ export default {
     this.validButton = setInterval(() => {
       let date = new Date();
       let currHour = date.getHours();
-      if (LoginId === this.post.author && currHour>=11 && currHour<17) {
+      if (LoginId === this.post.author && currHour >= 11 && currHour < 17) {
         this.isMyPost = true;
       } else {
         this.isMyPost = false;
@@ -162,20 +162,24 @@ export default {
     },
     editPostBtn() {
       let date = new Date();
-      if (date.getHours()>=11 && date.getHours()<17) {
+      if (date.getHours() >= 11 && date.getHours() < 17) {
         this.$emit("editPost", this.post.id);
       } else {
-        alert("지금은 수정이 가능한 시간이 아니에요 . 오전 11시부터 오후 5시까지 가능합니다.");
+        alert(
+          "지금은 수정이 가능한 시간이 아니에요 . 오전 11시부터 오후 5시까지 가능합니다."
+        );
       }
     },
     removePostBtn() {
       let date = new Date();
       let ans = confirm("게시글을 삭제할까요 ?");
       if (ans == true) {
-        if (date.getHours()>=11 && date.getHours()<17) {
+        if (date.getHours() >= 11 && date.getHours() < 17) {
           this.$emit("delPost", this.post.id);
         } else {
-          alert("지금은 삭제가 가능한 시간이 아니에요 . 오전 11시부터 오후 5시까지 가능합니다.");
+          alert(
+            "지금은 삭제가 가능한 시간이 아니에요 . 오전 11시부터 오후 5시까지 가능합니다."
+          );
         }
       }
     },
@@ -224,7 +228,9 @@ export default {
           this.post.likes = res.data.like_users.length;
         },
         error => {
-          alert("게시글 좋아요에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+          alert(
+            "게시글 좋아요에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요."
+          );
         }
       );
     },

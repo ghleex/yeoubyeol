@@ -1,89 +1,91 @@
 
 <template>
   <v-card dark color="#110b22">
-    <v-form ref="form" v-model="valid" lazy-validation @submit.prevent>
-      <v-container fluid class="py-3">
-        <v-row no-gutters justify="space-between" align="center">
-          <v-col cols="12" class="pt-2">
-            <h1>
-              정말 특별한 감성을
-              <br />지니신 것 같아요. 컴온('-^)7
-            </h1>
-            <br />
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              outlined
-              v-model="email"
-              :rules="emailRules"
-              label="이메일"
-              hint="이메일입력 필수"
-              required
-            ></v-text-field>
+    <div id="UserLogin">
+      <v-form ref="form" v-model="valid" lazy-validation @submit.prevent>
+        <v-container fluid class="py-3">
+          <v-row no-gutters justify="space-between" align="center">
+            <v-col cols="12" class="pt-2">
+              <h1>
+                정말 특별한 감성을
+                <br />지니신 것 같아요. 컴온('-^)7
+              </h1>
+              <br />
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                outlined
+                v-model="email"
+                :rules="emailRules"
+                label="이메일"
+                hint="이메일입력 필수"
+                required
+              ></v-text-field>
 
-            <v-text-field
-              outlined
-              v-model="password"
-              :rules="passwordRules"
-              type="password"
-              label="비밀번호"
-              hint="영문,숫자 포함 8자리 이상, 20자리 이하입니다."
-              required
-            ></v-text-field>
-          </v-col>
+              <v-text-field
+                outlined
+                v-model="password"
+                :rules="passwordRules"
+                type="password"
+                label="비밀번호"
+                hint="영문,숫자 포함 8자리 이상, 20자리 이하입니다."
+                required
+              ></v-text-field>
+            </v-col>
 
-          <!-- <v-checkbox
+            <!-- <v-checkbox
       v-model="checkbox"
       :rules="[v => !!v || '동의하지 않으면 가입할 수 없습니다.']"
       label="Do you agree?"
       required
-          ></v-checkbox>-->
-          <v-col cols="12">
-            <v-btn
-              min-height="50"
-              block
-              :disabled="!valid"
-              color="#71d087"
-              style="color:#110b22"
-              @click="validate"
-            >로그인</v-btn>
-          </v-col>
+            ></v-checkbox>-->
+            <v-col cols="12">
+              <v-btn
+                min-height="50"
+                block
+                :disabled="!valid"
+                color="#71d087"
+                style="color:#110b22"
+                @click="validate"
+              >로그인</v-btn>
+            </v-col>
 
-          <v-col cols="12" class="mt-5">
-            <GoogleLogin
-              :params="params"
-              :onSuccess="onSuccess"
-              :onFailure="onFailure"
-              style="width: 100%; height: 50px; border-radius: 5px; background-color: white; color: #110b22; font-family: 'Roboto'; display: flex; justify-content: center; align-content: center;"
-            >
-              <v-icon color="#110b22">mdi-google</v-icon>
-              <span>
-                <strong>oogle</strong>로 로그인
-              </span>
-            </GoogleLogin>
-            <!-- <div class="g-signin2" data-onsuccess="onSignIn" style="display: flex; flex-direction: column;"></div>
-            <a href="#" onclick="signOut();">Sign out</a>-->
-          </v-col>
+            <v-col cols="12" class="mt-5">
+              <GoogleLogin
+                :params="params"
+                :onSuccess="onSuccess"
+                :onFailure="onFailure"
+                style="width: 100%; height: 50px; border-radius: 5px; background-color: white; color: #110b22; font-family: 'Roboto'; display: flex; justify-content: center; align-content: center;"
+              >
+                <v-icon color="#110b22">mdi-google</v-icon>
+                <span>
+                  <strong>oogle</strong>로 로그인
+                </span>
+              </GoogleLogin>
+              <!-- <div class="g-signin2" data-onsuccess="onSignIn" style="display: flex; flex-direction: column;"></div>
+              <a href="#" onclick="signOut();">Sign out</a>-->
+            </v-col>
 
-          <v-col cols="12" class="d-flex justify-space-around px-12">
-            <router-link v-bind:to="{name:'비밀번호 변경'}">
-              <v-btn text min-width="100" class="px-0 my-3">비밀번호 찾기</v-btn>
-            </router-link>
-            <v-btn text disabled></v-btn>
-            <router-link v-bind:to="{name:'인증메일 발송'}" style="color: #00edd6">
-              <v-btn text min-width="100" class="px-0 my-3">함께 하기</v-btn>
-            </router-link>
-          </v-col>
-        </v-row>
-        <v-alert
-          v-model="alert"
-          dismissible
-          type="warning"
-          color="#F15050"
-          class="py-2"
-        >이메일과 비밀번호를 확인해주세요.</v-alert>
-      </v-container>
-    </v-form>
+            <v-col cols="12" class="d-flex justify-space-around px-12">
+              <router-link v-bind:to="{name:'비밀번호 변경'}">
+                <v-btn text min-width="100" class="px-0 my-3">비밀번호 찾기</v-btn>
+              </router-link>
+              <v-btn text disabled></v-btn>
+              <router-link v-bind:to="{name:'인증메일 발송'}" style="color: #00edd6">
+                <v-btn text min-width="100" class="px-0 my-3">함께 하기</v-btn>
+              </router-link>
+            </v-col>
+          </v-row>
+          <v-alert
+            v-model="alert"
+            dismissible
+            type="warning"
+            color="#F15050"
+            class="py-2"
+          >이메일과 비밀번호를 확인해주세요.</v-alert>
+        </v-container>
+      </v-form>
+    </div>
   </v-card>
 </template>
 
@@ -101,17 +103,18 @@ import dotenv from "dotenv";
 dotenv.config();
 
 let tokenFromLogin = "";
+let handled = false;
 export default {
-  created() {
-    window.addEventListener(
+  
+  mounted() {
+    const thisPage = document.getElementById("UserLogin");
+    thisPage.addEventListener(
       "keydown",
       function(event) {
         if (event.defaultPrevented) {
           return;
         }
-
-        let handled = false;
-
+        handled = false;
         if (event.keyCode == 13) {
           handled = true;
         }
@@ -122,7 +125,8 @@ export default {
       },
       true
     );
-
+  },
+  created() {
     if (sessionStorage.getItem("refresh_token")) {
       alert("이미 로그인된 상태입니다.");
       let router = this.$router;
