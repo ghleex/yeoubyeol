@@ -65,7 +65,6 @@ export default {
       UserApi.loadNotifications(
         userId,
         res => {
-          console.log(res);
           for (let i = 0; i < res.data.noti_ids.length; i++) {
               let noti = {
                 id: res.data.noti_ids[i],
