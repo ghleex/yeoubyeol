@@ -14,7 +14,7 @@
               v-model="email"
               :rules="emailRules"
               label="이메일"
-              hint="이메일입력 필수"
+              hint="이메일 입력 필수입니다."
               required
             ></v-text-field>
           </v-col>

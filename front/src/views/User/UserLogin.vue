@@ -18,7 +18,7 @@
                 v-model="email"
                 :rules="emailRules"
                 label="이메일"
-                hint="이메일입력 필수"
+                hint="이메일 입력 필수입니다."
                 required
               ></v-text-field>
 
@@ -28,7 +28,7 @@
                 :rules="passwordRules"
                 type="password"
                 label="비밀번호"
-                hint="영문,숫자 포함 8자리 이상, 20자리 이하입니다."
+                hint="영문, 숫자 포함 8자리 이상, 20자리 이하입니다."
                 required
               ></v-text-field>
             </v-col>

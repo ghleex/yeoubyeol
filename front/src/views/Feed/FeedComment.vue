@@ -74,6 +74,7 @@ export default {
   created() {
     this.getUserInformation();
     this.getArticleById(this.$route.params.id);
+
   },
   methods: {
     editPost(postId) {
