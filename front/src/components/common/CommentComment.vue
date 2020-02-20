@@ -7,15 +7,15 @@
           <v-img :src="pic_name"></v-img>
         </v-list-item-avatar>
         <v-list-item-content @click="viewUserPfPage(nickname)">
-          <v-list-item-title class="subtitle-2">{{nickname}}</v-list-item-title>
+          <v-list-item-title class="subtitle-1">{{nickname}}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-card-text>{{content}}</v-card-text>
+      <v-card-text class="white--text">{{content}}</v-card-text>
 
       <v-card-actions class="overline font-weight-thin">
         <div v-show="isMyComment">
-          <v-btn x-small text style="color:#ccc;" @click="editCommentBtn">수정</v-btn>
-          <v-btn x-small text style="color:#ccc;" @click="removeCommentBtn">삭제</v-btn>
+          <v-btn small text style="color:#ccc;" @click="editCommentBtn">수정</v-btn>
+          <v-btn small text style="color:#ccc;" @click="removeCommentBtn">삭제</v-btn>
         </div>
         <v-spacer></v-spacer>
         {{timedelta}}

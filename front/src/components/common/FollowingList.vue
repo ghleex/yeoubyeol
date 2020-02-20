@@ -14,7 +14,7 @@
         <v-col align="center" justify="end" cols="4" v-if="isMyAccount">
           <span class="subheading grey--text pr-1">
             <!-- <v-btn v-if="isFollowing" text style="color:#71d087" @click="unfollowBtn">UNFOLLOW</v-btn> -->
-            <v-btn text style="color:#71d087"  @click="unfollowBtn">UNFOLLOW</v-btn>
+            <v-btn text style="color:#71d087"  @click="unfollowBtn">언팔로우</v-btn>
           </span>
         </v-col>
       </v-list-item>
