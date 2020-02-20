@@ -399,15 +399,6 @@ export default {
       const seconds = now.getSeconds();
 
       const baseTime = new Date();
-<<<<<<< HEAD
-      let newDate = baseTime.getDate() + 1
-      if (hours >= 17 ) {
-        baseTime.setDate(newDate)
-      }
-      baseTime.setHours(17)
-      baseTime.setMinutes(0)
-      baseTime.setSeconds(0)
-=======
       let newDate = baseTime.getDate() + 1;
       if (hours >= 17) {
         baseTime.setDate(newDate);
@@ -415,7 +406,6 @@ export default {
       baseTime.setHours(17);
       baseTime.setMinutes(0);
       baseTime.setSeconds(0);
->>>>>>> 015eb2659408c3b64057052d6341bfffc452137c
 
       const diffTime = (baseTime - now) / 1000;
       let lastHours = diffTime / 3600;
