@@ -127,10 +127,10 @@ export default {
   },
   methods: {
     deactivateUser() {
-      this.$router.push({ name: '회원 탈퇴'})
+      this.$router.push({ name: "회원 탈퇴" });
     },
     changePassword() {
-      this.$router.push({ name: "비밀번호변경"});
+      this.$router.push({ name: "비밀번호변경" });
     },
     backToProfile() {
       this.$router.push({ name: "프로필" });
@@ -178,8 +178,7 @@ export default {
             params: { email: this.input.nickname }
           });
         },
-        error => {
-        }
+        error => {}
       );
     },
     isValidNickname() {

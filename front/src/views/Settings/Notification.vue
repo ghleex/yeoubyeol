@@ -25,52 +25,61 @@ export default {
   },
   methods: {
     async readAll() {
+      //읽음처리하고,
+      clearInterval(this.timeCalc);
       await this.postReadSign();
+      //다시 재개
+
       this.loadNotifications();
+      this.timeCalc = setInterval(() => {
+        this.loadNotifications();
+      }, 10000);
     },
+    //읽음처리 하는거
     postReadSign() {
+      //나머지 동작
       return new Promise((succ, fail) => {
         this.loading = true;
         for (let i = 0; i < this.notifications.length; i++) {
           if (!this.notifications[i].is_read) {
             let noti_id = this.notifications[i].id;
+            this.notifications[i].is_read = true;
             UserApi.readNotification(
               noti_id,
-              res => {
-                succ(res);
-              },
+              res => {},
               error => {
                 fail(error);
               }
             );
           }
         }
+        succ();
       });
     },
 
     loadNotifications() {
+      this.loading = true;
       let userInfo = this.$cookies.get("LoginUserInfo");
       let userId = userInfo.id;
-        this.notifications = [];
+      this.notifications = [];
       UserApi.loadNotifications(
         userId,
         res => {
           for (let i = 0; i < res.data.noti_ids.length; i++) {
-            let noti = {
-              id: res.data.noti_ids[i],
-              nickname: res.data.send_nicknames[i],
-              is_read: res.data.notifications[i].is_read,
-              created_at: res.data.notifications[i].created_at,
-              message: res.data.notifications[i].message,
-              article_no: res.data.notifications[i].article_no,
-              pic_name: res.data.pic_names[i]
-            };
-            this.notifications.push(noti);
+              let noti = {
+                id: res.data.noti_ids[i],
+                nickname: res.data.send_nicknames[i],
+                is_read: res.data.notifications[i].is_read,
+                created_at: res.data.notifications[i].created_at,
+                message: res.data.notifications[i].message,
+                article_no: res.data.notifications[i].article_no,
+                pic_name: res.data.pic_names[i]
+              };
+              this.notifications.push(noti);
           }
           this.loading = false;
         },
-        error => {
-        }
+        error => {}
       );
     }
   },
@@ -80,7 +89,7 @@ export default {
 
     this.timeCalc = setInterval(() => {
       this.loadNotifications();
-    }, 5000);
+    }, 10000);
   },
   beforeRouteLeave(to, from, next) {
     clearInterval(this.timeCalc);
