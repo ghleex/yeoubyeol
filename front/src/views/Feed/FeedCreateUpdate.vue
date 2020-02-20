@@ -140,8 +140,11 @@ export default {
     //time check
     let date = new Date();
     let currHour = date.getHours();
+    //냠
     if (!(currHour >= 11 && currHour < 17)) {
-      alert("지금은 작성 가능한 시간이 아니에요 ..");
+      alert(
+        "지금은 작성 가능한 시간이 아니에요 ..(작성가능한 시간은 현재 오전 11시 ~ 오후 5시 입니다.)"
+      );
       this.$router.push({ name: "메인피드" });
     }
 
@@ -318,6 +321,7 @@ export default {
       }
       let date = new Date();
       let currHour = date.getHours();
+      //냠
       if (currHour >= 11 && currHour < 17) {
         let form = new FormData();
         let tagLists = [];
@@ -396,10 +400,10 @@ export default {
 
       const baseTime = new Date();
       let newDate = baseTime.getDate() + 1;
-      if (hours >= 16) {
+      if (hours >= 17) {
         baseTime.setDate(newDate);
       }
-      baseTime.setHours(16);
+      baseTime.setHours(17);
       baseTime.setMinutes(0);
       baseTime.setSeconds(0);
 

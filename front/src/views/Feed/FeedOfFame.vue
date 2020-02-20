@@ -19,13 +19,16 @@
       </v-col>-->
       <v-col cols="12" v-if="isLoading">
         <v-card flat tile dark color="#110B22">
-          <v-window v-model="onboarding">
+          <v-window v-model="onboarding" v-if="feeds.length>0">
             <v-window-item v-for="(feed,idx) in feeds" :key="idx" class="ma-1">
               <Fame v-bind="feed" />
             </v-window-item>
           </v-window>
+          <v-window v-else>
+            <v-btn block large text disabled class="white--text">현재 명예의 전당에 등록된 게시물이 없네요 ...</v-btn>
+          </v-window>
 
-          <v-card-actions class="justify-space-between">
+          <v-card-actions class="justify-space-between" v-if="feeds.length>0">
             <v-btn text @click="prev">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
