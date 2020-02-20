@@ -115,7 +115,7 @@ export default {
       rules: {
         requireValue: value =>
           (!!value && value.trim().length > 0) || "입력해주세요!",
-        limitLength: value => value.trim().length < 20 || "너무 길어요",
+        limitLength: value => value.trim().length <= 20 || "너무 길어요",
         introRules: [
           value => !!value || "소개를 입력해주세요!",
           value => value.trim().length <= 50 || "너무 길어요"
