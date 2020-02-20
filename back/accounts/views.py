@@ -50,7 +50,7 @@ class NotificationList(APIView):
             if noti:
                 cnt += 1
                 noti_ids.append(noti.id)
-                send_user = User.objects.filter(id=noti.send_user)
+                send_user = User.objects.filter(id=noti.send_user_id)
                 send_nicknames.append(send_user[0].nickname)
                 serializer = NotificationSerializer(noti)
                 notis.append(serializer.data)
@@ -68,11 +68,11 @@ class NotificationList(APIView):
         notis = self.get_noti(pk)
         noti = {
             'id': notis.id,
-            'nickname': notis.nickname,
+            'nickname': notis.nickname_id,
             'is_read': True,
             'created_at': notis.created_at,
             'message': notis.message,
-            'send_user': notis.send_user,
+            'send_user': notis.send_user_id,
             'article_no': notis.article_no,
         }
         serializer = NotificationSerializer(notis, data=noti)
@@ -212,6 +212,7 @@ def google(request):
         user = User.objects.create_user(username, email=email, nickname=nickname, pic_name=pic_name, social=True, password=None)
         user.set_unusable_password()
         user.save()
+        serializer = UserSerializer(user)
         return Response(serializer.data)
     except ValueError:
         # Invalid token
@@ -347,7 +348,6 @@ def logout(request):
         ---
     """
     username = request.data.get('username')
-    print(username)
     account = get_object_or_404(AccountCookie, username=username)
     account.delete()
     return Response({'message': '삭제 성공이다!!'})
