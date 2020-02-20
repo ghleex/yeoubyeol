@@ -130,6 +130,7 @@ export default {
                 sessionStorage.removeItem("refresh_token");
               })
               .then(() => {
+                this.$emit("logoutEvent");
                 let router = this.$router;
                 router.push({ name: "홈" });
               });
@@ -182,6 +183,7 @@ export default {
             sessionStorage.removeItem("refresh_token");
           })
           .then(() => {
+            this.$emit("logoutEvent");
             let router = this.$router;
             router.push({ name: "홈" });
           });
