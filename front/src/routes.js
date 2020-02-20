@@ -186,11 +186,6 @@ export default [
         component: Password,
         beforeEnter: requireAuth()
     },
-    {
-        path: '/user/deactivate',
-        name: '회원 탈퇴',
-        component: Deactivate,
-    },
 
     //검색
     {
