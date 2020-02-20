@@ -12,7 +12,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text icon v-if="!isPostPage && enableTime">
+      <v-btn text icon v-if="!isPostPage">
         <v-icon @click="changeViewPost('새 피드 작성')">mdi-pencil-plus-outline</v-icon>
       </v-btn>
       <v-btn text icon v-if="!isSearchPage">
@@ -90,7 +90,6 @@ import dotenv from "dotenv";
 dotenv.config();
 export default {
   data: () => ({
-    enableTime: true,
 
     profileUsername: "",
     drawer: null,
@@ -114,13 +113,6 @@ export default {
     if (this.drawer) {
       this.getLoginUserProfile();
       this.getNotiUnread();
-    }
-    //time check
-      const curr = new Date();
-    if (curr.getHours() >= 11 && curr.getHours() < 17) {
-      this.enableTime = true;
-    } else {
-      this.enableTime = false;
     }
 
     if (this.$route.name === "프로필") {

@@ -74,7 +74,7 @@ export default {
           this.noti.id,
           res => {
             //타입에 따라 페이지 이동
-            if (this.noti.message === "MG") {
+            if (this.noti.message === "MJ") {
               this.$router.push({'name':'명예의 전당'})
             } else if (this.noti.message === "LK") {
               this.$router.push({ name: "댓글", params: { id: this.noti.article_no} });
@@ -112,7 +112,7 @@ export default {
       return this.noti.is_read ? "#110b22" : "#231e32";
     },
     getMessage: function() {
-      if (this.noti.message === "MG") {
+      if (this.noti.message === "MJ") {
         return "회원님의 게시글이 명예의 전당에 게시되었습니다.";
       } else if (this.noti.message === "LK") {
         return `${this.noti.nickname}님이 회원님의 게시글을 좋아합니다.`;

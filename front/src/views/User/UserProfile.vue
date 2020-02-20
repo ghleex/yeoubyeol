@@ -34,7 +34,7 @@
               @click="clickFollowBtn"
               :outlined="isFollow"
             >{{isFollow? "unFollow" : "Follow"}}</v-btn>
-            <v-btn v-else min-width="190" small color="#71d087" outlined @click="changeView('프로필 변경')">setting profile</v-btn>
+            <v-btn v-else min-width="190" small color="#71d087" outlined @click="changeView('프로필 변경')">SETTING PROFILE</v-btn>
           </v-list-item>
           <v-list-item>
             <v-list-item-content>
