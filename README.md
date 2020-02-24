@@ -4,7 +4,7 @@
 
 ![슬라이드4](https://user-images.githubusercontent.com/52685206/75149913-71fdb100-5746-11ea-8de0-0a08555d3be2.PNG)
 
-![슬라이드5](https://user-images.githubusercontent.com/52685206/75149917-72964780-5746-11ea-99a2-33122fc8faf8.PNG)
+![슬라이드5](https://user-images.githubusercontent.com/52685206/75151178-6069d880-5749-11ea-942e-7b74ebf376ca.PNG)
 
 ![슬라이드6](https://user-images.githubusercontent.com/52685206/75149920-732ede00-5746-11ea-8542-855076adebc6.PNG)
 
