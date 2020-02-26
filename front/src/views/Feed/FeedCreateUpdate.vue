@@ -2,17 +2,17 @@
   <v-responsive fluid>
     <v-row class="pt-0" align="start" justify="center">
       <!-- <v-col cols="12" dark style="backgroundImage:url('../../assets/images/moon_home.jpg)"> -->
-      <v-col cols="12" dark :style="bgByWeather">
+      <v-col cols="12" dark class='pt-0'>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-row class="py-0 ma-2">
-            <v-col cols="4" class="px-0">
-              <v-btn dark text>취소</v-btn>
+            <v-col cols="4" class="px-0 py-1">
+              <v-btn dark text @click="cancel()">취소</v-btn>
             </v-col>
-            <v-col cols="4" dark class="timer px-0 white--text text-center d-flex justify-center">
+            <v-col cols="4" dark class="timer px-0 py-1 white--text text-center d-flex justify-center">
               <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
               {{ lastTime }}
             </v-col>
-            <v-col cols="4" class="pl-0 pr-1 d-flex justify-end">
+            <v-col cols="4" class="pl-0 pr-1 py-1 d-flex justify-end">
               <v-btn
                 class="mb-2"
                 color="#71d087"
@@ -21,6 +21,9 @@
                 :disabled="!valid"
               >{{postId>0 ? "수정": "작성"}}</v-btn>
             </v-col>
+          </v-row>
+
+          <v-row class="py-0 ma-2" :style="bgByWeather">
             <v-col cols="12" class="pa-0">
               <div id="preview">
                 <img v-if="url" :src="url" style="padding-bottom:5px" />
@@ -198,6 +201,10 @@ export default {
     }
   },
   methods: {
+    cancel() {
+      this.$router.push({ name: "메인피드" });
+    },
+
     editPostDone() {
       let date = new Date();
       let currHour = date.getHours();
