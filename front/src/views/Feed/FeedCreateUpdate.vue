@@ -201,6 +201,11 @@ export default {
     }
   },
   methods: {
+    cancel() {
+      let router = this.$router;
+      router.go(-1);
+    },
+
     editPostDone() {
       let date = new Date();
       let currHour = date.getHours();
