@@ -6,7 +6,7 @@
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-row class="py-0 ma-2">
             <v-col cols="4" class="px-0 py-1">
-              <v-btn dark text>취소</v-btn>
+              <v-btn dark text @click="cancel()">취소</v-btn>
             </v-col>
             <v-col cols="4" dark class="timer px-0 py-1 white--text text-center d-flex justify-center">
               <v-img :src="weather_url" max-width="40" max-height="40"></v-img>
@@ -202,8 +202,7 @@ export default {
   },
   methods: {
     cancel() {
-      let router = this.$router;
-      router.go(-1);
+      this.$router.push({ name: "메인피드" });
     },
 
     editPostDone() {
