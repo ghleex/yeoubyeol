@@ -96,7 +96,7 @@ export default {
 
     validate() {
       if (this.$refs.form.validate()) {
-        this.PostComments();
+        this.AddComment();
       }
     },
     async removeComment(v) {

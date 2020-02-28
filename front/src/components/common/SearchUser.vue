@@ -12,7 +12,7 @@
         </v-list-item-content>
         <v-col align="center" justify="end" cols="4" v-if="!isMyAccount">
           <span class="subheading grey--text px-2">
-            <v-btn v-if="!v_isFollowing" text style="color:#71d087" @click="followBtn">FOLLOW</v-btn>
+            <v-btn v-if="!v_isFollowing" text style="color:#71d087" @click="followBtn">팔로우</v-btn>
           </span>
         </v-col>
       </v-list-item>
