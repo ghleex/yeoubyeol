@@ -3,7 +3,7 @@
     <v-img :src="imgUrl"></v-img>
 
     <v-card-text>
-      <div>{{article}}</div>
+      <div style="white-space:pre-wrap;" class="my-2">{{article}}</div>
     </v-card-text>
 
     <v-divider class="mx-4"></v-divider>

@@ -91,7 +91,7 @@ export default {
       }
     },
     editComment() {
-      if (this.content.trim() === "") {
+      if (this.secondaryContent.trim() === "") {
         alert("내용을 입력해주세요 ");
       } else {
         let data = {"comment_id": this.comment_id, "comment":this.secondaryContent};
