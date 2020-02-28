@@ -209,7 +209,7 @@ export default {
           //실패 시
           this.isArticleLoaded = false;
           alert("댓글과 게시물을 불러오는데 오류가 발생했어요 ..");
-          // this.$router.push({ path: "/feed" });
+          this.$router.push({ path: "/feed" });
         }
       );
     }
