@@ -1,118 +1,105 @@
 <template>
-  <v-tabs centered fixed-tabs dark background-color="transparent"
-  class="py-12"
-  >
-    <v-tabs-slider color="#71d087"></v-tabs-slider>
-
-    <v-tab href="#tab-1">알림</v-tab>
-
-    <v-tab href="#tab-2">요청</v-tab>
-
-    <!-- 알림 탭 부분 -->
-    <v-tab-item id="tab-1">
-      <v-container v-if="notifications.length>0" centered class="my-0">
-        <v-layout row class="my-0 py-0">
-          <v-flex xs12 sm12 v-for="(items,i) in notifications" :key="i">
-            <NotiList v-bind="items" />
-          </v-flex>
-        </v-layout>
-      </v-container>
-      <v-container v-else>
-        <p class="white--text subtitle-1">아직 노 알람..Oops!</p>
-      </v-container>
-    </v-tab-item>
-    <!-- 요청 탭 부분 -->
-    <v-tab-item id="tab-2">
-      <v-container v-if="requests.length>0" centered class="my-0">
-        <v-layout row class="my-0 py-0">
-          <v-flex xs12 sm12 v-for="(items,i) in requests" :key="i">
-            <ReqList v-bind="items" />
-          </v-flex>
-        </v-layout>
-      </v-container>
-      <v-container v-else>
-        <p class="white--text subtitle-1">아직 노 요청..Oops!</p>
-      </v-container>
-    </v-tab-item>
-  </v-tabs>
+  <v-responsive fluid>
+    <v-row class="pt-0" align="start" justify="center">
+      <v-progress-linear :active="loading" :indeterminate="loading" absolute color="green"></v-progress-linear>
+      <v-col cols="12" v-if="!loading" class="pt-0">
+        <v-btn text block class="red--text" @click="readAll">모두 읽음 처리</v-btn>
+      </v-col>
+      <!-- 글 원문  -->
+      <v-col cols="12" v-if="!loading" class="pt-0">
+        <v-flex xs12 sm12 v-for="(items,i) in notifications" :key="i">
+          <NotiList v-bind="items" />
+        </v-flex>
+      </v-col>
+    </v-row>
+  </v-responsive>
 </template>
 
 <script>
-import NotiList from "../../components/common/NotiList";
-import ReqList from "../../components/common/ReqList";
+import NotiList from "@/components/common/NotiList";
+import UserApi from "@/apis/UserApi";
 
 export default {
   components: {
-    NotiList,
-    ReqList
+    NotiList
+  },
+  methods: {
+    async readAll() {
+      //읽음처리하고,
+      clearInterval(this.timeCalc);
+      await this.postReadSign();
+      //다시 재개
+
+      this.loadNotifications();
+      this.timeCalc = setInterval(() => {
+        this.loadNotifications();
+      }, 10000);
+    },
+    //읽음처리 하는거
+    postReadSign() {
+      //나머지 동작
+      return new Promise((succ, fail) => {
+        this.loading = true;
+        for (let i = 0; i < this.notifications.length; i++) {
+          if (!this.notifications[i].is_read) {
+            let noti_id = this.notifications[i].id;
+            this.notifications[i].is_read = true;
+            UserApi.readNotification(
+              noti_id,
+              res => {},
+              error => {
+                fail(error);
+              }
+            );
+          }
+        }
+        succ();
+      });
+    },
+
+    loadNotifications() {
+      this.loading = true;
+      let userInfo = this.$cookies.get("LoginUserInfo");
+      let userId = userInfo.id;
+      this.notifications = [];
+      UserApi.loadNotifications(
+        userId,
+        res => {
+          for (let i = 0; i < res.data.noti_ids.length; i++) {
+              let noti = {
+                id: res.data.noti_ids[i],
+                nickname: res.data.send_nicknames[i],
+                is_read: res.data.notifications[i].is_read,
+                created_at: res.data.notifications[i].created_at,
+                message: res.data.notifications[i].message,
+                article_no: res.data.notifications[i].article_no,
+                pic_name: res.data.pic_names[i]
+              };
+              this.notifications.push(noti);
+          }
+          this.loading = false;
+        },
+        error => {}
+      );
+    }
+  },
+  created() {
+    this.loading = true;
+    this.loadNotifications();
+
+    this.timeCalc = setInterval(() => {
+      this.loadNotifications();
+    }, 10000);
+  },
+  beforeRouteLeave(to, from, next) {
+    clearInterval(this.timeCalc);
+    return next();
   },
   data: () => ({
     //code
-    // 1:댓글 2:좋아요 3: (나에게)팔로잉신청 4 (나의)팔로잉거절 5 팔로잉수락
-    notifications: [
-      {
-        uid: "sun_hangbok",
-        picName: "default",
-        code: "1",
-        time: "12:01"
-      },
-      {
-        uid: "roadhyun",
-        picName: "default",
-        code: "2",
-        time: "10:58"
-      },
-      {
-        uid: "kkyukkyuhong",
-        picName: "default",
-        code: "3",
-        time: "09:36"
-      },
-      {
-        uid: "hongjuzzang",
-        picName: "default",
-        code: "4",
-        time: "08:27"
-      },
-      {
-        uid: "zzidorii",
-        picName: "default",
-        code: "5",
-        time: "07:27"
-      }
-    ],
-    requests: [
-      {
-      uid:'zzidorii',
-      picName:"default",
-      time:"07:29"
-    },
-      {
-      uid:'zzidorii',
-      picName:"default",
-      time:"07:29"
-    },
-      {
-      uid:'zzidorii',
-      picName:"default",
-      time:"07:29"
-    },
-      {
-      uid:'zzidorii',
-      picName:"default",
-      time:"07:29"
-    },
-      {
-      uid:'zzidorii',
-      picName:"default",
-      time:"07:29"
-    },
-      {
-      uid:'zzidorii',
-      picName:"default",
-      time:"07:29"
-    },
-    ]
+    timeCalc: "",
+    loading: true,
+    notifications: []
   })
 };
 </script>
