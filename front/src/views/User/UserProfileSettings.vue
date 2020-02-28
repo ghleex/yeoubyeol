@@ -168,7 +168,8 @@ export default {
             username: data.email,
             nickname: res.data.nickname,
             id: res.data.id,
-            pic_name: res.data.pic_name
+            pic_name: res.data.pic_name,
+            social: this.isSocial
           };
           let userData = JSON.stringify(LoginUserInfo);
           this.$cookies.set("LoginUserInfo", userData, 0);
