@@ -95,15 +95,15 @@ export default {
     setTimeValues() {
       let date = new Date();
       let maybe = new Date(this.noti.created_at);
-      let Hours = Math.ceil((date - maybe) / 1000 / 60 / 60);
-      let Mins = Math.ceil((date - maybe) / 1000 / 60);
-
+      let Hours = Math.ceil((date.getTime() - maybe.getTime()) / 1000 / 60 / 60);
+      let Mins = Math.ceil((date.getTime() - maybe.getTime()) / 1000 / 60);
       if (Hours <= 1) {
         this.noti.timedelta = `${Mins}분 전`;
       } else if (Hours < 24) {
         this.noti.timedelta = `${Hours}시간 전`;
       } else {
-        this.noti.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
+      let days = Math.ceil((date.getTime()-maybe.getTime()) / 1000 / 60 / 60 / 24);
+        this.noti.timedelta = `${days}일 전`;
       }
     }
   },

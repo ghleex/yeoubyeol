@@ -195,18 +195,18 @@ export default {
         this.post.isLike = false;
       }
     },
-    setTimeValues() {
+setTimeValues() {
       let date = new Date();
       let maybe = new Date(this.post.created_at);
-      let Hours = Math.ceil((date - maybe) / 1000 / 60 / 60);
-      let Mins = Math.ceil((date - maybe) / 1000 / 60);
-
+      let Hours = Math.ceil((date.getTime() - maybe.getTime()) / 1000 / 60 / 60);
+      let Mins = Math.ceil((date.getTime() - maybe.getTime()) / 1000 / 60);
       if (Hours <= 1) {
         this.post.timedelta = `${Mins}분 전`;
       } else if (Hours < 24) {
         this.post.timedelta = `${Hours}시간 전`;
       } else {
-        this.post.timedelta = `${date.getDate() - maybe.getDate()}일 전`;
+       let days = Math.ceil((date.getTime()-maybe.getTime()) / 1000 / 60 / 60 / 24);
+        this.post.timedelta = `${days}일 전`;
       }
     },
     iLoveIt() {
