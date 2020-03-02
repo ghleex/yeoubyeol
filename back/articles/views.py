@@ -412,6 +412,7 @@ def like(request):
     month = datetime.now().month
     if article.month != month:
         article.month = month
+        article.last_popular_post = article.popular_post
         article.popular_post = 0
     like_users = article.like_users.all()
     article_like_users = []
@@ -581,7 +582,7 @@ def monthlytrend(request):
         ---
     """
     hashtags = Hashtag.objects.all()
-    articles = Article.objects.order_by('-popular_post', '-id')
+    articles = Article.objects.order_by('-last_popular_post', '-id')
     datas = []
 
     for article in articles:
