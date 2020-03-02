@@ -19,6 +19,7 @@ class Article(models.Model):
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_articles', blank=True)
     hashtags = models.ManyToManyField(Hashtag, related_name='hashtag_articles', blank=True)
     month = models.IntegerField(blank=True, null=True)
+    last_popular_post = models.IntegerField(default=0)
     popular_post = models.IntegerField(default=0)
     image = ProcessedImageField(
         processors=[ResizeToFit(300, 300)],
