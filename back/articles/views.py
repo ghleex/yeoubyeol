@@ -597,6 +597,7 @@ def monthlytrend(request):
                 data['hashtags'][u] = hashtag.hashtag
             data['nickname'] = account.nickname
             data['comments'] = len(comments)
+            data['last_popular_post'] = article.last_popular_post
             datas.append(data)
         if len(datas) == 10:
             break
