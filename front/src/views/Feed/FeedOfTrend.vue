@@ -24,13 +24,13 @@
                     <h3 class="white--text">지난 달의 인기글이에요</h3>
                     <br />
                     <h5 class="white--text">
-                      인기글은 지난달 동안 가장
+                      인기글은 지난달에 가장
                       <b>많은 좋아요</b> 수를 받은 게시글로 선정됩니다.
                     </h5>
                   </div>
                 </v-col>
                 <v-col cols="12" v-for="(trend,idx) in trends" :key="idx">
-                  <h5 class="white--text ml-2">{{idx+1}}위 / 누적 좋아요 수 : {{trend.popular_post}} ❤️</h5>
+                  <h5 class="white--text ml-2">{{idx+1}}위 / 지난달 좋아요 수 : {{trend.last_popular_post}} ❤️</h5>
                   <Post v-bind="trend" />
                 </v-col>
               </v-row>
@@ -113,7 +113,8 @@ export default {
               comments: response.data[i].comments,
               created_at: response.data[i].created_at,
               like_users: response.data[i].like_users,
-              popular_post:response.data[i].popular_post,
+              popular_post: response.data[i].popular_post,
+              last_popular_post: response.data[i].last_popular_post,
             };
 
             this.trends.push(prop);
