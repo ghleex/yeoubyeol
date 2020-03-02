@@ -586,7 +586,7 @@ def monthlytrend(request):
     datas = []
 
     for article in articles:
-        if article.popular_post == datetime.now().month:
+        if article.month == datetime.now().month:
             comments = article.comment_set.all()
             article_serializer = ArticleSerializer(article)
             account = get_object_or_404(User, id=article_serializer.data.get('author'))
