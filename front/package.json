@@ -1,5 +1,5 @@
 {
-  "name": "saffy_vue",
+  "name": "yeoubyeol",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,9 @@
     "build": "vue-cli-service build",
     "test:unit": "jest --no-cache",
     "lint": "vue-cli-service lint",
-    "test": "jest"
+    "test": "jest",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@vue/cli": "^4.1.2",
@@ -86,5 +88,6 @@
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "homepage": "https://ghleex.github.io/yeoubyeol"
 }
